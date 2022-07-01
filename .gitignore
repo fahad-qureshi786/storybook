@@ -45,3 +45,4 @@ junit.xml
 !/**/.yarn/sdks
 !/**/.yarn/versions
 /**/.pnp.*
+config.bat
