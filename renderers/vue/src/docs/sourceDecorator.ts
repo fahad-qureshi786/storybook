@@ -1,15 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint no-underscore-dangle: ["error", { "allow": ["_vnode"] }] */
 
-import type { StoryContext } from '@storybook/csf';
 import { addons } from '@storybook/addons';
 import { logger } from '@storybook/client-logger';
 import type Vue from 'vue';
 
 import { SourceType, SNIPPET_RENDERED } from '@storybook/docs-tools';
-import type { VueFramework } from '../preview/types-6-0';
+import type { StoryContext } from '../types';
 
-export const skipSourceRender = (context: StoryContext<VueFramework>) => {
+export const skipSourceRender = (context: StoryContext) => {
   const sourceParams = context?.parameters.docs?.source;
   const isArgsStory = context?.parameters.__isArgsStory;
 
@@ -23,7 +22,7 @@ export const skipSourceRender = (context: StoryContext<VueFramework>) => {
   return !isArgsStory || sourceParams?.code || sourceParams?.type === SourceType.CODE;
 };
 
-export const sourceDecorator = (storyFn: any, context: StoryContext<VueFramework>) => {
+export const sourceDecorator = (storyFn: any, context: StoryContext) => {
   const story = storyFn();
 
   // See ../react/jsxDecorator.tsx

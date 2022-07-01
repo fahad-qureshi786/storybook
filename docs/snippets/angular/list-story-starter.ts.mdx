@@ -1,7 +1,7 @@
 ```ts
 // List.stories.ts
 
-import { Story, Meta, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryFn, moduleMetadata } from '@storybook/angular';
 
 import { CommonModule } from '@angular/common';
 
@@ -22,7 +22,7 @@ export default {
 } as Meta;
 
 // Always an empty list, not super interesting
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
   template: `<app-list></app-list>`,
 });

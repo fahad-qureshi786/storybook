@@ -19,21 +19,19 @@ import { logger } from '@storybook/client-logger';
 import { getEventMetadata } from '../lib/events';
 import {
   denormalizeStoryParameters,
-  transformStoriesRawToStoriesHash,
-  isStory,
-  isRoot,
+  transformSetStoriesStoryDataToStoriesHash,
   transformStoryIndexToStoriesHash,
   getComponentLookupList,
   getStoriesLookupList,
+  HashEntry,
+  DocsEntry,
 } from '../lib/stories';
 
 import type {
   StoriesHash,
-  Story,
-  Group,
+  StoryEntry,
   StoryId,
-  Root,
-  StoriesRaw,
+  SetStoriesStoryData,
   SetStoriesPayload,
   StoryIndex,
 } from '../lib/stories';
@@ -42,13 +40,13 @@ import type { Args, ModuleFn } from '../index';
 import type { ComposedRef } from './refs';
 
 const { DOCS_MODE, FEATURES, fetch } = global;
-const STORY_INDEX_PATH = './stories.json';
+const STORY_INDEX_PATH = './index.json';
 
 type Direction = -1 | 1;
 type ParameterName = string;
 
 type ViewMode = 'story' | 'info' | 'settings' | string | undefined;
-type StoryUpdate = Pick<Story, 'parameters' | 'initialArgs' | 'argTypes' | 'args'>;
+type StoryUpdate = Pick<StoryEntry, 'parameters' | 'initialArgs' | 'argTypes' | 'args'>;
 
 export interface SubState {
   storiesHash: StoriesHash;
@@ -60,26 +58,27 @@ export interface SubState {
 
 export interface SubAPI {
   storyId: typeof toId;
-  resolveStory: (storyId: StoryId, refsId?: string) => Story | Group | Root;
+  resolveStory: (storyId: StoryId, refsId?: string) => HashEntry;
   selectFirstStory: () => void;
   selectStory: (
-    kindOrId: string,
+    kindOrId?: string,
     story?: string,
     obj?: { ref?: string; viewMode?: ViewMode }
   ) => void;
-  getCurrentStoryData: () => Story | Group;
-  setStories: (stories: StoriesRaw, failed?: Error) => Promise<void>;
+  getCurrentStoryData: () => DocsEntry | StoryEntry;
+  setStories: (stories: SetStoriesStoryData, failed?: Error) => Promise<void>;
   jumpToComponent: (direction: Direction) => void;
   jumpToStory: (direction: Direction) => void;
-  getData: (storyId: StoryId, refId?: string) => Story | Group;
+  getData: (storyId: StoryId, refId?: string) => DocsEntry | StoryEntry;
   isPrepared: (storyId: StoryId, refId?: string) => boolean;
   getParameters: (
     storyId: StoryId | { storyId: StoryId; refId: string },
     parameterName?: ParameterName
-  ) => Story['parameters'] | any;
+  ) => StoryEntry['parameters'] | any;
   getCurrentParameter<S>(parameterName?: ParameterName): S;
-  updateStoryArgs(story: Story, newArgs: Args): void;
-  resetStoryArgs: (story: Story, argNames?: string[]) => void;
+  updateStoryArgs(story: StoryEntry, newArgs: Args): void;
+  resetStoryArgs: (story: StoryEntry, argNames?: string[]) => void;
+  findLeafEntry(StoriesHash: StoriesHash, storyId: StoryId): DocsEntry | StoryEntry;
   findLeafStoryId(StoriesHash: StoriesHash, storyId: StoryId): StoryId;
   findSiblingStoryId(
     storyId: StoryId,
@@ -90,16 +89,6 @@ export interface SubAPI {
   fetchStoryList: () => Promise<void>;
   setStoryList: (storyList: StoryIndex) => Promise<void>;
   updateStory: (storyId: StoryId, update: StoryUpdate, ref?: ComposedRef) => Promise<void>;
-}
-
-interface Meta {
-  ref?: ComposedRef;
-  source?: string;
-  sourceType?: 'local' | 'external';
-  sourceLocation?: string;
-  refId?: string;
-  v?: number;
-  type: string;
 }
 
 const deprecatedOptionsParameterWarnings: Record<string, () => void> = [
@@ -126,7 +115,7 @@ function checkDeprecatedOptionParameters(options?: Record<string, any>) {
   });
 }
 
-export const init: ModuleFn = ({
+export const init: ModuleFn<SubAPI, SubState, true> = ({
   fullAPI,
   store,
   navigate,
@@ -138,16 +127,14 @@ export const init: ModuleFn = ({
     storyId: toId,
     getData: (storyId, refId) => {
       const result = api.resolveStory(storyId, refId);
-
-      return isRoot(result) ? undefined : result;
+      if (result?.type === 'story' || result?.type === 'docs') {
+        return result;
+      }
+      return undefined;
     },
     isPrepared: (storyId, refId) => {
       const data = api.getData(storyId, refId);
-      if (data.isLeaf) {
-        return data.prepared;
-      }
-      // Groups are always prepared :shrug:
-      return true;
+      return data.type === 'story' ? data.prepared : true;
     },
     resolveStory: (storyId, refId) => {
       const { refs, storiesHash } = store.getState();
@@ -168,7 +155,7 @@ export const init: ModuleFn = ({
           : storyIdOrCombo;
       const data = api.getData(storyId, refId);
 
-      if (isStory(data)) {
+      if (data?.type === 'story') {
         const { parameters } = data;
 
         if (parameters) {
@@ -226,7 +213,7 @@ export const init: ModuleFn = ({
     },
     setStories: async (input, error) => {
       // Now create storiesHash by reordering the above by group
-      const hash = transformStoriesRawToStoriesHash(input, {
+      const hash = transformSetStoriesStoryDataToStoriesHash(input, {
         provider,
       });
 
@@ -238,9 +225,7 @@ export const init: ModuleFn = ({
     },
     selectFirstStory: () => {
       const { storiesHash } = store.getState();
-      const firstStory = Object.keys(storiesHash).find(
-        (k) => !(storiesHash[k].children || Array.isArray(storiesHash[k]))
-      );
+      const firstStory = Object.keys(storiesHash).find((id) => storiesHash[id].type === 'story');
 
       if (firstStory) {
         api.selectStory(firstStory);
@@ -249,7 +234,7 @@ export const init: ModuleFn = ({
 
       navigate('/');
     },
-    selectStory: (kindOrId = undefined, story = undefined, options = {}) => {
+    selectStory: (titleOrId = undefined, name = undefined, options = {}) => {
       const { ref, viewMode: viewModeFromArgs } = options;
       const {
         viewMode: viewModeFromState = 'story',
@@ -262,38 +247,51 @@ export const init: ModuleFn = ({
 
       const kindSlug = storyId?.split('--', 2)[0];
 
-      if (!story) {
-        const s = kindOrId ? hash[kindOrId] || hash[sanitize(kindOrId)] : hash[kindSlug];
-        // eslint-disable-next-line no-nested-ternary
-        const id = s ? (s.children ? s.children[0] : s.id) : kindOrId;
-        let viewMode =
-          s && !isRoot(s) && (viewModeFromArgs || s.parameters.viewMode)
-            ? s.parameters.viewMode
-            : viewModeFromState;
+      if (!name) {
+        // Find the entry (group, component or story) that is referred to
+        const entry = titleOrId ? hash[titleOrId] || hash[sanitize(titleOrId)] : hash[kindSlug];
 
-        // Some viewModes are not story-specific, and we should reset viewMode
-        //  to 'story' if one of those is active when navigating to another story
-        if (['settings', 'about', 'release'].includes(viewMode)) {
-          viewMode = 'story';
+        if (!entry) throw new Error(`Unknown id or title: '${titleOrId}'`);
+
+        // We want to navigate to the first ancestor entry that is a leaf
+        const leafEntry = api.findLeafEntry(hash, entry.id);
+
+        // We would default to the viewMode passed in or maintain the current
+        const desiredViewMode = viewModeFromArgs || viewModeFromState;
+
+        // By default we would render a story as a story
+        let viewMode = 'story';
+        // However, any story can be rendered as docs if required
+        if (desiredViewMode === 'docs') {
+          viewMode = 'docs';
         }
 
-        const p = s && s.refId ? `/${viewMode}/${s.refId}_${id}` : `/${viewMode}/${id}`;
+        // NOTE -- we currently still render docs entries in story view mode,
+        // (even though in the preview they will appear in docs mode)
+        // in order to maintain the viewMode as you browse around.
+        // This will change later.
 
-        navigate(p);
-      } else if (!kindOrId) {
+        // On the other hand, docs entries can *only* be rendered as docs
+        // if (leafEntry.type === 'docs') {
+        //   viewMode = 'docs';
+        // }
+
+        const fullId = leafEntry.refId ? `${leafEntry.refId}_${leafEntry.id}` : leafEntry.id;
+        navigate(`/${viewMode}/${fullId}`);
+      } else if (!titleOrId) {
         // This is a slugified version of the kind, but that's OK, our toId function is idempotent
-        const id = toId(kindSlug, story);
+        const id = toId(kindSlug, name);
 
         api.selectStory(id, undefined, options);
       } else {
-        const id = ref ? `${ref}_${toId(kindOrId, story)}` : toId(kindOrId, story);
+        const id = ref ? `${ref}_${toId(titleOrId, name)}` : toId(titleOrId, name);
         if (hash[id]) {
           api.selectStory(id, undefined, options);
         } else {
           // Support legacy API with component permalinks, where kind is `x/y` but permalink is 'z'
-          const k = hash[sanitize(kindOrId)];
-          if (k && k.children) {
-            const foundId = k.children.find((childId) => hash[childId].name === story);
+          const entry = hash[sanitize(titleOrId)];
+          if (entry?.type === 'component') {
+            const foundId = entry.children.find((childId) => hash[childId].name === name);
             if (foundId) {
               api.selectStory(foundId, undefined, options);
             }
@@ -301,13 +299,17 @@ export const init: ModuleFn = ({
         }
       }
     },
-    findLeafStoryId(storiesHash, storyId) {
-      if (storiesHash[storyId].isLeaf) {
-        return storyId;
+    findLeafEntry(storiesHash, storyId) {
+      const entry = storiesHash[storyId];
+      if (entry.type === 'docs' || entry.type === 'story') {
+        return entry;
       }
 
-      const childStoryId = storiesHash[storyId].children[0];
-      return api.findLeafStoryId(storiesHash, childStoryId);
+      const childStoryId = entry.children[0];
+      return api.findLeafEntry(storiesHash, childStoryId);
+    },
+    findLeafStoryId(storiesHash, storyId) {
+      return api.findLeafEntry(storiesHash, storyId)?.id;
     },
     findSiblingStoryId(storyId, hash, direction, toSiblingGroup) {
       if (toSiblingGroup) {
@@ -370,7 +372,7 @@ export const init: ModuleFn = ({
         const storyIndex = (await result.json()) as StoryIndex;
 
         // We can only do this if the stories.json is a proper storyIndex
-        if (storyIndex.v !== 3) {
+        if (storyIndex.v < 3) {
           logger.warn(`Skipping story index with version v${storyIndex.v}, awaiting SET_STORIES.`);
           return;
         }
@@ -404,14 +406,14 @@ export const init: ModuleFn = ({
         storiesHash[storyId] = {
           ...storiesHash[storyId],
           ...update,
-        } as Story;
+        } as StoryEntry;
         await store.setState({ storiesHash });
       } else {
         const { id: refId, stories } = ref;
         stories[storyId] = {
           ...stories[storyId],
           ...update,
-        } as Story;
+        } as StoryEntry;
         await fullAPI.updateRef(refId, { stories });
       }
     },
@@ -490,19 +492,19 @@ export const init: ModuleFn = ({
 
     fullAPI.on(SET_STORIES, function handler(data: SetStoriesPayload) {
       const { ref } = getEventMetadata(this, fullAPI);
-      const stories = data.v ? denormalizeStoryParameters(data) : data.stories;
+      const setStoriesData = data.v ? denormalizeStoryParameters(data) : data.stories;
 
       if (!ref) {
         if (!data.v) {
           throw new Error('Unexpected legacy SET_STORIES event from local source');
         }
 
-        fullAPI.setStories(stories);
+        fullAPI.setStories(setStoriesData);
         const options = fullAPI.getCurrentParameter('options');
         checkDeprecatedOptionParameters(options);
         fullAPI.setOptions(options);
       } else {
-        fullAPI.setRef(ref.id, { ...ref, ...data, stories }, true);
+        fullAPI.setRef(ref.id, { ...ref, setStoriesData }, true);
       }
     });
 

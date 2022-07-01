@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 import { Button } from '../../angular-demo';
 
 export default {
@@ -6,26 +6,26 @@ export default {
   component: Button,
 } as Meta;
 
-export const Default: Story = () => ({
+export const Default: StoryFn = () => ({
   props: { text: 'Button' },
 });
 
-export const Fullscreen: Story = () => ({
+export const Fullscreen: StoryFn = () => ({
   template: `<div style="background-color: yellow;"><storybook-button-component text="Button"></storybook-button-component></div>`,
 });
 Fullscreen.parameters = { layout: 'fullscreen' };
 
-export const Centered: Story = () => ({
+export const Centered: StoryFn = () => ({
   props: { text: 'Button' },
 });
 Centered.parameters = { layout: 'centered' };
 
-export const Padded: Story = () => ({
+export const Padded: StoryFn = () => ({
   props: { text: 'Button' },
 });
 Padded.parameters = { layout: 'padded' };
 
-export const None: Story = () => ({
+export const None: StoryFn = () => ({
   props: { text: 'Button' },
 });
 None.parameters = { layout: 'none' };

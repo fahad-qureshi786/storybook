@@ -1,6 +1,8 @@
 import { logger } from '@storybook/node-logger';
+// @ts-ignore
 import betterOpn from 'better-opn'; // betterOpn alias used because also loading open
 import open from 'open';
+// @ts-ignore
 import getDefaultBrowser from 'x-default-browser';
 import dedent from 'ts-dedent';
 

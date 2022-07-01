@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { List } from './List';
 
@@ -17,5 +17,5 @@ export default {
 } as ComponentMeta<typeof List>;
 
 //👇 Always an empty list, not super interesting
-const Template: ComponentStory<typeof List> = (args) => <List {...args} />;
+const Template: ComponentStoryFn<typeof List> = (args) => <List {...args} />;
 ```

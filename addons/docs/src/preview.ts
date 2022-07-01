@@ -1,6 +1,8 @@
-export const parameters = {
+export const parameters: any = {
   docs: {
-    getContainer: async () => (await import('./blocks')).DocsContainer,
-    getPage: async () => (await import('./blocks')).DocsPage,
+    renderer: async () => {
+      const { DocsRenderer } = (await import('./blocks')) as any;
+      return new DocsRenderer();
+    },
   },
 };

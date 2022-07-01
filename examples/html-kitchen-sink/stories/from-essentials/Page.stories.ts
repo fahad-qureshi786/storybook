@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/html';
+import type { Meta, StoryFn } from '@storybook/html';
 import { createPage } from './Page';
 import * as HeaderStories from './Header.stories';
 import { HeaderProps } from './Header';
@@ -12,7 +12,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<HeaderProps> = (args) => createPage(args);
+const Template: StoryFn<HeaderProps> = (args) => createPage(args);
 
 export const LoggedIn = Template.bind({});
 LoggedIn.args = {

@@ -3,8 +3,8 @@ import isEqual from 'lodash/isEqual';
 
 import { logger } from '@storybook/client-logger';
 
-export default (a: any, b: any) =>
-  mergeWith({}, a, b, (objValue: any, srcValue: any) => {
+export default <TObj = any>(a: TObj, b: Partial<TObj>) =>
+  mergeWith({}, a, b, (objValue: TObj, srcValue: Partial<TObj>) => {
     if (Array.isArray(srcValue) && Array.isArray(objValue)) {
       srcValue.forEach((s) => {
         const existing = objValue.find((o) => o === s || isEqual(o, s));

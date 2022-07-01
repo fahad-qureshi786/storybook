@@ -3,6 +3,7 @@ import { AxeResults } from 'axe-core';
 import { render, act } from '@testing-library/react';
 import * as api from '@storybook/api';
 import { STORY_CHANGED } from '@storybook/core-events';
+import { HIGHLIGHT } from '@storybook/addon-highlight';
 
 import { A11yContextProvider, useA11yContext } from './A11yContext';
 import { EVENTS } from '../constants';
@@ -50,16 +51,16 @@ const axeResult: Partial<AxeResults> = {
 };
 
 describe('A11YPanel', () => {
+  const getCurrentStoryData = jest.fn();
   beforeEach(() => {
     mockedApi.useChannel.mockReset();
-    mockedApi.useStorybookState.mockReset();
+    mockedApi.useStorybookApi.mockReset();
     mockedApi.useAddonState.mockReset();
 
     mockedApi.useAddonState.mockImplementation((_, defaultState) => React.useState(defaultState));
     mockedApi.useChannel.mockReturnValue(jest.fn());
-    const storyState: Partial<api.State> = { storyId };
-    // Lazy to mock entire state
-    mockedApi.useStorybookState.mockReturnValue(storyState as any);
+    getCurrentStoryData.mockReset().mockReturnValue({ id: storyId, type: 'story' });
+    mockedApi.useStorybookApi.mockReturnValue({ getCurrentStoryData } as any);
   });
 
   it('should render children', () => {
@@ -97,7 +98,7 @@ describe('A11YPanel', () => {
     const { rerender } = render(<A11yContextProvider active />);
     rerender(<A11yContextProvider active={false} />);
     expect(emit).toHaveBeenLastCalledWith(
-      EVENTS.HIGHLIGHT,
+      HIGHLIGHT,
       expect.objectContaining({
         color: expect.any(String),
         elements: [],

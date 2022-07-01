@@ -1,5 +1,7 @@
 /* eslint-disable no-underscore-dangle */
+// @ts-ignore
 import global from 'global';
+
 import { extractArgTypes } from './custom-elements';
 import customElementsManifest from './__testfixtures__/custom-elements.json';
 

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
-import React from 'react';
+import React, { createElement, FC, PropsWithChildren } from 'react';
 import PropTypes from 'prop-types';
-import { addons, StoryContext, useEffect } from '@storybook/addons';
+import { addons, useEffect } from '@storybook/addons';
 import { SNIPPET_RENDERED } from '@storybook/docs-tools';
 import { renderJsx, jsxDecorator } from './jsxDecorator';
 
@@ -47,6 +47,7 @@ describe('renderJsx', () => {
   });
   it('large objects', () => {
     const obj = Array.from({ length: 20 }).reduce((acc, _, i) => {
+      // @ts-ignore
       acc[`key_${i}`] = `val_${i}`;
       return acc;
     }, {});
@@ -109,11 +110,14 @@ describe('renderJsx', () => {
   });
 
   it('forwardRef component', () => {
-    const MyExoticComponent = React.forwardRef(function MyExoticComponent(props: any, _ref: any) {
+    const MyExoticComponent = React.forwardRef<PropsWithChildren<{}>>(function MyExoticComponent(
+      props,
+      _ref
+    ) {
       return <div>{props.children}</div>;
     });
 
-    expect(renderJsx(<MyExoticComponent>I'm forwardRef!</MyExoticComponent>, {}))
+    expect(renderJsx(createElement(MyExoticComponent, {}, 'I am forwardRef!'), {}))
       .toMatchInlineSnapshot(`
         <MyExoticComponent>
           I'm forwardRef!
@@ -122,11 +126,11 @@ describe('renderJsx', () => {
   });
 
   it('memo component', () => {
-    const MyMemoComponent = React.memo(function MyMemoComponent(props: any) {
+    const MyMemoComponent: FC = React.memo(function MyMemoComponent(props) {
       return <div>{props.children}</div>;
     });
 
-    expect(renderJsx(<MyMemoComponent>I'm memo!</MyMemoComponent>, {})).toMatchInlineSnapshot(`
+    expect(renderJsx(createElement(MyMemoComponent, {}, 'I am memo!'), {})).toMatchInlineSnapshot(`
       <MyMemoComponent>
         I'm memo!
       </MyMemoComponent>
@@ -169,6 +173,7 @@ describe('jsxDecorator', () => {
   let mockChannel: { on: jest.Mock; emit?: jest.Mock };
   beforeEach(() => {
     mockedAddons.getChannel.mockReset();
+    // @ts-ignore
     mockedUseEffect.mockImplementation((cb) => setTimeout(cb, 0));
 
     mockChannel = { on: jest.fn(), emit: jest.fn() };
@@ -266,7 +271,8 @@ describe('jsxDecorator', () => {
 
   it('renders MDX properly', async () => {
     // FIXME: generate this from actual MDX
-    const mdxElement = {
+    const mdxElement: ReturnType<typeof createElement> = {
+      // @ts-ignore
       type: { displayName: 'MDXCreateElement' },
       props: {
         mdxType: 'div',
@@ -282,6 +288,35 @@ describe('jsxDecorator', () => {
       SNIPPET_RENDERED,
       'jsx-test--mdx-args',
       '<div className="foo" />'
+    );
+  });
+
+  it('handles stories that trigger Suspense', async () => {
+    // if a story function uses a hook or other library that triggers suspense, it will throw a Promise until it is resolved
+    // and then it will return the story content after the promise is resolved
+    const storyFn = jest.fn();
+    storyFn
+      .mockImplementationOnce(() => {
+        throw Promise.resolve();
+      })
+      .mockImplementation(() => {
+        return <div>resolved args story</div>;
+      });
+    const jsx = '';
+    const context = makeContext('args', { __isArgsStory: true, jsx }, {});
+    expect(() => {
+      jsxDecorator(storyFn, context);
+    }).toThrow(Promise);
+    jsxDecorator(storyFn, context);
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(mockChannel.emit).toHaveBeenCalledTimes(2);
+    expect(mockChannel.emit).nthCalledWith(1, SNIPPET_RENDERED, 'jsx-test--args', '');
+    expect(mockChannel.emit).nthCalledWith(
+      2,
+      SNIPPET_RENDERED,
+      'jsx-test--args',
+      '<div>\n  resolved args story\n</div>'
     );
   });
 });

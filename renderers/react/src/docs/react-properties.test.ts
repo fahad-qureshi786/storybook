@@ -8,7 +8,7 @@ import { inferControls } from '@storybook/store';
 import type { AnyFramework } from '@storybook/csf';
 import { normalizeNewlines } from '@storybook/docs-tools';
 
-import type { StoryContext } from '..';
+import type { StoryContext } from '../types';
 import { extractProps } from './extractProps';
 import { extractArgTypes } from './extractArgTypes';
 
@@ -31,8 +31,8 @@ const transformToModule = (inputCode: string) => {
       ],
     ],
   };
-  const { code } = transformSync(inputCode, options);
-  return normalizeNewlines(code);
+  const { code } = transformSync(inputCode, options) || {};
+  return normalizeNewlines(code || '');
 };
 
 const annotateWithDocgen = (inputPath: string) => {
@@ -41,8 +41,8 @@ const annotateWithDocgen = (inputPath: string) => {
     plugins: ['babel-plugin-react-docgen', '@babel/plugin-proposal-class-properties'],
     babelrc: false,
   };
-  const { code } = transformFileSync(inputPath, options);
-  return normalizeNewlines(code);
+  const { code } = transformFileSync(inputPath, options) || {};
+  return normalizeNewlines(code || '');
 };
 
 describe('react component properties', () => {

@@ -15,6 +15,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
+    "strictBindCallApply": true,
     "types": [
       "jest"
     ],

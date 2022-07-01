@@ -15,10 +15,10 @@ const generator: Generator = async (packageManager, npmOptions, options) => {
       config.resolve.plugins.forEach((p) => {
         if (Array.isArray(p.appSrcs)) {
           p.appSrcs.push('${monorepoRootPath}');
-        }
-      });
-      return config;
-    }
+              }
+            });
+          return config;
+          }
     %%`,
       }
     : {};

@@ -1,7 +1,7 @@
 import { Store, StoreModule } from '@ngrx/store';
 import { Component } from '@angular/core';
 
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
+import { Meta, moduleMetadata, StoryFn } from '@storybook/angular';
 
 @Component({
   selector: 'storybook-comp-with-store',
@@ -41,10 +41,10 @@ export default {
   ],
 } as Meta;
 
-export const WithComponent: Story = () => ({
+export const WithComponent: StoryFn = () => ({
   component: WithStoreComponent,
 });
 
-export const WithTemplate: Story = () => ({
+export const WithTemplate: StoryFn = () => ({
   template: `<storybook-comp-with-store></storybook-comp-with-store>`,
 });

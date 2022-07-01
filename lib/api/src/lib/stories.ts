@@ -25,68 +25,122 @@ const { FEATURES } = global;
 
 export type { StoryId };
 
-export interface Root {
+export interface BaseEntry {
+  id: StoryId;
+  depth: number;
+  name: string;
+  refId?: string;
+  renderLabel?: (item: BaseEntry) => React.ReactNode;
+
+  /** @deprecated */
+  isRoot: boolean;
+  /** @deprecated */
+  isComponent: boolean;
+  /** @deprecated */
+  isLeaf: boolean;
+}
+
+export interface RootEntry extends BaseEntry {
   type: 'root';
-  id: StoryId;
-  depth: 0;
-  name: string;
-  refId?: string;
-  children: StoryId[];
-  isComponent: false;
-  isRoot: true;
-  isLeaf: false;
-  renderLabel?: (item: Root) => React.ReactNode;
   startCollapsed?: boolean;
-}
-
-export interface Group {
-  type: 'group' | 'component';
-  id: StoryId;
-  depth: number;
-  name: string;
   children: StoryId[];
-  refId?: string;
-  parent?: StoryId;
-  isComponent: boolean;
-  isRoot: false;
+
+  /** @deprecated */
+  isRoot: true;
+  /** @deprecated */
+  isComponent: false;
+  /** @deprecated */
   isLeaf: false;
-  renderLabel?: (item: Group) => React.ReactNode;
-  // MDX docs-only stories are "Group" type
-  parameters?: {
-    docsOnly?: boolean;
-    viewMode?: ViewMode;
-  };
 }
 
-export interface Story {
-  type: 'story' | 'docs';
-  id: StoryId;
-  depth: number;
-  parent: StoryId;
-  name: string;
-  kind: StoryKind;
-  refId?: string;
-  children?: StoryId[];
-  isComponent: boolean;
+export interface GroupEntry extends BaseEntry {
+  type: 'group';
+  parent?: StoryId;
+  children: StoryId[];
+
+  /** @deprecated */
   isRoot: false;
+  /** @deprecated */
+  isComponent: false;
+  /** @deprecated */
+  isLeaf: false;
+}
+
+export interface ComponentEntry extends BaseEntry {
+  type: 'component';
+  parent?: StoryId;
+  children: StoryId[];
+
+  /** @deprecated */
+  isRoot: false;
+  /** @deprecated */
+  isComponent: true;
+  /** @deprecated */
+  isLeaf: false;
+}
+
+export interface DocsEntry extends BaseEntry {
+  type: 'docs';
+  parent: StoryId;
+  title: ComponentTitle;
+  /** @deprecated */
+  kind: ComponentTitle;
+  importPath: Path;
+
+  /** @deprecated */
+  isRoot: false;
+  /** @deprecated */
+  isComponent: false;
+  /** @deprecated */
   isLeaf: true;
-  renderLabel?: (item: Story) => React.ReactNode;
+}
+
+export interface StoryEntry extends BaseEntry {
+  type: 'story';
+  parent: StoryId;
+  title: ComponentTitle;
+  /** @deprecated */
+  kind: ComponentTitle;
+  importPath: Path;
   prepared: boolean;
   parameters?: {
-    fileName: string;
-    options: {
-      [optionName: string]: any;
-    };
-    docsOnly?: boolean;
-    viewMode?: ViewMode;
     [parameterName: string]: any;
   };
   args?: Args;
   argTypes?: ArgTypes;
   initialArgs?: Args;
+
+  /** @deprecated */
+  isRoot: false;
+  /** @deprecated */
+  isComponent: false;
+  /** @deprecated */
+  isLeaf: true;
 }
 
-export interface StoryInput {
+/** @deprecated */
+export type Root = RootEntry;
+
+/** @deprecated */
+export type Group = GroupEntry | ComponentEntry;
+
+/** @deprecated */
+export type Story = DocsEntry | StoryEntry;
+
+export type HashEntry = RootEntry | GroupEntry | ComponentEntry | DocsEntry | StoryEntry;
+
+/**
+ * The `StoriesHash` is our manager-side representation of the `StoryIndex`.
+ * We create entries in the hash not only for each story or docs entry, but
+ * also for each "group" of the component (split on '/'), as that's how things
+ * are manipulated in the manager (i.e. in the sidebar)
+ */
+export interface StoriesHash {
+  [id: string]: HashEntry;
+}
+
+// The data received on the (legacy) `setStories` event
+export interface SetStoriesStory {
   id: StoryId;
   name: string;
   refId?: string;
@@ -100,35 +154,13 @@ export interface StoryInput {
     viewMode?: ViewMode;
     [parameterName: string]: any;
   };
+  argTypes?: ArgTypes;
   args?: Args;
   initialArgs?: Args;
 }
 
-export interface StoriesHash {
-  [id: string]: Root | Group | Story;
-}
-
-export type StoriesList = (Group | Story)[];
-
-export type GroupsList = (Root | Group)[];
-
-export interface StoriesRaw {
-  [id: string]: StoryInput;
-}
-
-type Path = string;
-export interface StoryIndexStory {
-  id: StoryId;
-  name: StoryName;
-  title: ComponentTitle;
-  importPath: Path;
-
-  // v2 or v2-compatible story index includes this
-  parameters?: Parameters;
-}
-export interface StoryIndex {
-  v: number;
-  stories: Record<StoryId, StoryIndexStory>;
+export interface SetStoriesStoryData {
+  [id: string]: SetStoriesStory;
 }
 
 export type SetStoriesPayload =
@@ -137,15 +169,49 @@ export type SetStoriesPayload =
       error?: Error;
       globals: Args;
       globalParameters: Parameters;
-      stories: StoriesRaw;
+      stories: SetStoriesStoryData;
       kindParameters: {
         [kind: string]: Parameters;
       };
     }
   | ({
       v?: number;
-      stories: StoriesRaw;
+      stories: SetStoriesStoryData;
     } & Record<string, never>);
+
+// The data recevied via the story index
+type Path = string;
+
+interface BaseIndexEntry {
+  id: StoryId;
+  name: StoryName;
+  title: ComponentTitle;
+  importPath: Path;
+}
+
+export type StoryIndexEntry = BaseIndexEntry & {
+  type?: 'story';
+};
+
+interface V3IndexEntry extends BaseIndexEntry {
+  parameters?: Parameters;
+}
+
+export interface StoryIndexV3 {
+  v: 3;
+  stories: Record<StoryId, V3IndexEntry>;
+}
+
+export type DocsIndexEntry = BaseIndexEntry & {
+  storiesImports: Path[];
+  type: 'docs';
+};
+
+export type IndexEntry = StoryIndexEntry | DocsIndexEntry;
+export interface StoryIndex {
+  v: number;
+  entries: Record<StoryId, IndexEntry>;
+}
 
 const warnLegacyShowRoots = deprecate(
   () => {},
@@ -168,7 +234,7 @@ export const denormalizeStoryParameters = ({
   globalParameters,
   kindParameters,
   stories,
-}: SetStoriesPayload): StoriesRaw => {
+}: SetStoriesPayload): SetStoriesStoryData => {
   return mapValues(stories, (storyData) => ({
     ...storyData,
     parameters: combineParameters(
@@ -179,181 +245,258 @@ export const denormalizeStoryParameters = ({
   }));
 };
 
-const STORY_KIND_PATH_SEPARATOR = /\s*\/\s*/;
+const TITLE_PATH_SEPARATOR = /\s*\/\s*/;
 
-export const transformStoryIndexToStoriesHash = (
-  index: StoryIndex,
+// We used to received a bit more data over the channel on the SET_STORIES event, including
+// the full parameters for each story.
+type PreparedIndexEntry = IndexEntry & {
+  parameters?: Parameters;
+  argTypes?: ArgTypes;
+  args?: Args;
+  initialArgs?: Args;
+};
+export interface PreparedStoryIndex {
+  v: number;
+  entries: Record<StoryId, PreparedIndexEntry>;
+}
+
+export const transformSetStoriesStoryDataToStoriesHash = (
+  data: SetStoriesStoryData,
   { provider }: { provider: Provider }
-): StoriesHash => {
-  const countByTitle = countBy(Object.values(index.stories), 'title');
-  const input = Object.entries(index.stories).reduce(
-    (acc, [id, { title, name, importPath, parameters }]) => {
-      const docsOnly = name === 'Page' && countByTitle[title] === 1;
-      acc[id] = {
+) =>
+  transformStoryIndexToStoriesHash(transformSetStoriesStoryDataToPreparedStoryIndex(data), {
+    provider,
+  });
+
+const transformSetStoriesStoryDataToPreparedStoryIndex = (
+  stories: SetStoriesStoryData
+): PreparedStoryIndex => {
+  const entries: PreparedStoryIndex['entries'] = Object.entries(stories).reduce(
+    (acc, [id, story]) => {
+      if (!story) return acc;
+
+      const { docsOnly, fileName, ...parameters } = story.parameters;
+      const base = {
+        title: story.kind,
         id,
-        kind: title,
-        name,
-        parameters: { fileName: importPath, options: {}, docsOnly, ...parameters },
+        name: story.name,
+        importPath: fileName,
       };
+      if (docsOnly) {
+        acc[id] = {
+          type: 'docs',
+          storiesImports: [],
+          ...base,
+        };
+      } else {
+        const { argTypes, args, initialArgs } = story;
+        acc[id] = {
+          type: 'story',
+          ...base,
+          parameters,
+          argTypes,
+          args,
+          initialArgs,
+        };
+      }
       return acc;
     },
-    {} as StoriesRaw
+    {} as PreparedStoryIndex['entries']
   );
 
-  return transformStoriesRawToStoriesHash(input, { provider, prepared: false });
+  return { v: 4, entries };
 };
 
-export const transformStoriesRawToStoriesHash = (
-  input: StoriesRaw,
-  { provider, prepared = true }: { provider: Provider; prepared?: Story['prepared'] }
+const transformStoryIndexV3toV4 = (index: StoryIndexV3): PreparedStoryIndex => {
+  const countByTitle = countBy(Object.values(index.stories), 'title');
+  return {
+    v: 4,
+    entries: Object.values(index.stories).reduce((acc, entry) => {
+      let type: IndexEntry['type'] = 'story';
+      if (
+        entry.parameters?.docsOnly ||
+        (entry.name === 'Page' && countByTitle[entry.title] === 1)
+      ) {
+        type = 'docs';
+      }
+      acc[entry.id] = {
+        type,
+        ...(type === 'docs' && { storiesImports: [] }),
+        ...entry,
+      };
+      return acc;
+    }, {} as PreparedStoryIndex['entries']),
+  };
+};
+
+export const transformStoryIndexToStoriesHash = (
+  index: PreparedStoryIndex,
+  {
+    provider,
+  }: {
+    provider: Provider;
+  }
 ): StoriesHash => {
-  const values = Object.values(input).filter(Boolean);
-  const usesOldHierarchySeparator = values.some(({ kind }) => kind.match(/\.|\|/)); // dot or pipe
+  if (!index.v) throw new Error('Composition: Missing stories.json version');
 
-  const storiesHashOutOfOrder = values.reduce((acc, item) => {
-    const { kind, parameters } = item;
-    const { sidebar = {}, showRoots: deprecatedShowRoots } = provider.getConfig();
-    const { showRoots = deprecatedShowRoots, collapsedRoots = [], renderLabel } = sidebar;
+  const v4Index = index.v === 4 ? index : transformStoryIndexV3toV4(index as any);
 
-    if (typeof deprecatedShowRoots !== 'undefined') {
-      warnLegacyShowRoots();
-    }
+  const entryValues = Object.values(v4Index.entries);
+  const { sidebar = {}, showRoots: deprecatedShowRoots } = provider.getConfig();
+  const { showRoots = deprecatedShowRoots, collapsedRoots = [], renderLabel } = sidebar;
+  const usesOldHierarchySeparator = entryValues.some(({ title }) => title.match(/\.|\|/)); // dot or pipe
+  if (typeof deprecatedShowRoots !== 'undefined') {
+    warnLegacyShowRoots();
+  }
 
-    const setShowRoots = typeof showRoots !== 'undefined';
-    if (usesOldHierarchySeparator && !setShowRoots && FEATURES?.warnOnLegacyHierarchySeparator) {
-      warnChangedDefaultHierarchySeparators();
-    }
+  const setShowRoots = typeof showRoots !== 'undefined';
+  if (usesOldHierarchySeparator && !setShowRoots && FEATURES?.warnOnLegacyHierarchySeparator) {
+    warnChangedDefaultHierarchySeparators();
+  }
 
-    const groups = kind.trim().split(STORY_KIND_PATH_SEPARATOR);
+  const storiesHashOutOfOrder = Object.values(entryValues).reduce((acc, item) => {
+    // First, split the title into a set of names, separated by '/' and trimmed.
+    const { title } = item;
+    const groups = title.trim().split(TITLE_PATH_SEPARATOR);
     const root = (!setShowRoots || showRoots) && groups.length > 1 ? [groups.shift()] : [];
+    const names = [...root, ...groups];
 
-    const rootAndGroups = [...root, ...groups].reduce((list, name, index) => {
-      const parent = index > 0 && list[index - 1].id;
+    // Now create a "path" or sub id for each name
+    const paths = names.reduce((list, name, idx) => {
+      const parent = idx > 0 && list[idx - 1];
       const id = sanitize(parent ? `${parent}-${name}` : name);
 
       if (parent === id) {
         throw new Error(
           dedent`
-              Invalid part '${name}', leading to id === parentId ('${id}'), inside kind '${kind}'
-
-              Did you create a path that uses the separator char accidentally, such as 'Vue <docs/>' where '/' is a separator char? See https://github.com/storybookjs/storybook/issues/6128
-            `
+          Invalid part '${name}', leading to id === parentId ('${id}'), inside title '${title}'
+          
+          Did you create a path that uses the separator char accidentally, such as 'Vue <docs/>' where '/' is a separator char? See https://github.com/storybookjs/storybook/issues/6128
+          `
         );
       }
+      list.push(id);
+      return list;
+    }, [] as string[]);
 
-      if (root.length && index === 0) {
-        list.push({
+    // Now, let's add an entry to the hash for each path/name pair
+    paths.forEach((id, idx) => {
+      // The child is the next path, OR the story/docs entry itself
+      const childId = paths[idx + 1] || item.id;
+
+      if (root.length && idx === 0) {
+        acc[id] = merge<RootEntry>((acc[id] || {}) as RootEntry, {
           type: 'root',
           id,
-          name,
-          depth: index,
-          children: [],
-          isComponent: false,
-          isLeaf: false,
-          isRoot: true,
+          name: names[idx],
+          depth: idx,
           renderLabel,
           startCollapsed: collapsedRoots.includes(id),
-        });
-      } else {
-        list.push({
-          type: 'group',
-          id,
-          name,
-          parent,
-          depth: index,
-          children: [],
+          // Note that this will later get appended to the previous list of children (see below)
+          children: [childId],
+
+          // deprecated fields
+          isRoot: true,
           isComponent: false,
           isLeaf: false,
-          isRoot: false,
+        });
+        // Usually the last path/name pair will be displayed as a component,
+        // *unless* there are other stories that are more deeply nested under it
+        //
+        // For example, if we had stories for both
+        //   - Atoms / Button
+        //   - Atoms / Button / LabelledButton
+        //
+        // In this example the entry for 'atoms-button' would *not* be a component.
+      } else if ((!acc[id] || acc[id].type === 'component') && idx === paths.length - 1) {
+        acc[id] = merge<ComponentEntry>((acc[id] || {}) as ComponentEntry, {
+          type: 'component',
+          id,
+          name: names[idx],
+          parent: paths[idx - 1],
+          depth: idx,
           renderLabel,
-          parameters: {
-            docsOnly: parameters?.docsOnly,
-            viewMode: parameters?.viewMode,
-          },
+          ...(childId && {
+            children: [childId],
+          }),
+          // deprecated fields
+          isRoot: false,
+          isComponent: true,
+          isLeaf: false,
+        });
+      } else {
+        acc[id] = merge<GroupEntry>((acc[id] || {}) as GroupEntry, {
+          type: 'group',
+          id,
+          name: names[idx],
+          parent: paths[idx - 1],
+          depth: idx,
+          renderLabel,
+          ...(childId && {
+            children: [childId],
+          }),
+          // deprecated fields
+          isRoot: false,
+          isComponent: false,
+          isLeaf: false,
         });
       }
-
-      return list;
-    }, [] as GroupsList);
-
-    const paths = [...rootAndGroups.map(({ id }) => id), item.id];
-
-    // Ok, now let's add everything to the store
-    rootAndGroups.forEach((group, index) => {
-      const child = paths[index + 1];
-      const { id } = group;
-      acc[id] = merge(acc[id] || {}, {
-        ...group,
-        ...(child && { children: [child] }),
-      });
     });
 
+    // Finally add an entry for the docs/story itself
     acc[item.id] = {
-      type: item.parameters?.docsOnly ? 'docs' : 'story',
+      type: 'story',
       ...item,
-      depth: rootAndGroups.length,
-      parent: rootAndGroups[rootAndGroups.length - 1].id,
-      isLeaf: true,
-      isComponent: false,
-      isRoot: false,
+      depth: paths.length,
+      parent: paths[paths.length - 1],
       renderLabel,
-      prepared,
-    };
+      ...(item.type !== 'docs' && { prepared: !!item.parameters }),
+
+      // deprecated fields
+      kind: item.title,
+      isRoot: false,
+      isComponent: false,
+      isLeaf: true,
+    } as DocsEntry | StoryEntry;
 
     return acc;
   }, {} as StoriesHash);
 
-  function addItem(acc: StoriesHash, item: Story | Group) {
-    if (!acc[item.id]) {
-      // If we were already inserted as part of a group, that's great.
-      acc[item.id] = item;
-      const { children } = item;
-      if (children) {
-        const childNodes = children.map((id) => storiesHashOutOfOrder[id]) as (Story | Group)[];
-        if (childNodes.every((childNode) => childNode.isLeaf)) {
-          acc[item.id].isComponent = true;
-          acc[item.id].type = 'component';
-        }
-        childNodes.forEach((childNode) => addItem(acc, childNode));
-      }
+  // This function adds a "root" or "orphan" and all of its descendents to the hash.
+  function addItem(acc: StoriesHash, item: HashEntry) {
+    // If we were already inserted as part of a group, that's great.
+    if (acc[item.id]) {
+      return acc;
+    }
+
+    acc[item.id] = item;
+    // Ensure we add the children depth-first *before* inserting any other entries
+    if (item.type === 'root' || item.type === 'group' || item.type === 'component') {
+      item.children.forEach((childId) => addItem(acc, storiesHashOutOfOrder[childId]));
     }
     return acc;
   }
 
-  return Object.values(storiesHashOutOfOrder).reduce(addItem, {});
+  // We'll do two passes over the data, adding all the orphans, then all the roots
+  const orphanHash = Object.values(storiesHashOutOfOrder)
+    .filter((i) => i.type !== 'root' && !i.parent)
+    .reduce(addItem, {});
+
+  return Object.values(storiesHashOutOfOrder)
+    .filter((i) => i.type === 'root')
+    .reduce(addItem, orphanHash);
 };
-
-export type Item = StoriesHash[keyof StoriesHash];
-
-export function isRoot(item: Item): item is Root {
-  if (item as Root) {
-    return item.isRoot;
-  }
-  return false;
-}
-export function isGroup(item: Item): item is Group {
-  if (item as Group) {
-    return !item.isRoot && !item.isLeaf;
-  }
-  return false;
-}
-export function isStory(item: Item): item is Story {
-  if (item as Story) {
-    return item.isLeaf;
-  }
-  return false;
-}
 
 export const getComponentLookupList = memoize(1)((hash: StoriesHash) => {
   return Object.entries(hash).reduce((acc, i) => {
     const value = i[1];
-    if (value.isComponent) {
-      acc.push([...i[1].children]);
+    if (value.type === 'component') {
+      acc.push([...value.children]);
     }
     return acc;
   }, [] as StoryId[][]);
 });
 
 export const getStoriesLookupList = memoize(1)((hash: StoriesHash) => {
-  return Object.keys(hash).filter((k) => !(hash[k].children || Array.isArray(hash[k])));
+  return Object.keys(hash).filter((k) => ['story', 'docs'].includes(hash[k].type));
 });

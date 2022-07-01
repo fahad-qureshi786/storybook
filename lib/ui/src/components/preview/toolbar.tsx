@@ -3,7 +3,7 @@ import React, { Fragment, useMemo, FunctionComponent } from 'react';
 import { styled } from '@storybook/theming';
 
 import { FlexBar, IconButton, Icons, Separator, TabButton, TabBar } from '@storybook/components';
-import { Consumer, Combo, API, Story, Group, State, merge } from '@storybook/api';
+import { Consumer, Combo, API, State, merge, DocsEntry, StoryEntry } from '@storybook/api';
 import { shortcutToHumanString } from '@storybook/api/shortcut';
 import { addons, Addon, types } from '@storybook/addons';
 
@@ -131,8 +131,13 @@ const useTools = (
   );
 
   return useMemo(() => {
-    return story && story.parameters
-      ? filterTools(tools, toolsExtra, tabs, { viewMode, story, location, path })
+    return story?.type === 'story' && story.parameters
+      ? filterTools(tools, toolsExtra, tabs, {
+          viewMode,
+          story,
+          location,
+          path,
+        })
       : { left: tools, right: toolsExtra };
   }, [viewMode, story, location, path, tools, toolsExtra, tabs]);
 };
@@ -141,7 +146,7 @@ export interface ToolData {
   isShown: boolean;
   tabs: Addon[];
   api: API;
-  story: Story | Group;
+  story: DocsEntry | StoryEntry;
 }
 
 export const ToolRes: FunctionComponent<ToolData & RenderData> = React.memo<ToolData & RenderData>(
@@ -173,8 +178,8 @@ export const Tools = React.memo<{ list: Addon[] }>(({ list }) => (
 ));
 
 function toolbarItemHasBeenExcluded(item: Partial<Addon>, story: PreviewProps['story']) {
-  const toolbarItemsFromStoryParameters =
-    'toolbar' in story.parameters ? story.parameters.toolbar : undefined;
+  const parameters = story.type === 'story' ? story.parameters : {};
+  const toolbarItemsFromStoryParameters = 'toolbar' in parameters ? parameters.toolbar : undefined;
   const { toolbar: toolbarItemsFromAddonsConfig } = addons.getConfig();
 
   const toolbarItems = merge(toolbarItemsFromAddonsConfig, toolbarItemsFromStoryParameters);

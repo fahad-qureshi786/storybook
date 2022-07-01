@@ -1,6 +1,6 @@
 {
   "name": "@storybook/react",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook React renderer",
   "keywords": [
     "storybook"
@@ -19,9 +19,26 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./preview": {
+      "require": "./dist/config.js",
+      "import": "./dist/config.mjs",
+      "types": "./dist/config.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "types/**/*",
@@ -30,15 +47,15 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/addons": "7.0.0-alpha.3",
-    "@storybook/client-logger": "7.0.0-alpha.3",
-    "@storybook/core-client": "7.0.0-alpha.3",
+    "@storybook/addons": "7.0.0-alpha.8",
+    "@storybook/client-logger": "7.0.0-alpha.8",
+    "@storybook/core-client": "7.0.0-alpha.8",
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
-    "@storybook/docs-tools": "7.0.0-alpha.3",
-    "@storybook/store": "7.0.0-alpha.3",
+    "@storybook/docs-tools": "7.0.0-alpha.8",
+    "@storybook/store": "7.0.0-alpha.8",
     "@types/estree": "^0.0.51",
     "@types/node": "^14.14.20 || ^16.0.0",
     "acorn": "^7.4.1",
@@ -56,6 +73,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.11.5",
+    "@digitak/esrun": "^3.2.2",
     "@types/util-deprecate": "^1.0.0"
   },
   "peerDependencies": {
@@ -75,5 +93,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts",
+    "./src/config.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

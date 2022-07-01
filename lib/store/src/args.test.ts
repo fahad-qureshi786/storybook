@@ -1,4 +1,7 @@
 import { once } from '@storybook/client-logger';
+import { expect } from '@jest/globals';
+import { SBType } from '@storybook/csf';
+
 import {
   combineArgs,
   groupArgsByTarget,
@@ -7,13 +10,13 @@ import {
   validateOptions,
 } from './args';
 
-const stringType = { name: 'string' };
-const numberType = { name: 'number' };
-const booleanType = { name: 'boolean' };
-const enumType = { name: 'enum' };
-const functionType = { name: 'function' };
-const numArrayType = { name: 'array', value: numberType };
-const boolObjectType = { name: 'object', value: { bool: booleanType } };
+const stringType: SBType = { name: 'string' };
+const numberType: SBType = { name: 'number' };
+const booleanType: SBType = { name: 'boolean' };
+const enumType: SBType = { name: 'enum', value: [1, 2, 3] };
+const functionType: SBType = { name: 'function' };
+const numArrayType: SBType = { name: 'array', value: numberType };
+const boolObjectType: SBType = { name: 'object', value: { bool: booleanType } };
 
 jest.mock('@storybook/client-logger');
 

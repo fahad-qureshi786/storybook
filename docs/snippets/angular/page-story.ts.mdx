@@ -1,7 +1,7 @@
 ```ts
 // Page.stories.ts
 
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
+import { Meta, moduleMetadata, StoryFn } from '@storybook/angular';
 
 import { CommonModule } from '@angular/common';
 
@@ -27,7 +27,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 

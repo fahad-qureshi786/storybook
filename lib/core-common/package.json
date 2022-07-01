@@ -1,6 +1,6 @@
 {
   "name": "@storybook/core-common",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook framework-agnostic API",
   "keywords": [
     "storybook"
@@ -19,9 +19,21 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "types/**/*",
@@ -30,7 +42,7 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
@@ -55,7 +67,8 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/register": "^7.12.1",
-    "@storybook/node-logger": "7.0.0-alpha.3",
+    "@storybook/csf": "0.0.2--canary.4566f4d.1",
+    "@storybook/node-logger": "7.0.0-alpha.8",
     "@storybook/semver": "^7.3.2",
     "@types/babel__core": "^7.0.0",
     "@types/express": "^4.7.0",
@@ -85,6 +98,7 @@
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
+    "@digitak/esrun": "^3.2.2",
     "@types/compression": "^1.7.0",
     "@types/interpret": "^1.1.1",
     "@types/mock-fs": "^4.13.0",
@@ -103,5 +117,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

@@ -202,11 +202,11 @@ describe('CsfFile', () => {
       expect(
         parse(
           dedent`
-          import { Meta, Story } from '@storybook/react';
+          import type { Meta, StoryFn } from '@storybook/react';
           type PropTypes = {};
           export default { title: 'foo/bar/baz' } as Meta<PropTypes>;
-          export const A: Story<PropTypes> = () => <>A</>;
-          export const B: Story<PropTypes> = () => <>B</>;
+          export const A: StoryFn<PropTypes> = () => <>A</>;
+          export const B: StoryFn<PropTypes> = () => <>B</>;
         `
         )
       ).toMatchInlineSnapshot(`
@@ -224,12 +224,12 @@ describe('CsfFile', () => {
       expect(
         parse(
           dedent`
-          import { Meta, Story } from '@storybook/react';
+          import type { Meta, StoryFn } from '@storybook/react';
           type PropTypes = {};
           const meta = { title: 'foo/bar/baz' } as Meta<PropTypes>;
           export default meta;
-          export const A: Story<PropTypes> = () => <>A</>;
-          export const B: Story<PropTypes> = () => <>B</>;
+          export const A: StoryFn<PropTypes> = () => <>A</>;
+          export const B: StoryFn<PropTypes> = () => <>B</>;
         `
         )
       ).toMatchInlineSnapshot(`
@@ -631,6 +631,39 @@ describe('CsfFile', () => {
         'Unexpected usage of "storyName" in "A". Please use "name" instead.'
       );
       consoleWarnMock.mockRestore();
+    });
+  });
+
+  describe('import handling', () => {
+    it('imports', () => {
+      const input = dedent`
+        import Button from './Button';
+        import { Check } from './Check';
+        export default { title: 'foo/bar', x: 1, y: 2 };
+      `;
+      const csf = loadCsf(input, { makeTitle }).parse();
+      expect(csf.imports).toMatchInlineSnapshot(`
+        - ./Button
+        - ./Check
+      `);
+    });
+    // eslint-disable-next-line jest/no-disabled-tests
+    it.skip('dynamic imports', () => {
+      const input = dedent`
+        const Button = await import('./Button');
+        export default { title: 'foo/bar', x: 1, y: 2 };
+      `;
+      const csf = loadCsf(input, { makeTitle }).parse();
+      expect(csf.imports).toMatchInlineSnapshot();
+    });
+    // eslint-disable-next-line jest/no-disabled-tests
+    it.skip('requires', () => {
+      const input = dedent`
+        const Button = require('./Button');
+        export default { title: 'foo/bar', x: 1, y: 2 };
+      `;
+      const csf = loadCsf(input, { makeTitle }).parse();
+      expect(csf.imports).toMatchInlineSnapshot();
     });
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComponentMeta, Story, ComponentStory } from '@storybook/react';
+import type { ComponentMeta, StoryFn, ComponentStoryFn } from '@storybook/react';
 import TsButton from '../../components/TsButton';
 
 export default {
@@ -14,7 +14,7 @@ export default {
   ],
 } as ComponentMeta<typeof TsButton>;
 
-const Template: Story = (args) => <TsButton {...args} />;
+const Template: StoryFn = (args) => <TsButton {...args} />;
 
 export const Basic = Template.bind({});
 Basic.args = {
@@ -22,7 +22,7 @@ Basic.args = {
   children: 'basic',
 };
 
-const TypedTemplate: ComponentStory<typeof TsButton> = (args) => <TsButton {...args} />;
+const TypedTemplate: ComponentStoryFn<typeof TsButton> = (args) => <TsButton {...args} />;
 
 export const Typed = TypedTemplate.bind({});
 Typed.args = {

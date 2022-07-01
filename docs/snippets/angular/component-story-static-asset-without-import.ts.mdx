@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { MyComponent } from './MyComponent.component';
 
@@ -15,7 +15,7 @@ export default {
 } as Meta;
 
 // Assume image.png is located in the "public" directory.
-export const WithAnImage: Story = () => ({
+export const WithAnImage: StoryFn = () => ({
   props: {
     src: '/image.png',
     alt: 'my image',

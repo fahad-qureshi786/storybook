@@ -1,17 +1,9 @@
-export type { DecoratorFn } from './preview';
-export {
-  storiesOf,
-  setAddon,
-  addDecorator,
-  addParameters,
-  configure,
-  getStorybook,
-  raw,
-  forceReRender,
-} from './preview';
-export * from './testing';
+import './globals';
 
-export * from './preview/types-6-3';
+export * from './public-api';
+export * from './public-types';
+
+export * from './testing-api';
 
 // optimization: stop HMR propagation in webpack
 module?.hot?.decline();

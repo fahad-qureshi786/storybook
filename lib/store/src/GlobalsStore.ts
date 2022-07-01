@@ -14,11 +14,22 @@ const setUndeclaredWarning = deprecate(
 );
 
 export class GlobalsStore {
-  allowedGlobalNames: Set<string>;
+  // We use ! here because TS doesn't analyse the .set() function to see if it actually get set
+  allowedGlobalNames!: Set<string>;
 
-  initialGlobals: Globals;
+  initialGlobals!: Globals;
 
-  globals: Globals = {};
+  globals!: Globals;
+
+  constructor({
+    globals = {},
+    globalTypes = {},
+  }: {
+    globals?: Globals;
+    globalTypes?: GlobalTypes;
+  }) {
+    this.set({ globals, globalTypes });
+  }
 
   set({ globals = {}, globalTypes = {} }: { globals?: Globals; globalTypes?: GlobalTypes }) {
     const delta = this.initialGlobals && deepDiff(this.initialGlobals, this.globals);

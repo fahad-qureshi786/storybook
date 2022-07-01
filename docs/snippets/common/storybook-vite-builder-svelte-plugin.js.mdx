@@ -13,12 +13,15 @@ module.exports = {
     // Customize the Vite config here
     return config;
   },
-  svelteOptions: {
-    preprocess: preprocess({
-      typescript: true,
-      postcss: true,
-      sourceMap: true,
-    }),
+  framework:{
+    name: '@storybook/svelte-webpack5', 
+    options: {
+      preprocess: preprocess({
+        typescript: true,
+        postcss: true,
+        sourceMap: true,
+      }),
+    },
   },
 };
 ```

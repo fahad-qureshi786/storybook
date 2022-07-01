@@ -1,7 +1,7 @@
 import type {
-  CommonWebpackConfiguration,
-  StorybookConfig as BaseStorybookConfig,
-  TypescriptOptions as BaseTypescriptOptions,
+  WebpackConfiguration as WebpackConfigurationBase,
+  StorybookConfig as StorybookConfigBase,
+  TypescriptOptions as TypescriptOptionsBase,
 } from '@storybook/core-webpack';
 import type { PluginOptions as ReactDocgenTypescriptOptions } from '@storybook/react-docgen-typescript-plugin';
 
@@ -20,19 +20,7 @@ export interface ReactOptions {
   legacyRootApi?: boolean;
 }
 
-/**
- * The interface for Storybook configuration in `main.ts` files.
- */
-export interface ReactConfig {
-  framework:
-    | string
-    | {
-        name: '@storybook/react';
-        options: ReactOptions;
-      };
-}
-
-export type TypescriptOptions = BaseTypescriptOptions & {
+export type TypescriptOptions = TypescriptOptionsBase & {
   /**
    * Sets the type of Docgen when working with React and TypeScript
    *
@@ -48,8 +36,7 @@ export type TypescriptOptions = BaseTypescriptOptions & {
   reactDocgenTypescriptOptions: ReactDocgenTypescriptOptions;
 };
 
-export type StorybookConfig<TWebpackConfiguration = CommonWebpackConfiguration> =
-  BaseStorybookConfig<TWebpackConfiguration> &
-    ReactConfig & {
-      typescript?: Partial<TypescriptOptions>;
-    };
+export type StorybookConfig<TWebpackConfiguration = WebpackConfigurationBase> =
+  StorybookConfigBase<TWebpackConfiguration> & {
+    typescript?: Partial<TypescriptOptions>;
+  };

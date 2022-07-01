@@ -10,14 +10,15 @@ import { from, Observable, of, throwError } from 'rxjs';
 import type { CLIOptions } from '@storybook/core-common';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 import { sync as findUpSync } from 'find-up';
+import { sync as readUpSync } from 'read-pkg-up';
 import {
   BrowserBuilderOptions,
   ExtraEntryPoint,
   StylePreprocessorOptions,
 } from '@angular-devkit/build-angular';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import buildStandalone, { StandaloneOptions } from '@storybook/angular/standalone';
+import { buildStaticStandalone } from '@storybook/core-server';
+import type { StandaloneOptions } from '../utils/standalone-options';
 import { runCompodoc } from '../utils/run-compodoc';
 import { buildStandaloneErrorHandler } from '../utils/build-standalone-errors-handler';
 
@@ -66,6 +67,7 @@ function commandBuilder(
       } = options;
 
       const standaloneOptions: StandaloneOptions = {
+        packageJson: readUpSync({ cwd: __dirname }).packageJson,
         configDir,
         docs,
         loglevel,
@@ -110,7 +112,7 @@ async function setup(options: StorybookBuilderOptions, context: BuilderContext) 
 }
 
 function runInstance(options: StandaloneOptions) {
-  return from(buildStandalone(options)).pipe(
+  return from(buildStaticStandalone(options as any)).pipe(
     catchError((error: any) => throwError(buildStandaloneErrorHandler(error)))
   );
 }

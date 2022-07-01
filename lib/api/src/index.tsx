@@ -25,9 +25,16 @@ import type { Listener } from '@storybook/channels';
 import { createContext } from './context';
 import Store, { Options } from './store';
 import getInitialState from './initial-state';
-import type { StoriesHash, Story, Root, Group } from './lib/stories';
+import type {
+  StoriesHash,
+  RootEntry,
+  GroupEntry,
+  ComponentEntry,
+  DocsEntry,
+  StoryEntry,
+  HashEntry,
+} from './lib/stories';
 import type { ComposedRef, Refs } from './modules/refs';
-import { isGroup, isRoot, isStory } from './lib/stories';
 
 import * as provider from './modules/provider';
 import * as addons from './modules/addons';
@@ -139,18 +146,27 @@ export const combineParameters = (...parameterSets: Parameters[]) =>
     return undefined;
   });
 
-export type ModuleFn = (m: ModuleArgs) => Module;
-
-interface Module {
-  init?: () => void;
-  api?: unknown;
-  state?: unknown;
+interface ModuleWithInit<APIType = unknown, StateType = unknown> {
+  init: () => void | Promise<void>;
+  api: APIType;
+  state: StateType;
 }
+
+type ModuleWithoutInit<APIType = unknown, StateType = unknown> = Omit<
+  ModuleWithInit<APIType, StateType>,
+  'init'
+>;
+
+export type ModuleFn<APIType = unknown, StateType = unknown, HasInit = false> = (
+  m: ModuleArgs
+) => HasInit extends true
+  ? ModuleWithInit<APIType, StateType>
+  : ModuleWithoutInit<APIType, StateType>;
 
 class ManagerProvider extends Component<ManagerProviderProps, State> {
   api: API = {} as API;
 
-  modules: Module[];
+  modules: (ModuleWithInit | ModuleWithoutInit)[];
 
   static displayName = 'Manager';
 
@@ -252,9 +268,9 @@ class ManagerProvider extends Component<ManagerProviderProps, State> {
   initModules = () => {
     // Now every module has had a chance to set its API, call init on each module which gives it
     // a chance to do things that call other modules' APIs.
-    this.modules.forEach(({ init }) => {
-      if (init) {
-        init();
+    this.modules.forEach((module) => {
+      if ('init' in module) {
+        module.init();
       }
     });
   };
@@ -331,8 +347,18 @@ export function useStorybookApi(): API {
   return api;
 }
 
-export type { StoriesHash, Story, Root, Group, ComposedRef, Refs };
-export { ManagerConsumer as Consumer, ManagerProvider as Provider, isGroup, isRoot, isStory };
+export type {
+  StoriesHash,
+  RootEntry,
+  GroupEntry,
+  ComponentEntry,
+  DocsEntry,
+  StoryEntry,
+  HashEntry,
+  ComposedRef,
+  Refs,
+};
+export { ManagerConsumer as Consumer, ManagerProvider as Provider };
 
 export interface EventMap {
   [eventId: string]: Listener;
@@ -446,13 +472,13 @@ export function useArgs(): [Args, (newArgs: Args) => void, (argNames?: string[])
   const { getCurrentStoryData, updateStoryArgs, resetStoryArgs } = useStorybookApi();
 
   const data = getCurrentStoryData();
-  const args = isStory(data) ? data.args : {};
+  const args = data.type === 'story' ? data.args : {};
   const updateArgs = useCallback(
-    (newArgs: Args) => updateStoryArgs(data as Story, newArgs),
+    (newArgs: Args) => updateStoryArgs(data as StoryEntry, newArgs),
     [data, updateStoryArgs]
   );
   const resetArgs = useCallback(
-    (argNames?: string[]) => resetStoryArgs(data as Story, argNames),
+    (argNames?: string[]) => resetStoryArgs(data as StoryEntry, argNames),
     [data, resetStoryArgs]
   );
 
@@ -468,12 +494,13 @@ export function useGlobalTypes(): ArgTypes {
   return useStorybookApi().getGlobalTypes();
 }
 
-function useCurrentStory(): Story {
+function useCurrentStory(): StoryEntry | DocsEntry {
   const { getCurrentStoryData } = useStorybookApi();
 
-  return getCurrentStoryData() as Story;
+  return getCurrentStoryData();
 }
 
 export function useArgTypes(): ArgTypes {
-  return useCurrentStory()?.argTypes || {};
+  const current = useCurrentStory();
+  return (current?.type === 'story' && current.argTypes) || {};
 }

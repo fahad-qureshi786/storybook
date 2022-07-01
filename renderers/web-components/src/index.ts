@@ -1,27 +1,13 @@
+// @ts-ignore
 import global from 'global';
 
 const { window, EventSource } = global;
 
-export {
-  storiesOf,
-  setAddon,
-  addDecorator,
-  addParameters,
-  configure,
-  getStorybook,
-  forceReRender,
-  raw,
-} from './preview';
+export * from './globals';
 
-export {
-  getCustomElements,
-  setCustomElements,
-  setCustomElementsManifest,
-  isValidComponent,
-  isValidMetaData,
-} from './customElements';
-
-export * from './preview/types-6-0';
+export * from './public-types';
+export * from './public-api';
+export * from './framework-api';
 
 // TODO: disable HMR and do full page loads because of customElements.define
 if (module && module.hot && module.hot.decline) {

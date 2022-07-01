@@ -9,7 +9,7 @@ import { StoryContext, ArgsStoryFn, PartialStoryFn } from '@storybook/csf';
 import { SourceType, SNIPPET_RENDERED, getDocgenSection } from '@storybook/docs-tools';
 import { logger } from '@storybook/client-logger';
 
-import { ReactFramework } from '..';
+import { ReactFramework } from '../types';
 
 import { isMemo, isForwardRef } from './lib';
 
@@ -179,14 +179,16 @@ export const jsxDecorator = (
 ) => {
   const channel = addons.getChannel();
   const skip = skipJsxRender(context);
-  const story = storyFn();
 
   let jsx = '';
 
   useEffect(() => {
-    if (!skip) channel.emit(SNIPPET_RENDERED, (context || {}).id, jsx);
+    if (!skip) {
+      channel.emit(SNIPPET_RENDERED, (context || {}).id, jsx);
+    }
   });
 
+  const story = storyFn();
   // We only need to render JSX if the source block is actually going to
   // consume it. Otherwise it's just slowing us down.
   if (skip) {

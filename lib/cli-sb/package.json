@@ -1,6 +1,6 @@
 {
   "name": "sb",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook CLI",
   "keywords": [
     "storybook"
@@ -24,10 +24,10 @@
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {
-    "@storybook/cli": "7.0.0-alpha.3"
+    "@storybook/cli": "7.0.0-alpha.8"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

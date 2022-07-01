@@ -1,8 +1,6 @@
 import { logger } from '@storybook/node-logger';
-import type { StorybookConfig } from '@storybook/core-webpack';
+import type { Preset, StorybookConfig } from '@storybook/core-webpack';
 import { isReactScriptsInstalled } from './cra-config';
-
-type Preset = string | { name: string };
 
 const checkForNewPreset = (presetsList: Preset[]) => {
   const hasNewPreset = presetsList.some((preset: Preset) => {
@@ -25,5 +23,19 @@ export const webpackFinal: StorybookConfig['webpack'] = (config, { presetsList }
       checkForNewPreset(presetsList);
     }
   }
+  config.module?.rules?.push(
+    ...[
+      {
+        test: /\.m?js$/,
+        type: 'javascript/auto',
+      },
+      {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+    ]
+  );
   return config;
 };

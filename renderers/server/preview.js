@@ -1,1 +1,1 @@
-export * from './dist/esm/preview/config';
+export * from './dist/config';

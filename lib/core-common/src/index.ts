@@ -21,9 +21,8 @@ export * from './utils/cache';
 export * from './utils/template';
 export * from './utils/interpolate';
 export * from './utils/validate-configuration-files';
-export * from './utils/to-require-context';
+export * from './utils/glob-to-regexp';
 export * from './utils/normalize-stories';
-export * from './utils/to-importFn';
 export * from './utils/readTemplate';
 export * from './utils/findDistEsm';
 

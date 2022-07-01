@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/html';
+import type { Meta, StoryFn } from '@storybook/html';
 import { createHeader, HeaderProps } from './Header';
 
 export default {
@@ -10,7 +10,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<HeaderProps> = (args) => createHeader(args);
+const Template: StoryFn<HeaderProps> = (args) => createHeader(args);
 
 export const LoggedIn = Template.bind({});
 LoggedIn.args = {

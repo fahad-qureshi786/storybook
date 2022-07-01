@@ -157,7 +157,7 @@ Interaction tests can be expensive to maintain when applied wholesale to every c
 
 - [Test runner](./test-runner.md) to automate test execution
 - [Visual tests](./visual-testing.md) for appearance
-- [Accessibility tests](accessibility-testing.md) for accessibility
+- [Accessibility tests](./accessibility-testing.md) for accessibility
 - Interaction tests for user behavior simulation
 - [Snapshot tests](./snapshot-testing.md) for rendering errors and warnings
 - [Import stories in other tests](./importing-stories-in-tests.md) for other tools

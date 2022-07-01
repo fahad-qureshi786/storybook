@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { action } from '@storybook/addon-actions';
-import { moduleMetadata, Meta, Story } from '@storybook/angular';
+import { moduleMetadata, Meta, StoryFn } from '@storybook/angular';
 import { CustomCvaComponent } from './custom-cva.component';
 
 export default {
@@ -18,7 +18,7 @@ export default {
   ],
 } as Meta;
 
-export const SimpleInput: Story = () => ({
+export const SimpleInput: StoryFn = () => ({
   props: {
     ngModel: 'Type anything',
     ngModelChange: action('ngModelChange'),

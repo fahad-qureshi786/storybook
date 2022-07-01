@@ -1,0 +1,40 @@
+{
+  "name": "@storybook/example-doc-blocks",
+  "version": "7.0.0-alpha.8",
+  "private": true,
+  "scripts": {
+    "build-storybook": "cross-env STORYBOOK_DISPLAY_WARNING=true DISPLAY_WARNING=true sb build",
+    "debug": "cross-env NODE_OPTIONS=--inspect-brk STORYBOOK_DISPLAY_WARNING=true DISPLAY_WARNING=true yarn sb dev -p 9011",
+    "storybook": "cross-env STORYBOOK_DISPLAY_WARNING=true DISPLAY_WARNING=true sb dev -p 9010 --no-manager-cache"
+  },
+  "dependencies": {
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@babel/preset-typescript": "^7.12.7",
+    "@storybook/addon-essentials": "7.0.0-alpha.8",
+    "@storybook/addon-storyshots": "7.0.0-alpha.8",
+    "@storybook/addon-storysource": "7.0.0-alpha.8",
+    "@storybook/addons": "7.0.0-alpha.8",
+    "@storybook/cli": "7.0.0-alpha.8",
+    "@storybook/components": "7.0.0-alpha.8",
+    "@storybook/react-webpack5": "7.0.0-alpha.8",
+    "@storybook/theming": "7.0.0-alpha.8",
+    "@types/babel__preset-env": "^7",
+    "@types/react": "^16.14.23",
+    "@types/react-dom": "^16.9.14",
+    "cross-env": "^7.0.3",
+    "lodash": "^4.17.21",
+    "sb": "7.0.0-alpha.8",
+    "typescript": "~4.6.3",
+    "webpack": "5"
+  },
+  "storybook": {
+    "chromatic": {
+      "projectToken": "2ea6e5abac97"
+    }
+  }
+}

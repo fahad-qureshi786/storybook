@@ -52,7 +52,7 @@ const results = stories
   });
 
 const recents = stories
-  .filter((item) => item.isComponent) // even though we track stories, we display them grouped by component
+  .filter((item) => item.type === 'component') // even though we track stories, we display them grouped by component
   .map((story) => ({ item: story, matches: [], score: 0 }));
 
 // We need this to prevent react key warnings

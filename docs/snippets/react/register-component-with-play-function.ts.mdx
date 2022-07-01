@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { screen, userEvent } from '@storybook/testing-library';
 
@@ -18,7 +18,7 @@ export default {
   component: RegistrationForm,
 } as ComponentMeta<typeof RegistrationForm>;
 
-const Template: ComponentStory<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
+const Template: ComponentStoryFn<typeof RegistrationForm> = (args) => <RegistrationForm {...args} />;
 
 export const FilledForm = Template.bind({});
 FilledForm.play = async () => {

@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { YourComponent } from './YourComponent';
 
@@ -18,7 +18,7 @@ export default {
 } as ComponentMeta<typeof YourComponent>;
 
 //👇 We create a “template” of how args map to rendering
-const Template: ComponentStory<typeof YourComponent> = (args) => <YourComponent {...args} />;
+const Template: ComponentStoryFn<typeof YourComponent> = (args) => <YourComponent {...args} />;
 
 export const FirstStory = Template.bind({});
 

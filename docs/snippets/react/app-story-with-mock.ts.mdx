@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import App from './App';
 
@@ -16,7 +16,7 @@ export default {
   component: App,
 } as ComponentMeta<typeof App>;
 
-const Template: ComponentStory<typeof App> = () => <App />;
+const Template: ComponentStoryFn<typeof App> = () => <App />;
 
 export const Success = Template.bind({});
 Success.parameters = {

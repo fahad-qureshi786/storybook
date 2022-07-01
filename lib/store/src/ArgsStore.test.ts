@@ -1,3 +1,5 @@
+import { expect } from '@jest/globals';
+
 import { ArgsStore } from './ArgsStore';
 
 jest.mock('@storybook/client-logger');

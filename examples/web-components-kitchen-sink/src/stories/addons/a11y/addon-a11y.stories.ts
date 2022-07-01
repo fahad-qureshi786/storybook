@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import type { Story, Meta } from '@storybook/web-components';
+import type { Meta, StoryFn } from '@storybook/web-components';
 
 const text = 'Testing the a11y addon';
 
@@ -10,14 +10,14 @@ export default {
   },
 } as Meta;
 
-export const Default: Story = () => html`<button></button>`;
-export const Label: Story = () => html`<button>${text}</button>`;
-export const Disabled: Story = () => html`<button disabled>${text}</button>`;
-export const InvalidContrast: Story = () => html`
+export const Default: StoryFn = () => html`<button></button>`;
+export const Label: StoryFn = () => html`<button>${text}</button>`;
+export const Disabled: StoryFn = () => html`<button disabled>${text}</button>`;
+export const InvalidContrast: StoryFn = () => html`
   <button style="color: black; background-color: brown;">${text}</button>
 `;
 
-export const DelayedRender: Story = () => {
+export const DelayedRender: StoryFn = () => {
   const div = document.createElement('div');
   setTimeout(() => {
     div.innerHTML = `<button>This button has a delayed render of 1s</button>`;

@@ -1,7 +1,7 @@
 ```ts
 // RegistrationForm.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { screen, userEvent } from '@storybook/testing-library';
 
@@ -16,11 +16,11 @@ export default {
   component: RegistrationForm,
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const FilledForm: Story = Template.bind({});
+export const FilledForm: StoryFn = Template.bind({});
 FilledForm.play = async () => {
   const emailInput = screen.getByLabelText('email', {
     selector: 'input',

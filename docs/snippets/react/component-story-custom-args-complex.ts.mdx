@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { YourComponent } from './your-component';
 
@@ -30,7 +30,7 @@ export default {
   },
 } as ComponentMeta<typeof YourComponent>;
 
-const Template: ComponentStory<typeof YourComponent> = ({ propertyA, propertyB, ...rest }) => {
+const Template: ComponentStoryFn<typeof YourComponent> = ({ propertyA, propertyB, ...rest }) => {
   //👇 Assigns the result from the function to a variable
   const someFunctionResult = someFunction(propertyA, propertyB);
 

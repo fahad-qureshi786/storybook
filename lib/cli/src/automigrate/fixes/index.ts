@@ -5,6 +5,7 @@ import { vue3 } from './vue3';
 import { mainjsFramework } from './mainjsFramework';
 import { eslintPlugin } from './eslint-plugin';
 import { builderVite } from './builder-vite';
+import { npm7 } from './npm7';
 import { Fix } from '../types';
 
 export * from '../types';
@@ -16,4 +17,5 @@ export const fixes: Fix[] = [
   mainjsFramework,
   eslintPlugin,
   builderVite,
+  npm7,
 ];

@@ -1,11 +1,11 @@
-import { Story, Meta } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 import { Button } from '../angular-demo';
 
 export default {
   title: 'Legacy / Component in Story',
 } as Meta;
 
-export const Basic: Story = (args) => ({
+export const Basic: StoryFn = (args) => ({
   component: Button,
   props: args,
 });

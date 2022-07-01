@@ -193,7 +193,11 @@ export const Search = React.memo<{
         let results: DownshiftItem[] = [];
         const resultIds: Set<string> = new Set();
         const distinctResults = (fuse.search(input) as SearchResult[]).filter(({ item }) => {
-          if (!(item.isComponent || item.isLeaf) || resultIds.has(item.parent)) return false;
+          if (
+            !(item.type === 'component' || item.type === 'docs' || item.type === 'story') ||
+            resultIds.has(item.parent)
+          )
+            return false;
           resultIds.add(item.id);
           return true;
         });
@@ -312,10 +316,7 @@ export const Search = React.memo<{
               const data = dataset.hash[refId];
               if (data && data.stories && data.stories[storyId]) {
                 const story = data.stories[storyId];
-                const item =
-                  story.isLeaf && !story.isComponent && !story.isRoot
-                    ? data.stories[story.parent]
-                    : story;
+                const item = story.type === 'story' ? data.stories[story.parent] : story;
                 // prevent duplicates
                 if (!acc.some((res) => res.item.refId === refId && res.item.id === item.id)) {
                   acc.push({ item: searchItem(item, dataset.hash[refId]), matches: [], score: 0 });

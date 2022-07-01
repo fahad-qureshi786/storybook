@@ -7,7 +7,12 @@ import {
   useParameter,
   useStorybookState,
 } from '@storybook/api';
-import { ArgsTable, NoControlsWarning, PresetColor, SortType } from '@storybook/components';
+import {
+  PureArgsTable as ArgsTable,
+  NoControlsWarning,
+  PresetColor,
+  SortType,
+} from '@storybook/blocks';
 
 import { PARAM_KEY } from './constants';
 

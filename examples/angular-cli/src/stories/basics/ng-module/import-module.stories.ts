@@ -1,4 +1,4 @@
-import { moduleMetadata, Story, Meta } from '@storybook/angular';
+import { moduleMetadata, StoryFn, Meta } from '@storybook/angular';
 import { ChipsModule } from './angular-src/chips.module';
 import { ChipsGroupComponent } from './angular-src/chips-group.component';
 import { ChipComponent } from './angular-src/chip.component';
@@ -12,7 +12,7 @@ export default {
   ],
 } as Meta;
 
-export const ChipsGroup: Story = (args) => ({
+export const ChipsGroup: StoryFn = (args) => ({
   component: ChipsGroupComponent,
   props: args,
 });
@@ -33,7 +33,7 @@ ChipsGroup.argTypes = {
   removeAllChipsClick: { action: 'Remove all chips clicked' },
 };
 
-export const Chip: Story = (args) => ({
+export const Chip: StoryFn = (args) => ({
   component: ChipComponent,
   props: args,
 });

@@ -1,3 +1,82 @@
+## 7.0.0-alpha.8 (June 29, 2022)
+
+### Features
+
+- Webpack: Support .cjs extension ([#18502](https://github.com/storybookjs/storybook/pull/18502))
+
+### Maintenance
+
+- Docs2: Extract doc blocks into a separate package ([#18587](https://github.com/storybookjs/storybook/pull/18587))
+
+## 7.0.0-alpha.7 (June 29, 2022)
+
+### Features
+
+- TypeScript: Re-structure types for frameworks and presets ([#18504](https://github.com/storybookjs/storybook/pull/18504))
+- UI: Add parent wildcard sortOrder ([#18243](https://github.com/storybookjs/storybook/pull/18243))
+
+### Bug Fixes
+
+- UI: Fix typo in CSS pseudo selector ([#17708](https://github.com/storybookjs/storybook/pull/17708))
+- UI: Fix sidebar a11y by moving aria-expanded attribute to button ([#18354](https://github.com/storybookjs/storybook/pull/18354))
+- CLI: Hook up the npm7 migration ([#18522](https://github.com/storybookjs/storybook/pull/18522))
+
+### Maintenance
+
+- Build: Use TSUP to compile `core-common` ([#18546](https://github.com/storybookjs/storybook/pull/18546))
+- Build: Use TSUP to compile the presets ([#18544](https://github.com/storybookjs/storybook/pull/18544))
+- Build: Use TSUP to compile the frameworks ([#18543](https://github.com/storybookjs/storybook/pull/18543))
+- Build: Use TSUP to compile the renderers ([#18534](https://github.com/storybookjs/storybook/pull/18534))
+- Essentials: Add highlight addon ([#17800](https://github.com/storybookjs/storybook/pull/17800))
+- Core: Replace `cpy` with `fs-extra` copy/copyFile ([#18497](https://github.com/storybookjs/storybook/pull/18497))
+- Build: Enable Template.bind({}) TS support in our repo ([#18540](https://github.com/storybookjs/storybook/pull/18540))
+- Turn on strict types in store + preview-web ([#18536](https://github.com/storybookjs/storybook/pull/18536))
+- Addon-highlight: Convert to simplified addon style ([#17991](https://github.com/storybookjs/storybook/pull/17991))
+
+### Dependency Upgrades
+
+- Upgrade @storybook/testing-library to `0.0.14-next.0` ([#18539](https://github.com/storybookjs/storybook/pull/18539))
+
+## 7.0.0-alpha.6 (June 21, 2022)
+
+### Bug Fixes
+
+- Interactions: Reset instrumenter state on HMR ([#18516](https://github.com/storybookjs/storybook/pull/18516))
+- Interactions: Prevent showing child exception while parent is still playing ([#18518](https://github.com/storybookjs/storybook/pull/18518))
+
+### Maintenance
+
+- Docs2 core: Fetch `index.json` for composition ([#18521](https://github.com/storybookjs/storybook/pull/18521))
+- Addon-docs: Switch Meta block to receive all module exports ([#18514](https://github.com/storybookjs/storybook/pull/18514))
+- Re-add deprecated fields to lib/api ([#18488](https://github.com/storybookjs/storybook/pull/18488))
+- Core: Handle v3 index in composition ([#18498](https://github.com/storybookjs/storybook/pull/18498))
+- Story index: Ensure that `extract` script works and SBs can be composed into v6 storybooks ([#18409](https://github.com/storybookjs/storybook/pull/18409))
+- Docs2: Handle new docs entries in the preview ([#18099](https://github.com/storybookjs/storybook/pull/18099))
+- Docs2: Refactor manager to use new index data ([#18023](https://github.com/storybookjs/storybook/pull/18023))
+
+## 7.0.0-alpha.5 (June 20, 2022)
+
+### Bug Fixes
+
+- Core: Allow a teardown function to be returned from `renderToDOM` ([#18457](https://github.com/storybookjs/storybook/pull/18457))
+- CLI: Add npm7 migration for legacy peer deps ([#18510](https://github.com/storybookjs/storybook/pull/18510))
+- Interactions: Fix broken UI on nested interactions ([#18499](https://github.com/storybookjs/storybook/pull/18499))
+
+### Maintenance
+
+- Build: Upgrade yarn to 3.2.1 ([#18511](https://github.com/storybookjs/storybook/pull/18511))
+
+## 7.0.0-alpha.4 (June 19, 2022)
+
+### Breaking Changes
+
+- Core: Remove standalone node APIs ([#18089](https://github.com/storybookjs/storybook/pull/18089))
+
+### Maintenance
+
+- Build: Add logFilters to yarn config ([#18500](https://github.com/storybookjs/storybook/pull/18500))
+- Build: Set typescript strict-mode ([#18493](https://github.com/storybookjs/storybook/pull/18493))
+
 ## 7.0.0-alpha.3 (June 17, 2022)
 
 ### Features

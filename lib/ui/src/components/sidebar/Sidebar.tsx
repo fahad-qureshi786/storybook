@@ -7,7 +7,7 @@ import type { StoriesHash, State, ComposedRef } from '@storybook/api';
 
 import { Heading } from './Heading';
 
-import { DEFAULT_REF_ID, collapseAllStories, collapseDocsOnlyStories } from './data';
+import { DEFAULT_REF_ID, collapseAllStories } from './data';
 import { Explorer } from './Explorer';
 import { Search } from './Search';
 import { SearchResults } from './SearchResults';
@@ -100,7 +100,7 @@ export const Sidebar: FunctionComponent<SidebarProps> = React.memo(
     enableShortcuts = true,
     refs = {},
   }) => {
-    const collapseFn = DOCS_MODE ? collapseAllStories : collapseDocsOnlyStories;
+    const collapseFn = DOCS_MODE ? collapseAllStories : (x: StoriesHash) => x;
     const selected: Selection = useMemo(() => storyId && { storyId, refId }, [storyId, refId]);
     const stories = useMemo(() => collapseFn(storiesHash), [DOCS_MODE, storiesHash]);
 

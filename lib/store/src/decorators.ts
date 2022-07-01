@@ -69,6 +69,9 @@ export function defaultDecorateStory<TFramework extends AnyFramework>(
   const bindWithContext =
     (decoratedStoryFn: LegacyStoryFn<TFramework>): PartialStoryFn<TFramework> =>
     (update) => {
+      // This code path isn't possible because we always set `contextStore.value` before calling
+      // `decoratedWithContextStore`, but TS doesn't know that.
+      if (!contextStore.value) throw new Error('Decorated function called without init');
       contextStore.value = {
         ...contextStore.value,
         ...sanitizeStoryContextUpdate(update),

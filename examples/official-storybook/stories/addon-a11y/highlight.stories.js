@@ -1,6 +1,7 @@
-import React from 'react';
-import { highlightObject } from '@storybook/addon-a11y';
-import { themes, convert, styled } from '@storybook/theming';
+import React, { useEffect } from 'react';
+import { useChannel } from '@storybook/addons';
+import { HIGHLIGHT } from '@storybook/addon-highlight';
+import { themes, convert } from '@storybook/theming';
 
 import Button from '../../components/addon-a11y/Button';
 
@@ -15,10 +16,41 @@ export default {
   decorators: [(storyFn) => <div style={{ padding: 10 }}>{storyFn()}</div>],
 };
 
-const PassesHighlight = styled.div(highlightObject(convert(themes.normal).color.positive));
-const IncompleteHighlight = styled.div(highlightObject(convert(themes.normal).color.warning));
-const ViolationsHighlight = styled.div(highlightObject(convert(themes.normal).color.negative));
+export const Passes = () => {
+  const emit = useChannel({});
 
-export const Passes = () => <PassesHighlight>{text}</PassesHighlight>;
-export const Incomplete = () => <IncompleteHighlight>{text}</IncompleteHighlight>;
-export const Violations = () => <ViolationsHighlight>{text}</ViolationsHighlight>;
+  useEffect(() => {
+    emit(HIGHLIGHT, {
+      elements: ['p'],
+      color: convert(themes.light).color.positive,
+    });
+  }, []);
+
+  return <p>{text}</p>;
+};
+
+export const Incomplete = () => {
+  const emit = useChannel({});
+
+  useEffect(() => {
+    emit(HIGHLIGHT, {
+      elements: ['p'],
+      color: convert(themes.light).color.warning,
+    });
+  }, []);
+
+  return <p>{text}</p>;
+};
+
+export const Violations = () => {
+  const emit = useChannel({});
+
+  useEffect(() => {
+    emit(HIGHLIGHT, {
+      elements: ['p'],
+      color: convert(themes.light).color.negative,
+    });
+  }, []);
+
+  return <p>{text}</p>;
+};

@@ -13,9 +13,8 @@ import deepEqual from 'fast-deep-equal';
 import global from 'global';
 import dedent from 'ts-dedent';
 
-import type { ModuleArgs, ModuleFn } from '../index';
-import type { Layout, UI } from './layout';
-import { isStory } from '../lib/stories';
+import { ModuleArgs, ModuleFn } from '../index';
+import { Layout, UI } from './layout';
 
 const { window: globalWindow } = global;
 
@@ -184,7 +183,7 @@ export const init: ModuleFn = ({ store, navigate, state, provider, fullAPI, ...r
       if (viewMode !== 'story') return;
 
       const currentStory = fullAPI.getCurrentStoryData();
-      if (!isStory(currentStory)) return;
+      if (currentStory?.type !== 'story') return;
 
       const { args, initialArgs } = currentStory;
       const argsString = buildArgsParam(initialArgs, args);

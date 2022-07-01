@@ -19,6 +19,7 @@ export interface FrameworkOptions {
   addESLint?: boolean;
   extraMain?: any;
   extensions?: string[];
+  framework?: Record<string, any>;
   commonJs?: boolean;
 }
 

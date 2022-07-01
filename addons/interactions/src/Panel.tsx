@@ -134,31 +134,11 @@ export const Panel: React.FC<AddonPanelProps> = (props) => {
   const [isRerunAnimating, setIsRerunAnimating] = React.useState(false);
   const [scrollTarget, setScrollTarget] = React.useState<HTMLElement>();
   const [collapsed, setCollapsed] = React.useState<Set<Call['id']>>(new Set());
+  const [log, setLog] = React.useState<LogItem[]>([]);
 
   // Calls are tracked in a ref so we don't needlessly rerender.
   const calls = React.useRef<Map<Call['id'], Omit<Call, 'status'>>>(new Map());
   const setCall = ({ status, ...call }: Call) => calls.current.set(call.id, call);
-
-  const [log, setLog] = React.useState<LogItem[]>([]);
-  const childCallMap = new Map<Call['id'], Call['id'][]>();
-  const interactions = log
-    .filter((call) => {
-      if (!call.parentId) return true;
-      childCallMap.set(call.parentId, (childCallMap.get(call.parentId) || []).concat(call.callId));
-      return !collapsed.has(call.parentId);
-    })
-    .map(({ callId, status }) => ({
-      ...calls.current.get(callId),
-      status,
-      childCallIds: childCallMap.get(callId),
-      isCollapsed: collapsed.has(callId),
-      toggleCollapsed: () =>
-        setCollapsed((ids) => {
-          if (ids.has(callId)) ids.delete(callId);
-          else ids.add(callId);
-          return new Set(ids);
-        }),
-    }));
 
   const endRef = React.useRef();
   React.useEffect(() => {
@@ -211,6 +191,38 @@ export const Panel: React.FC<AddonPanelProps> = (props) => {
 
   const showStatus = log.length > 0 && !isPlaying;
   const hasException = log.some((item) => item.status === CallStates.ERROR);
+
+  const interactions = React.useMemo(() => {
+    const callsById = new Map<Call['id'], Call>();
+    const childCallMap = new Map<Call['id'], Call['id'][]>();
+    return log
+      .filter(({ callId, parentId }) => {
+        if (!parentId) return true;
+        childCallMap.set(parentId, (childCallMap.get(parentId) || []).concat(callId));
+        return !collapsed.has(parentId);
+      })
+      .map(({ callId, status }) => ({ ...calls.current.get(callId), status } as Call))
+      .map((call) => {
+        const status =
+          call.status === CallStates.ERROR &&
+          callsById.get(call.parentId)?.status === CallStates.ACTIVE
+            ? CallStates.ACTIVE
+            : call.status;
+        callsById.set(call.id, { ...call, status });
+        return {
+          ...call,
+          status,
+          childCallIds: childCallMap.get(call.id),
+          isCollapsed: collapsed.has(call.id),
+          toggleCollapsed: () =>
+            setCollapsed((ids) => {
+              if (ids.has(call.id)) ids.delete(call.id);
+              else ids.add(call.id);
+              return new Set(ids);
+            }),
+        };
+      });
+  }, [log, collapsed]);
 
   return (
     <React.Fragment key="interactions">

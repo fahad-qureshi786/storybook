@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { screen, userEvent } from '@storybook/testing-library';
 
@@ -16,11 +16,11 @@ export default {
   component: MyComponent,
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const DelayedStory: Story = Template.bind({});
+export const DelayedStory: StoryFn = Template.bind({});
 DelayedStory.play = () => {
   const exampleElement= screen.getByLabelText('example-element');
     // The delay option set the amount of milliseconds between characters being typed

@@ -1,16 +1,16 @@
 import type {
-  ComponentAnnotations,
   AnyFramework,
   LegacyStoryAnnotationsOrFn,
   StoryId,
   StoryAnnotations,
   StoryFn,
+  ArgTypes,
 } from '@storybook/csf';
 import { storyNameFromExport, toId } from '@storybook/csf';
 import dedent from 'ts-dedent';
 import { logger } from '@storybook/client-logger';
 import deprecate from 'util-deprecate';
-import type { NormalizedStoryAnnotations } from '../types';
+import type { NormalizedComponentAnnotations, NormalizedStoryAnnotations } from '../types';
 import { normalizeInputTypes } from './normalizeInputTypes';
 
 const deprecatedStoryAnnotation = dedent`
@@ -25,16 +25,11 @@ const deprecatedStoryAnnotationWarning = deprecate(() => {}, deprecatedStoryAnno
 export function normalizeStory<TFramework extends AnyFramework>(
   key: StoryId,
   storyAnnotations: LegacyStoryAnnotationsOrFn<TFramework>,
-  meta: ComponentAnnotations<TFramework>
+  meta: NormalizedComponentAnnotations<TFramework>
 ): NormalizedStoryAnnotations<TFramework> {
-  let userStoryFn: StoryFn<TFramework>;
-  let storyObject: StoryAnnotations<TFramework>;
-  if (typeof storyAnnotations === 'function') {
-    userStoryFn = storyAnnotations;
-    storyObject = storyAnnotations;
-  } else {
-    storyObject = storyAnnotations;
-  }
+  const storyObject: StoryAnnotations<TFramework> = storyAnnotations;
+  const userStoryFn: StoryFn<TFramework> | null =
+    typeof storyAnnotations === 'function' ? storyAnnotations : null;
 
   const { story } = storyObject;
   if (story) {
@@ -51,13 +46,14 @@ export function normalizeStory<TFramework extends AnyFramework>(
   const decorators = [...(storyObject.decorators || []), ...(story?.decorators || [])];
   const parameters = { ...story?.parameters, ...storyObject.parameters };
   const args = { ...story?.args, ...storyObject.args };
-  const argTypes = { ...story?.argTypes, ...storyObject.argTypes };
+  const argTypes = { ...(story?.argTypes as ArgTypes), ...(storyObject.argTypes as ArgTypes) };
   const loaders = [...(storyObject.loaders || []), ...(story?.loaders || [])];
   const { render, play } = storyObject;
 
   // eslint-disable-next-line no-underscore-dangle
-  const id = parameters.__id || toId(meta.id || meta.title, exportName);
+  const id = parameters.__id || toId(meta.id, exportName);
   return {
+    moduleExport: storyAnnotations,
     id,
     name,
     decorators,

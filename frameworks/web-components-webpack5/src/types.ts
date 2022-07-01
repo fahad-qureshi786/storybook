@@ -1,10 +1,45 @@
-import type { Configuration } from 'webpack';
+import type {
+  StorybookConfig as StorybookConfigBase,
+  TypescriptOptions as TypescriptOptionsWebComponents,
+} from '@storybook/preset-web-components-webpack';
+import type {
+  BuilderOptions,
+  StorybookConfigWebpack,
+  TypescriptOptions as TypescriptOptionsBuilder,
+} from '@storybook/builder-webpack5';
 
-import type { StorybookConfig as BaseStorybookConfig } from '@storybook/preset-web-components-webpack';
+type FrameworkName = '@storybook/react-webpack5';
+type BuilderName = '@storybook/builder-webpack5';
 
-export type { BuilderResult } from '@storybook/preset-web-components-webpack';
+export type FrameworkOptions = {
+  builder?: BuilderOptions;
+};
+
+type StorybookConfigFramework = {
+  framework:
+    | FrameworkName
+    | {
+        name: FrameworkName;
+        options: FrameworkOptions;
+      };
+  core?: StorybookConfigBase['core'] & {
+    builder?:
+      | BuilderName
+      | {
+          name: BuilderName;
+          options: BuilderOptions;
+        };
+  };
+  typescript?: Partial<TypescriptOptionsBuilder & TypescriptOptionsWebComponents> &
+    StorybookConfigBase['typescript'];
+};
 
 /**
  * The interface for Storybook configuration in `main.ts` files.
  */
-export type StorybookConfig = BaseStorybookConfig<Configuration>;
+export type StorybookConfig = Omit<
+  StorybookConfigBase,
+  keyof StorybookConfigWebpack | keyof StorybookConfigFramework
+> &
+  StorybookConfigWebpack &
+  StorybookConfigFramework;

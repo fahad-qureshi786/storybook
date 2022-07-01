@@ -1,7 +1,7 @@
 /* eslint-disable storybook/use-storybook-testing-library */
 // @TODO: use addon-interactions and remove the rule disable above
 import React from 'react';
-import type { StoriesHash } from '@storybook/api';
+import type { ComponentEntry, StoriesHash } from '@storybook/api';
 import { screen } from '@testing-library/dom';
 
 import { Tree } from './Tree';
@@ -17,7 +17,7 @@ export default {
 };
 
 const refId = DEFAULT_REF_ID;
-const storyId = Object.values(stories).find((story) => story.isLeaf && !story.isComponent).id;
+const storyId = Object.values(stories).find((story) => story.type === 'story').id;
 
 const log = (id: string) => console.log(id);
 
@@ -37,35 +37,6 @@ export const Full = () => {
   );
 };
 
-const singleStoryComponent = {
-  single: {
-    name: 'Single',
-    id: 'single',
-    parent: false,
-    depth: 0,
-    children: ['single--single'],
-    isComponent: true,
-    isLeaf: false,
-    isRoot: false,
-    label: <span>🔥 Single</span>,
-  },
-  'single--single': {
-    id: 'single--single',
-    kind: 'Single',
-    name: 'Single',
-    story: 'Single',
-    args: {},
-    argTypes: {},
-    initialArgs: {},
-    depth: 1,
-    parent: 'single',
-    isLeaf: true,
-    isComponent: false,
-    isRoot: false,
-    label: <span>🔥 Single</span>,
-  },
-};
-
 const tooltipStories = Object.keys(stories).reduce((acc, key) => {
   if (key === 'tooltip-tooltipselect--default') {
     acc['tooltip-tooltipselect--tooltipselect'] = {
@@ -76,13 +47,41 @@ const tooltipStories = Object.keys(stories).reduce((acc, key) => {
     return acc;
   }
   if (key === 'tooltip-tooltipselect') {
-    acc[key] = { ...stories[key], children: ['tooltip-tooltipselect--tooltipselect'] };
+    acc[key] = {
+      ...(stories[key] as ComponentEntry),
+      children: ['tooltip-tooltipselect--tooltipselect'],
+    };
     return acc;
   }
   if (key.startsWith('tooltip')) acc[key] = stories[key];
   return acc;
 }, {} as StoriesHash);
 
+const singleStoryComponent: StoriesHash = {
+  single: {
+    type: 'component',
+    name: 'Single',
+    id: 'single',
+    parent: null,
+    depth: 0,
+    children: ['single--single'],
+    renderLabel: () => <span>🔥 Single</span>,
+  },
+  'single--single': {
+    type: 'story',
+    id: 'single--single',
+    title: 'Single',
+    name: 'Single',
+    prepared: true,
+    args: {},
+    argTypes: {},
+    initialArgs: {},
+    depth: 1,
+    parent: 'single',
+    renderLabel: () => <span>🔥 Single</span>,
+    importPath: './single.stories.js',
+  },
+};
 export const SingleStoryComponents = () => {
   const [selectedId, setSelectedId] = React.useState('tooltip-tooltipbuildlist--default');
   return (
@@ -90,7 +89,42 @@ export const SingleStoryComponents = () => {
       isBrowsing
       isMain
       refId={refId}
-      data={{ ...singleStoryComponent, ...tooltipStories } as StoriesHash}
+      data={{ ...singleStoryComponent, ...tooltipStories }}
+      highlightedRef={{ current: { itemId: selectedId, refId } }}
+      setHighlightedItemId={log}
+      selectedStoryId={selectedId}
+      onSelectStoryId={setSelectedId}
+    />
+  );
+};
+
+const docsOnlySinglesStoryComponent: StoriesHash = {
+  single: {
+    type: 'component',
+    name: 'Single',
+    id: 'single',
+    parent: null,
+    depth: 0,
+    children: ['single--docs'],
+  },
+  'single--docs': {
+    type: 'docs',
+    id: 'single--docs',
+    title: 'Single',
+    name: 'Single',
+    depth: 1,
+    parent: 'single',
+    importPath: './single.stories.js',
+  },
+};
+export const DocsOnlySingleStoryComponents = () => {
+  const [selectedId, setSelectedId] = React.useState('tooltip-tooltipbuildlist--default');
+  return (
+    <Tree
+      isBrowsing
+      isMain
+      refId={refId}
+      data={{ ...docsOnlySinglesStoryComponent, ...tooltipStories }}
       highlightedRef={{ current: { itemId: selectedId, refId } }}
       setHighlightedItemId={log}
       selectedStoryId={selectedId}

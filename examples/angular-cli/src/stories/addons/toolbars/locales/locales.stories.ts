@@ -1,7 +1,6 @@
 import type { DecoratorFunction } from '@storybook/addons';
 import { moduleMetadata } from '@storybook/angular';
-import type { Meta } from '@storybook/angular';
-import type { Story } from '@storybook/angular/types-6-0';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { TranslatePipe } from './translate.pipe';
 import { DEFAULT_LOCALE } from './translate.service';
@@ -36,7 +35,7 @@ export default {
   decorators: [withLocaleProvider, moduleMetadata({ declarations: [TranslatePipe] })],
 } as Meta;
 
-export const WithAngularService: Story = (_args, { globals: { locale } }) => {
+export const WithAngularService: StoryFn = (_args, { globals: { locale } }) => {
   return {
     template: `
       Your locale is {{ locale }}<br>

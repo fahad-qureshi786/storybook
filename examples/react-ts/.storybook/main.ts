@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-webpack5/types';
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
 const config: StorybookConfig = {
   stories: [
@@ -9,11 +9,11 @@ const config: StorybookConfig = {
     {
       directory: '../src',
       titlePrefix: 'Demo',
-      files: '*.stories.(js|ts|tsx|mdx)',
+      files: '*.stories.(js|ts|tsx)',
     },
     {
-      directory: '../src/addon-docs',
-      files: '*.stories.mdx',
+      directory: '../src',
+      files: '**/*.mdx',
     },
   ],
   logLevel: 'debug',
@@ -44,12 +44,5 @@ const config: StorybookConfig = {
     breakingChangesV7: true,
   },
   framework: '@storybook/react-webpack5',
-  // core: (c: any = {}) => {
-  //   return {
-  //     channelOptions: { allowFunction: false, maxDepth: 10 },
-  //     disableTelemetry: true,
-  //     ...c,
-  //   };
-  // },
 };
 module.exports = config;

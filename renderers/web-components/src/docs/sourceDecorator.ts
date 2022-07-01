@@ -5,7 +5,7 @@ import type { ArgsStoryFn, PartialStoryFn, StoryContext } from '@storybook/csf';
 import { addons, useEffect } from '@storybook/addons';
 import { SNIPPET_RENDERED, SourceType } from '@storybook/docs-tools';
 
-import type { WebComponentsFramework } from '..';
+import type { WebComponentsFramework } from '../types';
 
 // Taken from https://github.com/lit/lit/blob/main/packages/lit-html/src/test/test-utils/strip-markers.ts
 const LIT_EXPRESSION_COMMENTS = /<!--\?lit\$[0-9]+\$-->|<!--\??-->/g;

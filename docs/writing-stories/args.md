@@ -33,6 +33,8 @@ To define the args of a single story, use the `args` CSF story key:
     'svelte/button-story-with-args.native-format.mdx',
     'svelte/button-story-with-args.mdx.mdx',
     'web-components/button-story-with-args.js.mdx',
+    'html/button-story-with-args.ts.mdx',
+    'html/button-story-with-args.js.mdx',
   ]}
 />
 

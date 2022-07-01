@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
+import { Meta, moduleMetadata, StoryFn } from '@storybook/angular';
 
 import { CustomPipePipe } from './custom.pipe';
 import { WithPipeComponent } from './with-pipe.component';
@@ -13,13 +13,13 @@ export default {
   ],
 } as Meta;
 
-export const Simple: Story = () => ({
+export const Simple: StoryFn = () => ({
   props: {
     field: 'foobar',
   },
 });
 
-export const WithArgsStory: Story = (args) => ({
+export const WithArgsStory: StoryFn = (args) => ({
   props: args,
 });
 WithArgsStory.storyName = 'With args';

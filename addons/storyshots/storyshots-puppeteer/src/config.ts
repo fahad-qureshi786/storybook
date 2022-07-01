@@ -1,11 +1,7 @@
 import { MatchImageSnapshotOptions } from 'jest-image-snapshot';
-import {
-  Base64ScreenShotOptions,
-  Browser,
-  DirectNavigationOptions,
-  Page,
-  ElementHandle,
-} from 'puppeteer';
+import { ScreenshotOptions, Browser, Page, ElementHandle } from 'puppeteer';
+
+type PuppeteerLifeCycleEvent = 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2';
 
 export interface Context {
   kind: string;
@@ -18,6 +14,16 @@ export interface Context {
 interface Options {
   context: Context;
   url: string;
+}
+
+interface Base64ScreenShotOptions extends ScreenshotOptions {
+  encoding: 'base64';
+}
+
+interface DirectNavigationOptions {
+  referer?: string;
+  timeout?: number;
+  waitUntil?: PuppeteerLifeCycleEvent | PuppeteerLifeCycleEvent[];
 }
 
 export interface CommonConfig {
@@ -40,7 +46,7 @@ export interface ImageSnapshotConfig extends CommonConfig {
   getMatchOptions: (options: Options) => MatchImageSnapshotOptions;
   getScreenshotOptions: (options: Options) => Base64ScreenShotOptions;
   beforeScreenshot: (page: Page, options: Options) => Promise<void | ElementHandle>;
-  afterScreenshot: (options: { image: string; context: Context }) => Promise<void>;
+  afterScreenshot: (options: { image: string | void | Buffer; context: Context }) => Promise<void>;
 }
 
 export interface AxeConfig extends CommonConfig {

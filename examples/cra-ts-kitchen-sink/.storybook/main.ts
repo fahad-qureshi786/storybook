@@ -1,8 +1,8 @@
-import type { Configuration } from 'webpack';
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
 const path = require('path');
 
-module.exports = {
+const mainConfig: StorybookConfig = {
   stories: ['../src/components', '../src/stories'],
   logLevel: 'debug',
   addons: [
@@ -11,18 +11,22 @@ module.exports = {
     '@storybook/addon-actions',
     '@storybook/addon-links',
     '@storybook/addon-a11y',
+    '@storybook/addon-highlight',
     './localAddon/manager.tsx',
     './localAddon/preset.ts',
   ],
-  webpackFinal: (config: Configuration) => {
-    // add monorepo root as a valid directory to import modules from
-    config.resolve.plugins.forEach((p) => {
-      // @ts-ignore
-      if (Array.isArray(p.appSrcs)) {
+  // add monorepo root as a valid directory to import modules from
+  webpackFinal: (config) => {
+    const resolvePlugins = config.resolve?.plugins;
+    if (Array.isArray(resolvePlugins)) {
+      resolvePlugins.forEach((p) => {
         // @ts-ignore
-        p.appSrcs.push(path.join(__dirname, '..', '..', '..'));
-      }
-    });
+        const appSrcs = p.appSrcs as unknown as string[];
+        if (Array.isArray(appSrcs)) {
+          appSrcs.push(path.join(__dirname, '..', '..', '..'));
+        }
+      });
+    }
     return config;
   },
   core: {
@@ -36,3 +40,5 @@ module.exports = {
   },
   framework: '@storybook/react-webpack5',
 };
+
+module.exports = mainConfig;

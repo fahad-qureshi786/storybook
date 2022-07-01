@@ -16,6 +16,7 @@ import { start } from './start';
 
 jest.mock('@storybook/preview-web/dist/cjs/WebView');
 jest.spyOn(WebView.prototype, 'prepareForDocs').mockReturnValue('docs-root');
+jest.spyOn(WebView.prototype, 'prepareForStory').mockReturnValue('story-root');
 
 jest.mock('global', () => ({
   // @ts-ignore
@@ -156,7 +157,7 @@ describe('start', () => {
         expect.objectContaining({
           id: 'component-a--story-one',
         }),
-        undefined
+        'story-root'
       );
     });
 
@@ -328,7 +329,7 @@ describe('start', () => {
             }),
           }),
         }),
-        undefined
+        'story-root'
       );
     });
 
@@ -365,7 +366,7 @@ describe('start', () => {
             },
           }),
         }),
-        undefined
+        'story-root'
       );
 
       expect((window as any).IS_STORYBOOK).toBe(true);
@@ -707,7 +708,7 @@ describe('start', () => {
         expect.objectContaining({
           id: 'component-c--story-one',
         }),
-        undefined
+        'story-root'
       );
     });
 
@@ -946,6 +947,7 @@ describe('start', () => {
           "v": 2,
         }
       `);
+      await waitForRender();
 
       mockChannel.emit.mockClear();
       disposeCallback(module.hot.data);
@@ -1183,7 +1185,7 @@ describe('start', () => {
         expect.objectContaining({
           id: 'component-a--story-one',
         }),
-        undefined
+        'story-root'
       );
     });
   });
@@ -1341,6 +1343,8 @@ describe('start', () => {
           "v": 2,
         }
       `);
+
+      await waitForRender();
     });
   });
 });

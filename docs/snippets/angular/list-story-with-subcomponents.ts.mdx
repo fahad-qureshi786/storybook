@@ -1,7 +1,7 @@
 ```ts
 // List.stories.ts
 
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
+import { Meta, moduleMetadata, StoryFn } from '@storybook/angular';
 
 import { CommonModule } from '@angular/common';
 
@@ -24,13 +24,13 @@ export default {
   ],
 } as Meta;
 
-export const Empty: Story = () => ({
+export const Empty: StoryFn = () => ({
   props: {
     args,
   },
 });
 
-export const OneItem: Story = () => ({
+export const OneItem: StoryFn = () => ({
   props: {
     args,
   },

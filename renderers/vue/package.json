@@ -1,6 +1,6 @@
 {
   "name": "@storybook/vue",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook Vue renderer",
   "keywords": [
     "storybook"
@@ -19,9 +19,26 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./preview": {
+      "require": "./dist/config.js",
+      "import": "./dist/config.mjs",
+      "types": "./dist/config.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "README.md",
@@ -29,15 +46,15 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/addons": "7.0.0-alpha.3",
-    "@storybook/client-logger": "7.0.0-alpha.3",
-    "@storybook/core-client": "7.0.0-alpha.3",
+    "@storybook/addons": "7.0.0-alpha.8",
+    "@storybook/client-logger": "7.0.0-alpha.8",
+    "@storybook/core-client": "7.0.0-alpha.8",
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
-    "@storybook/docs-tools": "7.0.0-alpha.3",
-    "@storybook/store": "7.0.0-alpha.3",
+    "@storybook/docs-tools": "7.0.0-alpha.8",
+    "@storybook/store": "7.0.0-alpha.8",
     "core-js": "^3.8.2",
     "global": "^4.4.0",
     "react": "16.14.0",
@@ -45,6 +62,7 @@
     "ts-dedent": "^2.0.0"
   },
   "devDependencies": {
+    "@digitak/esrun": "^3.2.2",
     "vue": "^2.6.12"
   },
   "peerDependencies": {
@@ -59,5 +77,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts",
+    "./src/config.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

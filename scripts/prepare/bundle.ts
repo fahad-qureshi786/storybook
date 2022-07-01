@@ -28,6 +28,11 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
     target: 'node16',
     clean: true,
     shims: true,
+    external: [
+      packageJson.name,
+      ...Object.keys(packageJson.dependencies || {}),
+      ...Object.keys(packageJson.peerDependencies || {}),
+    ],
 
     dts: optimized
       ? {

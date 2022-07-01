@@ -1,3 +1,5 @@
+import { expect } from '@jest/globals';
+
 import { composeConfigs } from './composeConfigs';
 
 describe('composeConfigs', () => {

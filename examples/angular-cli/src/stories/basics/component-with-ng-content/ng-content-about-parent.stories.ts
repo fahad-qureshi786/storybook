@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular';
 
-import { Story, Meta } from '@storybook/angular/types-6-0';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 @Component({
   selector: 'sb-button',
@@ -38,13 +38,13 @@ export default {
 
 // By default storybook uses the default export component if no template or component is defined in the story
 // So Storybook nests the component twice because it is first added by the componentWrapperDecorator.
-export const AlwaysDefineTemplateOrComponent: Story = () => ({});
+export const AlwaysDefineTemplateOrComponent: StoryFn = () => ({});
 
-export const EmptyButton: Story = () => ({
+export const EmptyButton: StoryFn = () => ({
   template: '',
 });
 
-export const WithDynamicContentAndArgs: Story = (args) => ({
+export const WithDynamicContentAndArgs: StoryFn = (args) => ({
   template: `${args.content}`,
 });
 WithDynamicContentAndArgs.argTypes = {
@@ -52,7 +52,7 @@ WithDynamicContentAndArgs.argTypes = {
 };
 WithDynamicContentAndArgs.args = { content: 'My button text' };
 
-export const InH1: Story = () => ({
+export const InH1: StoryFn = () => ({
   template: 'My button in h1',
 });
 InH1.decorators = [componentWrapperDecorator((story) => `<h1>${story}</h1>`)];
@@ -74,7 +74,7 @@ class SbEmojiComponent {
   emoji = '👾';
 }
 
-export const WithComponent: Story = () => ({
+export const WithComponent: StoryFn = () => ({
   // Override the default component
   // It is therefore necessary to manually declare the parent component with moduleMetadata
   component: SbEmojiComponent,
@@ -85,7 +85,7 @@ WithComponent.decorators = [
   }),
 ];
 
-export const WithComponentAndArgs: Story = (args) => {
+export const WithComponentAndArgs: StoryFn = (args) => {
   return {
     props: args,
     component: SbEmojiComponent,

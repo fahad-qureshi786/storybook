@@ -1,4 +1,4 @@
-import { moduleMetadata, Story, Meta } from '@storybook/angular';
+import { moduleMetadata, StoryFn, Meta } from '@storybook/angular';
 import { ChipsModule } from './angular-src/chips.module';
 import { ChipsGroupComponent } from './angular-src/chips-group.component';
 import { CHIP_COLOR } from './angular-src/chip-color.token';
@@ -29,7 +29,7 @@ export default {
   },
 } as Meta;
 
-const Template = (): Story => (args) => ({
+const Template = (): StoryFn => (args) => ({
   props: args,
 });
 

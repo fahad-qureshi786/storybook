@@ -80,7 +80,7 @@ export async function storybookDevServer(options: Options) {
       const payload = storyIndex
         ? {
             storyIndex: {
-              storyCount: Object.keys(storyIndex.stories).length,
+              storyCount: Object.keys(storyIndex.entries).length,
               version: storyIndex.v,
             },
           }

@@ -4,7 +4,7 @@ import AnsiToHtml from 'ansi-to-html';
 import dedent from 'ts-dedent';
 import qs from 'qs';
 
-import { Story } from '@storybook/store';
+import type { Story } from '@storybook/store';
 
 const { document } = global;
 
@@ -41,7 +41,7 @@ export class WebView {
 
   testing = false;
 
-  preparingTimeout: ReturnType<typeof setTimeout> = null;
+  preparingTimeout?: ReturnType<typeof setTimeout>;
 
   constructor() {
     // Special code for testing situations

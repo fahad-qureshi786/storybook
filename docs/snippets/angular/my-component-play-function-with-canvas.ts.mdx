@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { getByRole, userEvent, within } from '@storybook/testing-library';
 
@@ -16,11 +16,11 @@ export default {
   component: MyComponent,
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const ExampleStory: Story = Template.bind({});
+export const ExampleStory: StoryFn = Template.bind({});
 ExampleStory.play = async ({ canvasElement }) => {
   // Assigns canvas to the component root element
   const canvas = within(canvasElement);

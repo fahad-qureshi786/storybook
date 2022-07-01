@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { MyComponent } from './MyComponent';
 
@@ -16,7 +16,7 @@ export default {
   component: MyComponent,
 } as ComponentMeta<typeof MyComponent>;
 
-const Template: ComponentStory<typeof MyComponent> = () => <MyComponent />;
+const Template: ComponentStoryFn<typeof MyComponent> = () => <MyComponent />;
 
 export const NonA11yStory = Template.bind({});
 NonA11yStory.parameters = {

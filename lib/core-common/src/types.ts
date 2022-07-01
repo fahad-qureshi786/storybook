@@ -2,6 +2,7 @@ import type { Options as TelejsonOptions } from 'telejson';
 import type { TransformOptions } from '@babel/core';
 import { Router } from 'express';
 import { Server } from 'http';
+import type { Parameters } from '@storybook/csf';
 import { FileSystemCache } from './utils/file-cache';
 
 /**
@@ -10,31 +11,13 @@ import { FileSystemCache } from './utils/file-cache';
 
 export type BuilderName = 'webpack5' | '@storybook/builder-webpack5' | string;
 
-export type BuilderConfigObject = {
-  name: BuilderName;
-  options?: Record<string, any>;
-};
-
-export interface Webpack5BuilderConfig extends BuilderConfigObject {
-  name: '@storybook/builder-webpack5';
-  options?: {
-    fsCache?: boolean;
-    lazyCompilation?: boolean;
-  };
-}
-
-export interface Webpack4BuilderConfig extends BuilderConfigObject {
-  name: '@storybook/builder-webpack5';
-}
-
-export type BuilderConfig =
-  | BuilderName
-  | BuilderConfigObject
-  | Webpack4BuilderConfig
-  | Webpack5BuilderConfig;
-
 export interface CoreConfig {
-  builder?: BuilderConfig;
+  builder?:
+    | BuilderName
+    | {
+        name: BuilderName;
+        options?: Record<string, any>;
+      };
   disableWebpackDefaults?: boolean;
   channelOptions?: Partial<TelejsonOptions>;
   /**
@@ -72,6 +55,7 @@ export interface Presets {
     config: TypescriptOptions,
     args?: Options
   ): Promise<TypescriptOptions>;
+  apply(extension: 'framework', config: {}, args: any): Promise<Preset>;
   apply(extension: 'babel', config: {}, args: any): Promise<TransformOptions>;
   apply(extension: 'entries', config: [], args: any): Promise<unknown>;
   apply(extension: 'stories', config: [], args: any): Promise<StoriesEntry[]>;
@@ -85,12 +69,6 @@ export interface LoadedPreset {
   name: string;
   preset: any;
   options: any;
-}
-
-export interface PresetsOptions {
-  corePresets: string[];
-  overridePresets: string[];
-  frameworkPresets: string[];
 }
 
 export type PresetConfig =
@@ -240,6 +218,7 @@ export interface IndexerOptions {
 export interface IndexedStory {
   id: string;
   name: string;
+  parameters?: Parameters;
 }
 export interface StoryIndex {
   meta: { title?: string };
@@ -439,3 +418,14 @@ export interface StorybookConfig {
    */
   storyIndexers?: (indexers: StoryIndexer[], options: Options) => StoryIndexer[];
 }
+
+export type PresetProperty<K, TStorybookConfig = StorybookConfig> =
+  | TStorybookConfig[K extends keyof TStorybookConfig ? K : never]
+  | PresetPropertyFn<K, TStorybookConfig>;
+
+export type PresetPropertyFn<K, TStorybookConfig = StorybookConfig, TOptions = {}> = (
+  config: TStorybookConfig[K extends keyof TStorybookConfig ? K : never],
+  options: Options & TOptions
+) =>
+  | TStorybookConfig[K extends keyof TStorybookConfig ? K : never]
+  | Promise<TStorybookConfig[K extends keyof TStorybookConfig ? K : never]>;

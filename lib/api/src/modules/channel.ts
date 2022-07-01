@@ -14,7 +14,9 @@ export interface SubAPI {
   expandAll: () => void;
 }
 
-export const init: ModuleFn = ({ provider }) => {
+export type SubState = Record<string, never>;
+
+export const init: ModuleFn<SubAPI, SubState> = ({ provider }) => {
   const api: SubAPI = {
     getChannel: () => provider.channel,
     on: (type, cb) => {
@@ -33,5 +35,5 @@ export const init: ModuleFn = ({ provider }) => {
       api.emit(STORIES_EXPAND_ALL);
     },
   };
-  return { api };
+  return { api, state: {} };
 };

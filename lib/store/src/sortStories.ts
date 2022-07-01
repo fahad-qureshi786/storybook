@@ -2,10 +2,10 @@ import stable from 'stable';
 import dedent from 'ts-dedent';
 import type { Comparator, StorySortParameter, StorySortParameterV7 } from '@storybook/addons';
 import { storySort } from './storySort';
-import type { Story, StoryIndexEntry, Path, Parameters } from './types';
+import type { Story, StoryIndexEntry, IndexEntry, Path, Parameters } from './types';
 
 const sortStoriesCommon = (
-  stories: StoryIndexEntry[],
+  stories: IndexEntry[],
   storySortParameter: StorySortParameterV7,
   fileNameOrder: Path[]
 ) => {
@@ -27,7 +27,7 @@ const sortStoriesCommon = (
 };
 
 export const sortStoriesV7 = (
-  stories: StoryIndexEntry[],
+  stories: IndexEntry[],
   storySortParameter: StorySortParameterV7,
   fileNameOrder: Path[]
 ) => {
@@ -37,7 +37,7 @@ export const sortStoriesV7 = (
     throw new Error(dedent`
     Error sorting stories with sort parameter ${storySortParameter}:
 
-    > ${err.message}
+    > ${(err as Error).message}
     
     Are you using a V6-style sort function in V7 mode?
 
@@ -47,8 +47,8 @@ export const sortStoriesV7 = (
 };
 
 const toIndexEntry = (story: any): StoryIndexEntry => {
-  const { id, title, name, parameters } = story;
-  return { id, title, name, importPath: parameters.fileName };
+  const { id, title, name, parameters, type } = story;
+  return { id, title, name, importPath: parameters.fileName, type };
 };
 
 export const sortStoriesV6 = (

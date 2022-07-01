@@ -45,7 +45,6 @@ Start your Storybook with:
     'angular/storybook-run-dev.with-builder.js.mdx',
     'common/storybook-run-dev.yarn.js.mdx',
     'common/storybook-run-dev.npm.js.mdx',
-
   ]}
 />
 

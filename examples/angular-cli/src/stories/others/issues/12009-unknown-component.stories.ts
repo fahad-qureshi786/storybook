@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/angular/types-6-0';
+import type { Meta, StoryFn } from '@storybook/angular';
 import { Button } from '../../angular-demo';
 
 export default {
@@ -6,7 +6,7 @@ export default {
   component: Button,
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 

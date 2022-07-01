@@ -10,7 +10,7 @@ import { normalizeStoryPath } from './paths';
 import { globToRegexp } from './glob-to-regexp';
 
 const DEFAULT_TITLE_PREFIX = '';
-const DEFAULT_FILES = '**/*.stories.@(mdx|tsx|ts|jsx|js)';
+const DEFAULT_FILES = '**/*.(stories|docs).@(mdx|tsx|ts|jsx|js)';
 
 // TODO: remove - LEGACY support for bad glob patterns we had in SB 5 - remove in SB7
 const fixBadGlob = deprecate(

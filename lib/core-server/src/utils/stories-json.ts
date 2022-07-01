@@ -1,7 +1,10 @@
 import { Router, Request, Response } from 'express';
 import fs from 'fs-extra';
+
 import type { NormalizedStoriesSpecifier } from '@storybook/core-common';
-import { debounce } from 'lodash';
+import type { StoryIndex, StoryIndexV3 } from '@storybook/store';
+import debounce from 'lodash/debounce';
+
 import { STORY_INDEX_INVALIDATED } from '@storybook/core-events';
 import { StoryIndexGenerator } from './StoryIndexGenerator';
 import { watchStorySpecifiers } from './watch-story-specifiers';
@@ -11,11 +14,12 @@ export const DEBOUNCE = 100;
 
 export async function extractStoriesJson(
   outputFile: string,
-  initializedStoryIndexGenerator: Promise<StoryIndexGenerator>
+  initializedStoryIndexGenerator: Promise<StoryIndexGenerator>,
+  transform?: (index: StoryIndex) => any
 ) {
   const generator = await initializedStoryIndexGenerator;
   const storyIndex = await generator.getIndex();
-  await fs.writeJson(outputFile, storyIndex);
+  await fs.writeJson(outputFile, transform ? transform(storyIndex) : storyIndex);
 }
 
 export function useStoriesJson({
@@ -40,7 +44,7 @@ export function useStoriesJson({
     maybeInvalidate();
   });
 
-  router.use('/stories.json', async (req: Request, res: Response) => {
+  router.use('/index.json', async (req: Request, res: Response) => {
     try {
       const generator = await initializedStoryIndexGenerator;
       const index = await generator.getIndex();
@@ -51,4 +55,38 @@ export function useStoriesJson({
       res.send(err.message);
     }
   });
+
+  router.use('/stories.json', async (req: Request, res: Response) => {
+    try {
+      const generator = await initializedStoryIndexGenerator;
+      const index = convertToIndexV3(await generator.getIndex());
+      res.header('Content-Type', 'application/json');
+      res.send(JSON.stringify(index));
+    } catch (err) {
+      res.status(500);
+      res.send(err.message);
+    }
+  });
 }
+
+export const convertToIndexV3 = (index: StoryIndex): StoryIndexV3 => {
+  const { entries } = index;
+  const stories = Object.entries(entries).reduce((acc, [id, entry]) => {
+    const { type, ...rest } = entry;
+    acc[id] = {
+      ...rest,
+      kind: rest.title,
+      story: rest.name,
+      parameters: {
+        __id: rest.id,
+        docsOnly: type === 'docs',
+        fileName: rest.importPath,
+      },
+    };
+    return acc;
+  }, {} as StoryIndexV3['stories']);
+  return {
+    v: 3,
+    stories,
+  };
+};

@@ -1,7 +1,7 @@
 ```ts
 // Button.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { Button } from './button.component';
 
@@ -20,7 +20,7 @@ export default {
   },
 } as Meta;
 
-export const Basic: Story = () => ({
+export const Basic: StoryFn = () => ({
    template: `<app-button>hello</<app-button>`,
 });
 ```

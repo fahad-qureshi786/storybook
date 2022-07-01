@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { screen, userEvent } from '@storybook/testing-library';
 
@@ -18,7 +18,7 @@ export default {
   component: MyComponent,
 } as ComponentMeta<typeof MyComponent>;
 
-const Template: ComponentStory<typeof MyComponent> = (args) => <MyComponent {...args} />;
+const Template: ComponentStoryFn<typeof MyComponent> = (args) => <MyComponent {...args} />;
 
 export const DelayedStory = Template.bind({});
 DelayedStory.play = async () => {

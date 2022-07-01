@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { List } from './List';
 import { ListItem } from './ListItem';
@@ -18,9 +18,9 @@ export default {
   subcomponents: { ListItem }, //👈 Adds the ListItem component as a subcomponent
 } as ComponentMeta<typeof List>;
 
-const Empty: ComponentStory<typeof List> = (args) => <List {...args} />;
+const Empty: ComponentStoryFn<typeof List> = (args) => <List {...args} />;
 
-const OneItem: ComponentStory<typeof List> = (args) =>(
+const OneItem: ComponentStoryFn<typeof List> = (args) =>(
   <List {...args}>
     <ListItem />
   </List>

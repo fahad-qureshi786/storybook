@@ -1,6 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import { ComponentStoryObj, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 import { CallStates } from '@storybook/instrumenter';
 import { styled } from '@storybook/theming';
 

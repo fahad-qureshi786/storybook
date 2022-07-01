@@ -1,6 +1,6 @@
 {
   "name": "@storybook/svelte-webpack5",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook for Svelte: Develop Svelte Component in isolation with Hot Reloading.",
   "keywords": [
     "storybook"
@@ -19,9 +19,26 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./preset": {
+      "require": "./dist/preset.js",
+      "import": "./dist/preset.mjs",
+      "types": "./dist/preset.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "templates/**/*",
@@ -30,19 +47,19 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/builder-webpack5": "7.0.0-alpha.3",
-    "@storybook/core-common": "7.0.0-alpha.3",
-    "@storybook/core-server": "7.0.0-alpha.3",
-    "@storybook/preset-svelte-webpack": "7.0.0-alpha.3",
-    "@storybook/svelte": "7.0.0-alpha.3",
+    "@storybook/builder-webpack5": "7.0.0-alpha.8",
+    "@storybook/core-common": "7.0.0-alpha.8",
+    "@storybook/preset-svelte-webpack": "7.0.0-alpha.8",
+    "@storybook/svelte": "7.0.0-alpha.8",
     "core-js": "^3.8.2",
     "react": "16.14.0",
     "react-dom": "16.14.0"
   },
   "devDependencies": {
+    "@digitak/esrun": "^3.2.2",
     "svelte": "^3.48.0",
     "svelte-loader": "^3.1.2"
   },
@@ -57,5 +74,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts",
+    "./src/preset.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

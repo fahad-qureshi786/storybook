@@ -10,8 +10,9 @@ import isPlainObject from 'lodash/isPlainObject';
  */
 export const combineParameters = (...parameterSets: (Parameters | undefined)[]) => {
   const mergeKeys: Record<string, boolean> = {};
-  const combined = parameterSets.filter(Boolean).reduce((acc, p) => {
-    Object.entries(p).forEach(([key, value]) => {
+  const definedParametersSets = parameterSets.filter(Boolean) as Parameters[];
+  const combined = definedParametersSets.reduce((acc, parameters) => {
+    Object.entries(parameters).forEach(([key, value]) => {
       const existing = acc[key];
       if (Array.isArray(value) || typeof existing === 'undefined') {
         acc[key] = value;
@@ -26,7 +27,7 @@ export const combineParameters = (...parameterSets: (Parameters | undefined)[]) 
   }, {} as Parameters);
 
   Object.keys(mergeKeys).forEach((key) => {
-    const mergeValues = parameterSets
+    const mergeValues = definedParametersSets
       .filter(Boolean)
       .map((p) => p[key])
       .filter((value) => typeof value !== 'undefined');

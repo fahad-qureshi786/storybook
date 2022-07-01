@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import type { StorybookConfig } from '@storybook/react-webpack5/types';
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
 const config: StorybookConfig = {
   stories: [

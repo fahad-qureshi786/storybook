@@ -1,7 +1,7 @@
 ```ts
 // Button.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { Button } from './button.component';
 
@@ -16,7 +16,7 @@ export default {
   component: Button,
 } as Meta;
 
-export const Text: Story = () => ({
+export const Text: StoryFn = () => ({
   props: {
     text: 'Hello Button',
     onClick: action('clicked'),

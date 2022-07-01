@@ -4,21 +4,26 @@ import type {
   AnyFramework,
   StoryContextForLoaders,
   ComponentTitle,
-  Args,
-  Globals,
+  Parameters,
 } from '@storybook/csf';
-import type { Story } from '@storybook/store';
+import type { ModuleExport, ModuleExports, Story } from '@storybook/store';
 import { PreviewWeb } from './PreviewWeb';
 
 export interface DocsContextProps<TFramework extends AnyFramework = AnyFramework> {
+  type: 'legacy' | 'modern' | 'external';
+
   id: StoryId;
   title: ComponentTitle;
   name: StoryName;
+
+  storyIdByModuleExport: (storyExport: ModuleExport, metaExports?: ModuleExports) => StoryId;
   storyById: (id: StoryId) => Story<TFramework>;
+  getStoryContext: (story: Story<TFramework>) => StoryContextForLoaders<TFramework>;
+
   componentStories: () => Story<TFramework>[];
+
   loadStory: (id: StoryId) => Promise<Story<TFramework>>;
   renderStoryToElement: PreviewWeb<TFramework>['renderStoryToElement'];
-  getStoryContext: (story: Story<TFramework>) => StoryContextForLoaders<TFramework>;
 
   /**
    * mdxStoryNameToKey is an MDX-compiler-generated mapping of an MDX story's
@@ -28,15 +33,15 @@ export interface DocsContextProps<TFramework extends AnyFramework = AnyFramework
   mdxStoryNameToKey?: Record<string, string>;
   mdxComponentAnnotations?: any;
 
-  // These keys are deprecated and will be removed in v7
-  /** @deprecated */
-  kind?: ComponentTitle;
-  /** @deprecated */
-  story?: StoryName;
-  /** @deprecated */
-  args?: Args;
-  /** @deprecated */
-  globals?: Globals;
-  /** @deprecated */
-  parameters?: Globals;
+  /**
+   * To be used by external docs
+   */
+  setMeta: (metaExport: ModuleExports) => void;
 }
+
+export type DocsRenderFunction<TFramework extends AnyFramework> = (
+  docsContext: DocsContextProps<TFramework>,
+  docsParameters: Parameters,
+  element: HTMLElement,
+  callback: () => void
+) => void;

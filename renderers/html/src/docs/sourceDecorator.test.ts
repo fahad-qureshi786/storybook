@@ -1,6 +1,7 @@
 import { SNIPPET_RENDERED } from '@storybook/docs-tools';
-import { addons, StoryContext, useEffect } from '@storybook/addons';
+import { addons, useEffect } from '@storybook/addons';
 import { sourceDecorator } from './sourceDecorator';
+import { StoryContext } from '../types';
 
 jest.mock('@storybook/addons');
 const mockedAddons = addons as jest.Mocked<typeof addons>;
@@ -13,21 +14,28 @@ expect.addSnapshotSerializer({
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
-const makeContext = (name: string, parameters: any, args: any, extra?: object): StoryContext => ({
-  id: `html-test--${name}`,
-  kind: 'js-text',
-  name,
-  parameters,
-  args,
-  argTypes: {},
-  globals: {},
-  ...extra,
-});
+const makeContext = (name: string, parameters: any, args: any, extra?: object): StoryContext =>
+  ({
+    id: `html-test--${name}`,
+    kind: 'js-text',
+    name,
+    parameters,
+    componentId: '',
+    title: '',
+    story: '',
+    args,
+    argTypes: {},
+    globals: {},
+    initialArgs: {},
+
+    ...extra,
+  } as StoryContext);
 
 describe('sourceDecorator', () => {
   let mockChannel: { on: jest.Mock; emit?: jest.Mock };
   beforeEach(() => {
     mockedAddons.getChannel.mockReset();
+    // @ts-ignore
     mockedUseEffect.mockImplementation((cb) => setTimeout(cb, 0));
 
     mockChannel = { on: jest.fn(), emit: jest.fn() };

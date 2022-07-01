@@ -1,6 +1,6 @@
 {
   "name": "vue-cli-example",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
@@ -15,16 +15,16 @@
     "vue-property-decorator": "^9.1.2"
   },
   "devDependencies": {
-    "@storybook/addon-controls": "7.0.0-alpha.3",
-    "@storybook/addon-essentials": "7.0.0-alpha.3",
+    "@storybook/addon-controls": "7.0.0-alpha.8",
+    "@storybook/addon-essentials": "7.0.0-alpha.8",
     "@storybook/preset-scss": "^1.0.3",
-    "@storybook/source-loader": "7.0.0-alpha.3",
-    "@storybook/vue": "7.0.0-alpha.3",
-    "@storybook/vue-webpack5": "7.0.0-alpha.3",
+    "@storybook/source-loader": "7.0.0-alpha.8",
+    "@storybook/vue": "7.0.0-alpha.8",
+    "@storybook/vue-webpack5": "7.0.0-alpha.8",
     "@vue/cli-plugin-babel": "^5.0.4",
     "@vue/cli-plugin-typescript": "^5.0.4",
     "@vue/cli-service": "^5.0.4",
-    "storybook": "7.0.0-alpha.3",
+    "storybook": "7.0.0-alpha.8",
     "typescript": "~4.6.3",
     "vue-template-compiler": "^2.6.14"
   }

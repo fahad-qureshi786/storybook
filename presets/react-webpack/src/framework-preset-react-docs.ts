@@ -22,7 +22,7 @@ export const babel: StorybookConfig['babel'] = async (config, options) => {
     overrides: [
       ...(config?.overrides || []),
       {
-        test: reactDocgen === 'react-docgen' ? /\.(mjs|tsx?|jsx?)$/ : /\.(mjs|jsx?)$/,
+        test: reactDocgen === 'react-docgen' ? /\.(cjs|mjs|tsx?|jsx?)$/ : /\.(cjs|mjs|jsx?)$/,
         plugins: [
           [
             require.resolve('babel-plugin-react-docgen'),

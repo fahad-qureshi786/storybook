@@ -1,5 +1,6 @@
-import path from 'path';
-import type { StorybookConfig } from '@storybook/core-webpack';
+import type { StorybookConfig } from './types';
+
+export * from './types';
 
 export const webpack: StorybookConfig['webpack'] = (config) => {
   const rules = [
@@ -7,13 +8,16 @@ export const webpack: StorybookConfig['webpack'] = (config) => {
     {
       type: 'javascript/auto',
       test: /\.stories\.json$/,
-      use: path.resolve(__dirname, './loader.js'),
+      use: require.resolve('@storybook/preset-server-webpack/dist/loader'),
     },
 
     {
       type: 'javascript/auto',
       test: /\.stories\.ya?ml/,
-      use: [path.resolve(__dirname, './loader.js'), 'yaml-loader'],
+      use: [
+        require.resolve('@storybook/preset-server-webpack/dist/loader'),
+        require.resolve('yaml-loader'),
+      ],
     },
   ];
 

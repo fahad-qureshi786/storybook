@@ -49,7 +49,6 @@ function getNameFromFilename(filename: string) {
 export default async function svelteDocgen(this: any, source: string) {
   // eslint-disable-next-line no-underscore-dangle
   const { resource } = this._module;
-  // This is webpack5 only
   const svelteOptions: any = this.getOptions();
 
   const { preprocess: preprocessOptions, logDocgen = false } = svelteOptions;

@@ -1,8 +1,10 @@
+// @ts-ignore
 import Watchpack from 'watchpack';
 import slash from 'slash';
 import fs from 'fs';
 import path from 'path';
 import glob from 'globby';
+import uniq from 'lodash/uniq';
 
 import type { NormalizedStoriesSpecifier } from '@storybook/core-common';
 import type { Path } from '@storybook/store';
@@ -35,7 +37,7 @@ export function watchStorySpecifiers(
     ignored: ['**/.git', 'node_modules'],
   });
   wp.watch({
-    directories: specifiers.map((ns) => ns.directory),
+    directories: uniq(specifiers.map((ns) => ns.directory)),
   });
 
   async function onChangeOrRemove(watchpackPath: Path, removed: boolean) {

@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/html';
+import type { Meta, StoryFn } from '@storybook/html';
 import { createButton, ButtonProps } from './Button';
 
 export default {
@@ -14,7 +14,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<ButtonProps> = (args) => {
+const Template: StoryFn<ButtonProps> = (args) => {
   // You can either use a function to create DOM elements or use a plain html string!
   // return `<div>${label}</div>`;
   return createButton(args);

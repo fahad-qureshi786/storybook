@@ -23,6 +23,7 @@ import {
   StoryIndex,
   PromiseLike,
   WebProjectAnnotations,
+  RenderToDOM,
 } from '@storybook/store';
 
 import { StoryRender } from './StoryRender';
@@ -32,7 +33,7 @@ const { fetch } = global;
 
 type MaybePromise<T> = Promise<T> | T;
 
-const STORY_INDEX_PATH = './stories.json';
+const STORY_INDEX_PATH = './index.json';
 
 export class Preview<TFramework extends AnyFramework> {
   channel: Channel;
@@ -45,7 +46,7 @@ export class Preview<TFramework extends AnyFramework> {
 
   importFn?: ModuleImportFn;
 
-  renderToDOM: WebProjectAnnotations<TFramework>['renderToDOM'];
+  renderToDOM?: RenderToDOM<TFramework>;
 
   storyRenders: StoryRender<TFramework>[] = [];
 
@@ -155,6 +156,8 @@ export class Preview<TFramework extends AnyFramework> {
   }
 
   emitGlobals() {
+    if (!this.storyStore.globals || !this.storyStore.projectAnnotations)
+      throw new Error(`Cannot emit before initialization`);
     this.channel.emit(SET_GLOBALS, {
       globals: this.storyStore.globals.get() || {},
       globalTypes: this.storyStore.projectAnnotations.globalTypes || {},
@@ -170,6 +173,9 @@ export class Preview<TFramework extends AnyFramework> {
 
   // If initialization gets as far as the story index, this function runs.
   initializeWithStoryIndex(storyIndex: StoryIndex): PromiseLike<void> {
+    if (!this.importFn)
+      throw new Error(`Cannot call initializeWithStoryIndex before initialization`);
+
     return this.storyStore.initialize({
       storyIndex,
       importFn: this.importFn,
@@ -217,7 +223,7 @@ export class Preview<TFramework extends AnyFramework> {
       // Update the store with the new stories.
       await this.onStoriesChanged({ storyIndex });
     } catch (err) {
-      this.renderPreviewEntryError('Error loading story index:', err);
+      this.renderPreviewEntryError('Error loading story index:', err as Error);
       throw err;
     }
   }
@@ -234,6 +240,8 @@ export class Preview<TFramework extends AnyFramework> {
   }
 
   async onUpdateGlobals({ globals }: { globals: Globals }) {
+    if (!this.storyStore.globals)
+      throw new Error(`Cannot call onUpdateGlobals before initialization`);
     this.storyStore.globals.update(globals);
 
     await Promise.all(this.storyRenders.map((r) => r.rerender()));
@@ -294,6 +302,9 @@ export class Preview<TFramework extends AnyFramework> {
   // we will change it to go ahead and load the story, which will end up being
   // "instant", although async.
   renderStoryToElement(story: Story<TFramework>, element: HTMLElement) {
+    if (!this.renderToDOM)
+      throw new Error(`Cannot call renderStoryToElement before initialization`);
+
     const render = new StoryRender<TFramework>(
       this.channel,
       this.storyStore,
@@ -317,7 +328,7 @@ export class Preview<TFramework extends AnyFramework> {
     { viewModeChanged }: { viewModeChanged?: boolean } = {}
   ) {
     this.storyRenders = this.storyRenders.filter((r) => r !== render);
-    await render?.teardown({ viewModeChanged });
+    await render?.teardown?.({ viewModeChanged });
   }
 
   // API

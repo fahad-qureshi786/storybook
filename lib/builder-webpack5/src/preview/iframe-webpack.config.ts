@@ -11,16 +11,15 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 import type { Options, CoreConfig } from '@storybook/core-common';
 import {
-  toRequireContextString,
   stringifyProcessEnvs,
   handlebars,
   interpolate,
-  toImportFn,
   normalizeStories,
   readTemplate,
   loadPreviewOrConfigFile,
 } from '@storybook/core-common';
-import type { TypescriptOptions } from '../types';
+import { toRequireContextString, toImportFn } from '@storybook/core-webpack';
+import type { BuilderOptions, TypescriptOptions } from '../types';
 import { createBabelLoader } from './babel-loader-preview';
 
 const storybookPaths: Record<string, string> = {
@@ -86,6 +85,8 @@ export default async (
   const bodyHtmlSnippet = await presets.apply('previewBody');
   const template = await presets.apply<string>('previewMainTemplate');
   const coreOptions = await presets.apply<CoreConfig>('core');
+  const builderOptions: BuilderOptions =
+    typeof coreOptions.builder === 'string' ? {} : coreOptions.builder?.options || {};
 
   const configs = [
     ...(await presets.apply('config', [], options)),
@@ -103,7 +104,8 @@ export default async (
     const storiesFilename = 'storybook-stories.js';
     const storiesPath = path.resolve(path.join(workingDir, storiesFilename));
 
-    virtualModuleMapping[storiesPath] = toImportFn(stories);
+    const needPipelinedImport = !!builderOptions.lazyCompilation && !isProd;
+    virtualModuleMapping[storiesPath] = toImportFn(stories, { needPipelinedImport });
     const configEntryPath = path.resolve(path.join(workingDir, 'storybook-config-entry.js'));
     virtualModuleMapping[configEntryPath] = handlebars(
       await readTemplate(
@@ -205,7 +207,7 @@ export default async (
             CONFIG_TYPE: configType,
             LOGLEVEL: logLevel,
             FRAMEWORK_OPTIONS: frameworkOptions,
-            CHANNEL_OPTIONS: coreOptions?.channelOptions,
+            CHANNEL_OPTIONS: coreOptions.channelOptions,
             FEATURES: features,
             PREVIEW_URL: previewUrl,
             STORIES: stories.map((specifier) => ({
@@ -238,6 +240,16 @@ export default async (
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.m?js$/,
+          type: 'javascript/auto',
+        },
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         createBabelLoader(babelOptions, typescriptOptions),
         {
           test: /\.md$/,

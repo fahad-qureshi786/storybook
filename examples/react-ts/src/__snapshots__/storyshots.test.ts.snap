@@ -4041,6 +4041,51 @@ exports[`Storyshots Demo/Examples / Emoji Button With Args 1`] = `
 </button>
 `;
 
+exports[`Storyshots Demo/button2 One 1`] = `
+<button
+  type="button"
+>
+   
+  one
+</button>
+`;
+
+exports[`Storyshots Demo/button2 Three 1`] = `
+<button
+  type="button"
+>
+   
+  three
+</button>
+`;
+
+exports[`Storyshots Demo/button2 Two 1`] = `
+<button
+  type="button"
+>
+   
+  two
+</button>
+`;
+
+exports[`Storyshots Demo/button3 Five 1`] = `
+<button
+  type="button"
+>
+   
+  five
+</button>
+`;
+
+exports[`Storyshots Demo/button3 Four 1`] = `
+<button
+  type="button"
+>
+   
+  four
+</button>
+`;
+
 exports[`Storyshots Docs/ButtonMdx Basic 1`] = `
 <button
   type="button"

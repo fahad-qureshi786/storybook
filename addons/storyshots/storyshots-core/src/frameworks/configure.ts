@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type { NormalizedStoriesSpecifier, StoriesEntry } from '@storybook/core-common';
-import { toRequireContext, normalizeStoriesEntry } from '@storybook/core-common';
+import { toRequireContext } from '@storybook/core-webpack';
+import { normalizeStoriesEntry } from '@storybook/core-common';
 import registerRequireContextHook from '@storybook/babel-plugin-require-context-hook/register';
 import global from 'global';
 import type {

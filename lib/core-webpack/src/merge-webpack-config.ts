@@ -1,5 +1,5 @@
 import type {
-  CommonWebpackConfiguration as Configuration,
+  WebpackConfiguration as Configuration,
   ModuleConfig,
   ResolveConfig,
   RulesConfig,

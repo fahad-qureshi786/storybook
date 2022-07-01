@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, ensure, themes } from '@storybook/theming';
 
-import type { Story, StoriesHash, Refs } from '@storybook/api';
+import type { HashEntry, StoriesHash, Refs } from '@storybook/api';
 import type { Theme } from '@storybook/theming';
 import type { RenderResult } from '@testing-library/react';
 import { Sidebar } from '../Sidebar';
@@ -10,7 +10,7 @@ import type { SidebarProps } from '../Sidebar';
 
 global.DOCS_MODE = false;
 
-const PAGE_NAME = 'Page';
+const DOCS_NAME = 'Docs';
 
 const factory = (props: Partial<SidebarProps>): RenderResult => {
   const theme: Theme = ensure(themes.light);
@@ -22,70 +22,56 @@ const factory = (props: Partial<SidebarProps>): RenderResult => {
   );
 };
 
-const generateStories = ({ kind, refId }: { kind: string; refId?: string }): StoriesHash => {
-  const [root, storyName]: [string, string] = kind.split('/') as any;
+const generateStories = ({ title, refId }: { title: string; refId?: string }): StoriesHash => {
+  const [root, componentName]: [string, string] = title.split('/') as any;
   const rootId: string = root.toLowerCase().replace(/\s+/g, '-');
-  const hypenatedstoryName: string = storyName.toLowerCase().replace(/\s+/g, '-');
-  const storyId = `${rootId}-${hypenatedstoryName}`;
-  const pageId = `${rootId}-${hypenatedstoryName}--page`;
+  const hypenatedComponentName: string = componentName.toLowerCase().replace(/\s+/g, '-');
+  const componentId = `${rootId}-${hypenatedComponentName}`;
+  const docsId = `${rootId}-${hypenatedComponentName}--docs`;
 
-  const storyBase: Partial<Story>[] = [
+  const storyBase: HashEntry[] = [
     {
+      type: 'root',
       id: rootId,
+      depth: 0,
+      refId,
       name: root,
-      children: [storyId],
+      children: [componentId],
       startCollapsed: false,
     },
     {
-      id: storyId,
-      name: storyName,
-      children: [pageId],
-      isComponent: true,
+      type: 'component',
+      id: componentId,
+      depth: 1,
+      refId,
+      name: componentName,
+      children: [docsId],
       parent: rootId,
     },
     {
-      id: pageId,
-      name: PAGE_NAME,
-      story: PAGE_NAME,
-      kind,
-      componentId: storyId,
-      parent: storyId,
-      title: kind,
+      type: 'docs',
+      id: docsId,
+      depth: 2,
+      refId,
+      name: DOCS_NAME,
+      title,
+      parent: componentId,
+      importPath: './docs.js',
     },
   ];
 
-  return storyBase.reduce(
-    (accumulator: StoriesHash, current: Partial<Story>, index: number): StoriesHash => {
-      const { id, name } = current;
-      const isRoot: boolean = index === 0;
-
-      const story: Story = {
-        ...current,
-        depth: index,
-        isRoot,
-        isLeaf: name === PAGE_NAME,
-        refId,
-      };
-
-      if (!isRoot) {
-        story.parameters = {};
-        story.parameters.docsOnly = true;
-      }
-
-      accumulator[id] = story;
-
-      return accumulator;
-    },
-    {}
-  );
+  return storyBase.reduce((accumulator: StoriesHash, current: HashEntry): StoriesHash => {
+    accumulator[current.id] = current;
+    return accumulator;
+  }, {});
 };
 
 describe('Sidebar', () => {
   test.skip("should not render an extra nested 'Page'", async () => {
     const refId = 'next';
-    const kind = 'Getting Started/Install';
-    const refStories: StoriesHash = generateStories({ refId, kind });
-    const internalStories: StoriesHash = generateStories({ kind: 'Welcome/Example' });
+    const title = 'Getting Started/Install';
+    const refStories: StoriesHash = generateStories({ refId, title });
+    const internalStories: StoriesHash = generateStories({ title: 'Welcome/Example' });
 
     const refs: Refs = {
       [refId]: {
@@ -93,6 +79,7 @@ describe('Sidebar', () => {
         id: refId,
         ready: true,
         title: refId,
+        url: 'https://ref.url',
       },
     };
 

@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import type { Story, Meta } from '@storybook/web-components';
+import type { Meta, StoryFn } from '@storybook/web-components';
 
 export default {
   title: 'Addons / Backgrounds',
@@ -14,7 +14,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story = () => html`<button>Click Me!</button>`;
+const Template: StoryFn = () => html`<button>Click Me!</button>`;
 
 export const Default = Template.bind({});
 

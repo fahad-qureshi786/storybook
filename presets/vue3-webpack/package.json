@@ -1,6 +1,6 @@
 {
   "name": "@storybook/preset-vue3-webpack",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook for Vue 3: Develop Vue 3 Components in isolation with Hot Reloading.",
   "keywords": [
     "storybook"
@@ -19,9 +19,36 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./preset": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/framework-preset-vue3-docs": {
+      "require": "./dist/framework-preset-vue3-docs.js",
+      "import": "./dist/framework-preset-vue3-docs.mjs",
+      "types": "./dist/framework-preset-vue3-docs.d.ts"
+    },
+    "./dist/framework-preset-vue3": {
+      "require": "./dist/framework-preset-vue3.js",
+      "import": "./dist/framework-preset-vue3.mjs",
+      "types": "./dist/framework-preset-vue3.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "bin/**/*",
     "dist/**/*",
@@ -30,11 +57,11 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/core-webpack": "7.0.0-alpha.3",
-    "@storybook/docs-tools": "7.0.0-alpha.3",
+    "@storybook/core-webpack": "7.0.0-alpha.8",
+    "@storybook/docs-tools": "7.0.0-alpha.8",
     "@types/node": "^14.14.20 || ^16.0.0",
     "core-js": "^3.8.2",
     "react": "16.14.0",
@@ -46,6 +73,7 @@
     "webpack": "5"
   },
   "devDependencies": {
+    "@digitak/esrun": "^3.2.2",
     "@vue/compiler-sfc": "^3.2.33",
     "vue": "^3.2.33"
   },
@@ -61,5 +89,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts",
+    "./src/framework-preset-vue3-docs.ts",
+    "./src/framework-preset-vue3.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

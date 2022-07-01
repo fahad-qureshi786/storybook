@@ -1,15 +1,7 @@
-export {
-  storiesOf,
-  setAddon,
-  addDecorator,
-  addParameters,
-  configure,
-  getStorybook,
-  forceReRender,
-  raw,
-} from './preview';
+import './globals';
 
-export * from './preview/types-6-0';
+export * from './public-api';
+export * from './public-types';
 
 // optimization: stop HMR propagation in webpack
 module?.hot?.decline();

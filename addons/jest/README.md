@@ -221,7 +221,7 @@ export const decorators = [
 Finally, in your story, you'll need to include the following:
 
 ```ts
-import { Meta, Story } from '@storybook/angular/types-6-0';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import MyComponent from './MyComponent.component';
 
@@ -230,7 +230,7 @@ export default {
   title: 'MyComponent',
 } as Meta;
 
-const Template: Story<MyComponent> = (args: MyComponent) => ({
+const Template: StoryFn<MyComponent> = (args: MyComponent) => ({
   props: args,
 });
 

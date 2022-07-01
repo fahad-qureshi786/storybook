@@ -7,7 +7,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { componentWrapperDecorator, moduleMetadata, Story, Meta } from '@storybook/angular';
+import { componentWrapperDecorator, moduleMetadata, StoryFn, Meta } from '@storybook/angular';
 
 import { WithoutSelectorComponent } from './without-selector.component';
 
@@ -52,7 +52,7 @@ class ComponentFactoryWrapperComponent implements AfterViewInit {
 
 // Live changing of args by controls does not work at the moment. When changing args storybook does not fully
 // reload and therefore does not take into account the change of provider.
-export const WithComponentFactoryResolver: Story = (args) => ({
+export const WithComponentFactoryResolver: StoryFn = (args) => ({
   props: args,
 });
 WithComponentFactoryResolver.storyName = 'Custom wrapper ComponentFactoryResolver';

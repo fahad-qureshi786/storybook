@@ -9,6 +9,7 @@
     - [Modern ESM / IE11 support discontinued](#modern-esm--ie11-support-discontinued)
     - [Framework field mandatory](#framework-field-mandatory)
     - [frameworkOptions renamed](#frameworkoptions-renamed)
+    - [Framework standalone build moved](#framework-standalone-build-moved)
     - [Docs modern inline rendering by default](#docs-modern-inline-rendering-by-default)
     - [Babel mode v7 by default](#babel-mode-v7-by-default)
     - [7.0 feature flags removed](#70-feature-flags-removed)
@@ -327,6 +328,26 @@ module.exports = {
     options: { fastRefresh: true };
   }
 }
+```
+
+#### Framework standalone build moved
+
+In 7.0 the location of the standalone node API has moved to `@storybook/core-server`.
+
+If you used the React standalone API, for example, you might have written:
+
+```js
+const { buildStandalone } = require('@storybook/react/standalone');
+const options = {};
+buildStandalone(options).then(() => console.log('done'));
+```
+
+In 7.0, you would now use:
+
+```js
+const build = require('@storybook/core-server/standalone');
+const options = {};
+build(options).then(() => console.log('done'));
 ```
 
 #### Docs modern inline rendering by default

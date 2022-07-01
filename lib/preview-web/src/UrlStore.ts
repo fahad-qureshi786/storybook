@@ -61,8 +61,7 @@ const getFirstString = (v: ValueOf<qs.ParsedQs>): string | void => {
     return getFirstString(v[0]);
   }
   if (isObject(v)) {
-    // @ts-ignore
-    return getFirstString(Object.values(v));
+    return getFirstString(Object.values(v).filter(Boolean) as string[]);
   }
   return undefined;
 };
@@ -74,7 +73,7 @@ Use \`id=$storyId\` instead.
 See https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#new-url-structure`
 );
 
-export const getSelectionSpecifierFromPath: () => SelectionSpecifier = () => {
+export const getSelectionSpecifierFromPath: () => SelectionSpecifier | null = () => {
   const query = qs.parse(document.location.search, { ignoreQueryPrefix: true });
   const args = typeof query.args === 'string' ? parseArgsParam(query.args) : undefined;
   const globals = typeof query.globals === 'string' ? parseArgsParam(query.globals) : undefined;
@@ -103,9 +102,9 @@ export const getSelectionSpecifierFromPath: () => SelectionSpecifier = () => {
 };
 
 export class UrlStore {
-  selectionSpecifier: SelectionSpecifier;
+  selectionSpecifier: SelectionSpecifier | null;
 
-  selection: Selection;
+  selection?: Selection;
 
   constructor() {
     this.selectionSpecifier = getSelectionSpecifierFromPath();

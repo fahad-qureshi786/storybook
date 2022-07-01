@@ -1,7 +1,7 @@
 /* eslint-disable storybook/use-storybook-testing-library */
 // @TODO: use addon-interactions and remove the rule disable above
 import React from 'react';
-import type { ComponentStory, ComponentMeta, ComponentStoryObj } from '@storybook/react';
+import type { ComponentMeta, ComponentStoryObj, ComponentStoryFn } from '@storybook/react';
 import { ThemeProvider, useTheme } from '@storybook/theming';
 import type { Theme } from '@storybook/theming';
 import { action } from '@storybook/addon-actions';
@@ -9,7 +9,7 @@ import { screen } from '@testing-library/dom';
 
 import { Heading } from './Heading';
 
-type Story = ComponentStory<typeof Heading>;
+type Story = ComponentStoryFn<typeof Heading>;
 
 export default {
   component: Heading,

@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Story, Meta } from '@storybook/angular/';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { withDesign } from 'storybook-addon-designs';
 
@@ -15,7 +15,7 @@ export default {
 } as Meta;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: Story = () => ({
+const Template: StoryFn = () => ({
   props: {},
 });
 

@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { Meta, Story } from '@storybook/web-components';
+import type { Meta, StoryFn } from '@storybook/web-components';
 import { expect } from '@storybook/jest';
 import { within, userEvent } from '@storybook/testing-library';
 
@@ -11,7 +11,7 @@ export default {
   component: 'sb-counter',
 } as Meta;
 
-const Template: Story<Counter> = () => html`<sb-counter></sb-counter>`;
+const Template: StoryFn<Counter> = () => html`<sb-counter></sb-counter>`;
 
 export const Default = Template.bind({});
 

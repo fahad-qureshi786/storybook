@@ -32,7 +32,7 @@ describe('framework-preset-react-docgen', () => {
         presets: ['env', 'foo-preset'],
         overrides: [
           {
-            test: /\.(mjs|tsx?|jsx?)$/,
+            test: /\.(cjs|mjs|tsx?|jsx?)$/,
             plugins: [
               [
                 babelPluginReactDocgenPath,

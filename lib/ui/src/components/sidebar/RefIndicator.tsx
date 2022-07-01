@@ -167,8 +167,14 @@ export const RefIndicator = React.memo(
     ({ state, ...ref }, forwardedRef) => {
       const api = useStorybookApi();
       const list = useMemo(() => Object.values(ref.stories || {}), [ref.stories]);
-      const componentCount = useMemo(() => list.filter((v) => v.isComponent).length, [list]);
-      const leafCount = useMemo(() => list.filter((v) => v.isLeaf).length, [list]);
+      const componentCount = useMemo(
+        () => list.filter((v) => v.type === 'component').length,
+        [list]
+      );
+      const leafCount = useMemo(
+        () => list.filter((v) => v.type === 'docs' || v.type === 'story').length,
+        [list]
+      );
 
       const changeVersion = useCallback(
         ((event, item) => {

@@ -15,9 +15,10 @@ import { from, Observable, of } from 'rxjs';
 import type { CLIOptions } from '@storybook/core-common';
 import { map, switchMap, mapTo } from 'rxjs/operators';
 import { sync as findUpSync } from 'find-up';
+import { sync as readUpSync } from 'read-pkg-up';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import buildStandalone, { StandaloneOptions } from '@storybook/angular/standalone';
+import { buildDevStandalone } from '@storybook/core-server';
+import type { StandaloneOptions } from '../utils/standalone-options';
 import { runCompodoc } from '../utils/run-compodoc';
 import { buildStandaloneErrorHandler } from '../utils/build-standalone-errors-handler';
 
@@ -81,6 +82,7 @@ function commandBuilder(
       } = options;
 
       const standaloneOptions: StandaloneOptions = {
+        packageJson: readUpSync({ cwd: __dirname }).packageJson,
         ci,
         configDir,
         docs,
@@ -132,7 +134,7 @@ async function setup(options: StorybookBuilderOptions, context: BuilderContext) 
 function runInstance(options: StandaloneOptions) {
   return new Observable<void>((observer) => {
     // This Observable intentionally never complete, leaving the process running ;)
-    buildStandalone(options).then(
+    buildDevStandalone(options as any).then(
       () => observer.next(),
       (error) => observer.error(buildStandaloneErrorHandler(error))
     );

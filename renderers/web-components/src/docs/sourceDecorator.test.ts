@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import { styleMap } from 'lit-html/directives/style-map';
 import { addons, useEffect } from '@storybook/addons';
 import { SNIPPET_RENDERED } from '@storybook/docs-tools';
-import type { StoryContext, WebComponentsFramework } from '..';
+import type { StoryContext } from '../types';
 import { sourceDecorator } from './sourceDecorator';
 
 jest.mock('@storybook/addons');
@@ -16,12 +16,7 @@ expect.addSnapshotSerializer({
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
-const makeContext = (
-  name: string,
-  parameters: any,
-  args: any,
-  extra?: Partial<StoryContext<WebComponentsFramework>>
-) =>
+const makeContext = (name: string, parameters: any, args: any, extra?: Partial<StoryContext>) =>
   ({
     id: `lit-test--${name}`,
     kind: 'js-text',
@@ -31,7 +26,7 @@ const makeContext = (
     argTypes: {},
     globals: {},
     ...extra,
-  } as StoryContext<WebComponentsFramework>);
+  } as StoryContext);
 
 describe('sourceDecorator', () => {
   let mockChannel: { on: jest.Mock; emit?: jest.Mock };

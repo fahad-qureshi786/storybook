@@ -1,0 +1,30 @@
+```js
+// Card.stories.ts
+
+import { componentWrapperDecorator, Meta, Story } from '@storybook/angular';
+import { useChannel } from '@storybook/addons';
+import { HIGHLIGHT, RESET_HIGHLIGHT } from '@storybook/addon-highlight';
+import { Card } form './card.component';
+
+export default {
+  /* 👇 The title prop is optional.
+  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
+  * to learn how to generate automatic titles
+  */
+  title: 'Card',
+  component: Card
+} as Meta;
+
+export const Default: Story = (args) => ({
+  template: '<app-card></app-card>',
+});
+Default.decorators = [
+  componentWrapperDecorator((story) => {
+    const emit = useChannel({});
+    emit(HIGHLIGHT, {
+      elements: ['.title', '.subtitle'],
+    });
+    return story;
+  }),
+];
+```

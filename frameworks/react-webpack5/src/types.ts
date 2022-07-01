@@ -1,49 +1,46 @@
-import type ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import type { Configuration } from 'webpack';
+import type {
+  ReactOptions,
+  StorybookConfig as StorybookConfigBase,
+  TypescriptOptions as TypescriptOptionsReact,
+} from '@storybook/preset-react-webpack';
+import type {
+  StorybookConfigWebpack,
+  BuilderOptions,
+  TypescriptOptions as TypescriptOptionsBuilder,
+} from '@storybook/builder-webpack5';
 
-import type { StorybookConfig as BaseStorybookConfig } from '@storybook/preset-react-webpack';
+type FrameworkName = '@storybook/react-webpack5';
+type BuilderName = '@storybook/builder-webpack5';
 
-export type { BuilderResult } from '@storybook/preset-react-webpack';
-
-/**
- * Options for TypeScript usage within Storybook.
- */
-export type TypescriptOptions = BaseStorybookConfig['typescript'] & {
-  /**
-   * Configures `fork-ts-checker-webpack-plugin`
-   */
-  checkOptions: ForkTsCheckerWebpackPlugin['options'];
+export type FrameworkOptions = ReactOptions & {
+  builder?: BuilderOptions;
 };
 
-export interface StorybookTypescriptConfig {
-  typescript?: Partial<TypescriptOptions>;
-}
-
-export interface ReactOptions {
-  fastRefresh?: boolean;
-  strictMode?: boolean;
-  /**
-   * Use React's legacy root API to mount components
-   * @description
-   * React has introduced a new root API with React 18.x to enable a whole set of new features (e.g. concurrent features)
-   * If this flag is true, the legacy Root API is used to mount components to make it easier to migrate step by step to React 18.
-   * @default false
-   */
-  legacyRootApi?: boolean;
-}
-
-export interface StorybookReactConfig {
+type StorybookConfigFramework = {
   framework:
-    | string
+    | FrameworkName
     | {
-        name: '@storybook/react-webpack5';
-        options: ReactOptions;
+        name: FrameworkName;
+        options: FrameworkOptions;
       };
-}
+  core?: StorybookConfigBase['core'] & {
+    builder?:
+      | BuilderName
+      | {
+          name: BuilderName;
+          options: BuilderOptions;
+        };
+  };
+  typescript?: Partial<TypescriptOptionsBuilder & TypescriptOptionsReact> &
+    StorybookConfigBase['typescript'];
+};
 
 /**
  * The interface for Storybook configuration in `main.ts` files.
  */
-export type StorybookConfig = BaseStorybookConfig<Configuration> &
-  StorybookReactConfig &
-  StorybookTypescriptConfig;
+export type StorybookConfig = Omit<
+  StorybookConfigBase,
+  keyof StorybookConfigWebpack | keyof StorybookConfigFramework
+> &
+  StorybookConfigWebpack &
+  StorybookConfigFramework;

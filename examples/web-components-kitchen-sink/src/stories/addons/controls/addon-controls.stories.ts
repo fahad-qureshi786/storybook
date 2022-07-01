@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import type { Story, Meta } from '@storybook/web-components';
+import type { Meta, StoryFn } from '@storybook/web-components';
 import '../../../components/sb-button';
 
 export default {
@@ -15,7 +15,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story = ({ primary, backgroundColor, size, label, sbButtonClickHandler }) =>
+const Template: StoryFn = ({ primary, backgroundColor, size, label, sbButtonClickHandler }) =>
   html`<sb-button
     ?primary="${primary}"
     .size="${size}"

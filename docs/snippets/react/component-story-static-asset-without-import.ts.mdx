@@ -5,7 +5,7 @@ import React from 'react';
 
 import imageFile from './static/image.png';
 
-import { Meta } from '@storybook/react';
+import type { Meta, StoryFn } from '@storybook/react';
 
 export default {
   /* 👇 The title prop is optional.
@@ -20,5 +20,5 @@ const image = {
   alt: 'my image',
 };
 // Assume image.png is located in the "public" directory.
-export const WithAnImage = () => <img src="/image.png" alt="my image" />;
+export const WithAnImage: StoryFn = () => <img src="/image.png" alt="my image" />;
 ```

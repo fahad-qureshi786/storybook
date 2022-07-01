@@ -1,19 +1,11 @@
-export {
-  storiesOf,
-  setAddon,
-  addDecorator,
-  addParameters,
-  configure,
-  getStorybook,
-  forceReRender,
-  raw,
-} from './preview';
+import './globals';
 
-export * from './preview/types-6-0';
+export * from './public-api';
+export * from './public-types';
 
-export type { StoryFnAngularReturnType as IStory } from './preview/types';
+export type { StoryFnAngularReturnType as IStory } from './types';
 
-export { moduleMetadata, componentWrapperDecorator } from './preview/decorators';
+export { moduleMetadata, componentWrapperDecorator } from './decorators';
 
 // optimization: stop HMR propagation in webpack
 module?.hot?.decline();

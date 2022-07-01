@@ -31,6 +31,16 @@ Object {
   "module": Object {
     "rules": Array [
       Object {
+        "test": "/\\\\.m?js$/",
+        "type": "javascript/auto",
+      },
+      Object {
+        "resolve": Object {
+          "fullySpecified": false,
+        },
+        "test": "/\\\\.m?js$/",
+      },
+      Object {
         "exclude": Array [
           "NODE_MODULES/",
           "/dist/",

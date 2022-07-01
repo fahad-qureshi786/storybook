@@ -5,7 +5,8 @@
     "module": "ES2020",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "moduleResolution": "Node"
   },
   "include": [
     "src/*"

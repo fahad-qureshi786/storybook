@@ -15,7 +15,7 @@ export default {
 
 const selected = {
   refId: 'storybook_internal',
-  storyId: '1-12-121',
+  storyId: 'root-1-child-a2--grandchild-a1-1',
 };
 
 const simple: Record<string, RefType> = {

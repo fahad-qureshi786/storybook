@@ -34,6 +34,7 @@ DarkModeDocs.decorators = [
   (storyFn) => (
     <DocsContainer
       context={{
+        type: 'legacy',
         componentStories: () => [],
         storyById: () => ({ parameters: { docs: { theme: themes.dark } } }),
       }}

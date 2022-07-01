@@ -1,11 +1,9 @@
-import type { StorybookConfig } from '@storybook/core-webpack';
+import type { Preset } from '@storybook/core-common';
+import type { StorybookConfig, SvelteOptions } from './types';
 
-export const webpack: StorybookConfig['webpack'] = async (config, options) => {
-  const { preprocess = undefined, loader = {} } = await options.presets.apply(
-    'svelteOptions',
-    {} as any,
-    options
-  );
+export const webpack: StorybookConfig['webpack'] = async (config, { presets }) => {
+  const framework = await presets.apply<Preset>('framework');
+  const svelteOptions = (typeof framework === 'object' ? framework.options : {}) as SvelteOptions;
 
   const mainFields = (config.resolve?.mainFields as string[]) || ['browser', 'module', 'main'];
 
@@ -18,7 +16,7 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
         {
           test: /\.(svelte|html)$/,
           loader: require.resolve('svelte-loader'),
-          options: { preprocess, ...loader },
+          options: { loader: {}, ...svelteOptions },
         },
       ],
     },

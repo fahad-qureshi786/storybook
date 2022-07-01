@@ -28,7 +28,7 @@ The `main.js` configuration file is a [preset](../addons/addon-types.md) and, as
 
 - `stories` - an array of globs that indicates the [location of your story files](#configure-story-loading), relative to `main.js`.
 - `addons` - a list of the [addons](https://storybook.js.org/addons/) you are using.
-- `webpackFinal` - custom [webpack configuration](./webpack.md#extending-storybooks-webpack-config).
+- `webpackFinal` - custom [webpack configuration](../builders/webpack.md#extending-storybooks-webpack-config).
 - `babel` - custom [babel configuration](./babel.md).
 - `framework` - framework specific configurations to help the loading and building process.
 
@@ -185,7 +185,7 @@ You can also use Storybook's API to configure your project with TypeScript. Unde
 | `features`            | Enables Storybook's additional features.<br/> See table below for a list of available features `features: { storyStoreV7: true }`                                                |
 | `refs`                | Configures [Storybook composition](../sharing/storybook-composition.md) <br/> `refs:{ example: { title: 'ExampleStorybook', url:'https://your-url.com' } }`                      |
 | `logLevel`            | Configures Storybook's logs in the browser terminal. Useful for debugging <br/> `logLevel: 'debug'`                                                                              |
-| `webpackFinal`        | Customize Storybook's [Webpack](./webpack.md) setup <br/> `webpackFinal: async (config:any) => { return config; }`                                                               |
+| `webpackFinal`        | Customize Storybook's [Webpack](../builders/webpack.md) setup <br/> `webpackFinal: async (config:any) => { return config; }`                                                     |
 | `env`                 | Defines custom Storybook [environment variables](./environment-variables.md#using-storybook-configuration). <br/> `env: (config) => ({...config, EXAMPLE_VAR: 'Example var' }),` |
 
 ## Configure story rendering

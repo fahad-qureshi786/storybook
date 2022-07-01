@@ -13,7 +13,7 @@ const data = { [refId]: { id: refId, url: '/', stories } };
 const dataset = { hash: data, entries: Object.entries(data) };
 const getLastViewed = () =>
   Object.values(stories)
-    .filter((item, index) => item.isComponent && index % 20 === 0)
+    .filter((item, index) => item.type === 'component' && item.parent && index % 20 === 0)
     .map((component) => ({ storyId: component.id, refId }));
 
 export default {

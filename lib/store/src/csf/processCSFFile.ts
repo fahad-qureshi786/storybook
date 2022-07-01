@@ -24,10 +24,9 @@ const checkStorySort = (parameters: Parameters) => {
   if (options?.storySort) logger.error('The storySort option parameter can only be set globally');
 };
 
-const checkDisallowedParameters = (parameters: Parameters) => {
-  if (!parameters) {
-    return;
-  }
+const checkDisallowedParameters = (parameters?: Parameters) => {
+  if (!parameters) return;
+
   checkGlobals(parameters);
   checkStorySort(parameters);
 };

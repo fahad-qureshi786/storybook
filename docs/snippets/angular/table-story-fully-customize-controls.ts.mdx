@@ -1,7 +1,7 @@
 ```ts
 // Table.stories.ts
 
-import { Meta, Story } from '@storybook/angular',
+import type { Meta, StoryFn } from '@storybook/angular',
 
 import { Table } from './Table.component';
 
@@ -14,7 +14,7 @@ export default {
   component: Table,
 } as Meta;
 
-const TableStory: Story = (args) => ({
+const TableStory: StoryFn = (args) => ({
   props: args,
   template: `
     <table>

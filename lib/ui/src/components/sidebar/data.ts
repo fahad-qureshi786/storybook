@@ -1,54 +1,50 @@
-import type { Story, StoriesHash } from '@storybook/api';
+import type { HashEntry, StoriesHash, StoryEntry } from '@storybook/api';
 import { Item } from './types';
 
 export const DEFAULT_REF_ID = 'storybook_internal';
+
+function isLeaf(entry: HashEntry) {
+  return entry.type === 'story' || entry.type === 'docs';
+}
 
 export const collapseAllStories = (stories: StoriesHash) => {
   // keep track of component IDs that have been rewritten to the ID of their first leaf child
   const componentIdToLeafId: Record<string, string> = {};
 
   // 1) remove all leaves
-  const leavesRemoved = Object.values(stories).filter(
-    (item: Story) => !(item.isLeaf && stories[item.parent].isComponent)
-  );
+  const leavesRemoved = Object.values(stories).filter((item) => !isLeaf(item));
 
   // 2) make all components leaves and rewrite their ID's to the first leaf child
-  const componentsFlattened = leavesRemoved.map((item: Story) => {
-    const { id, isComponent, children, ...rest } = item;
-
+  const componentsFlattened = leavesRemoved.map((item: HashEntry) => {
     // this is a folder, so just leave it alone
-    if (!isComponent) {
+    if (item.type !== 'component') {
       return item;
     }
+
+    const { id, children, name, parent, depth } = item;
 
     const nonLeafChildren: string[] = [];
     const leafChildren: string[] = [];
     children.forEach((child: string) =>
-      (stories[child].isLeaf ? leafChildren : nonLeafChildren).push(child)
+      (isLeaf(stories[child]) ? leafChildren : nonLeafChildren).push(child)
     );
 
     if (leafChildren.length === 0) {
       return item; // pass through, we'll handle you later
     }
 
-    const leafId = leafChildren[0];
+    const leaf = stories[leafChildren[0]] as StoryEntry;
     const component = {
-      args: {},
-      ...rest,
-      id: leafId,
-      kind: (stories[leafId] as Story).kind,
-      isRoot: false,
-      isLeaf: true,
-      isComponent: true,
-      children: [] as string[],
+      ...leaf,
+      name,
+      parent,
+      depth,
     };
-    componentIdToLeafId[id] = leafId;
+    componentIdToLeafId[id] = leaf.id;
 
     // this is a component, so it should not have any non-leaf children
     if (nonLeafChildren.length !== 0) {
-      throw new Error(
-        `Unexpected '${item.id}': ${JSON.stringify({ isComponent, nonLeafChildren })}`
-      );
+      throw new Error(`Unexpected '${item.id}': ${JSON.stringify({ nonLeafChildren })}`);
     }
 
     return component;
@@ -56,63 +52,17 @@ export const collapseAllStories = (stories: StoriesHash) => {
 
   // 3) rewrite all the children as needed
   const childrenRewritten = componentsFlattened.map((item) => {
-    if (item.isLeaf) {
-      return item;
-    }
-
-    const { children, ...rest } = item;
-    const rewritten = children.map((child: string) => componentIdToLeafId[child] || child);
-
-    return { children: rewritten, ...rest };
-  });
-
-  const result = {} as StoriesHash;
-  childrenRewritten.forEach((item) => {
-    result[item.id] = item as Item;
-  });
-  return result;
-};
-
-export const collapseDocsOnlyStories = (storiesHash: StoriesHash) => {
-  // keep track of component IDs that have been rewritten to the ID of their first leaf child
-  const componentIdToLeafId: Record<string, string> = {};
-  const docsOnlyStoriesRemoved = Object.values(storiesHash).filter((item: Story) => {
-    if (item.isLeaf && item.parameters && item.parameters.docsOnly) {
-      componentIdToLeafId[item.parent] = item.id;
-      return false; // filter it out
-    }
-    return true;
-  });
-
-  const docsOnlyComponentsCollapsed = docsOnlyStoriesRemoved.map((item: Story) => {
-    // collapse docs-only components
-    const { isComponent, children, id } = item;
-    if (isComponent && children.length === 1) {
-      const leafId = componentIdToLeafId[id];
-      if (leafId) {
-        const collapsed = {
-          args: {},
-          ...item,
-          id: leafId,
-          isLeaf: true,
-          children: [] as string[],
-        };
-        return collapsed;
-      }
-    }
-
-    // update groups
-    if (children) {
+    if (item.type === 'root' || item.type === 'group' || item.type === 'component') {
+      const { children, ...rest } = item;
       const rewritten = children.map((child: string) => componentIdToLeafId[child] || child);
-      return { ...item, children: rewritten };
-    }
 
-    // pass through stories unmodified
+      return { children: rewritten, ...rest };
+    }
     return item;
   });
 
   const result = {} as StoriesHash;
-  docsOnlyComponentsCollapsed.forEach((item) => {
+  childrenRewritten.forEach((item) => {
     result[item.id] = item as Item;
   });
   return result;

@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { screen, userEvent } from '@storybook/testing-library';
 
@@ -21,11 +21,11 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const ExampleChangeEvent: Story = Template.bind({});
+export const ExampleChangeEvent: StoryFn = Template.bind({});
 ExampleChangeEvent.play = async () => {
   const select = screen.getByRole('listbox');
 

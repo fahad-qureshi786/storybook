@@ -3,8 +3,8 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 import { logger } from '@storybook/node-logger';
 
-import type { StorybookConfig, Options, Preset } from '@storybook/core-webpack';
-import type { ReactOptions } from './types';
+import type { Options, Preset } from '@storybook/core-webpack';
+import type { StorybookConfig, ReactOptions } from './types';
 
 const useFastRefresh = async (options: Options) => {
   const isDevelopment = options.configType === 'DEVELOPMENT';

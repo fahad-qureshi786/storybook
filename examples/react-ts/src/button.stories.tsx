@@ -2,7 +2,7 @@
 /* eslint-disable storybook/use-storybook-testing-library */
 // @TODO: use addon-interactions and remove the rule disable above
 import React from 'react';
-import { Meta, ComponentStory } from '@storybook/react';
+import type { Meta, ComponentStoryFn } from '@storybook/react';
 import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { Button } from './button';
@@ -27,7 +27,7 @@ export default {
   // render: () => <>hohoho</>,
 } as Meta;
 
-export const WithArgs: ComponentStory<typeof Button> = (args) => <Button {...args} />;
+export const WithArgs: ComponentStoryFn<typeof Button> = (args) => <Button {...args} />;
 WithArgs.args = { label: 'With args' };
 
 export const Basic = () => <Button label="Click me" />;

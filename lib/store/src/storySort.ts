@@ -1,11 +1,11 @@
 import { StorySortComparatorV7, StorySortObjectParameter } from '@storybook/addons';
-import { StoryIndexEntry } from './types';
+import { IndexEntry } from './types';
 
 const STORY_KIND_PATH_SEPARATOR = /\s*\/\s*/;
 
 export const storySort =
   (options: StorySortObjectParameter = {}): StorySortComparatorV7 =>
-  (a: StoryIndexEntry, b: StoryIndexEntry): number => {
+  (a: IndexEntry, b: IndexEntry): number => {
     // If the two stories have the same story kind, then use the default
     // ordering, which is the order they are defined in the story file.
     // only when includeNames is falsy
@@ -79,7 +79,8 @@ export const storySort =
       }
 
       // If a nested array is provided for a name, use it for ordering.
-      const index = order.indexOf(nameA);
+      let index = order.indexOf(nameA);
+      if (index === -1) index = order.indexOf('*');
       order = index !== -1 && Array.isArray(order[index + 1]) ? order[index + 1] : [];
 
       // We'll need to look at the next part of the name.

@@ -133,6 +133,9 @@ export class Instrumenter {
     this.channel.on(STORY_RENDER_PHASE_CHANGED, ({ storyId, newPhase }) => {
       const { isDebugging } = this.getState(storyId);
       this.setState(storyId, { renderPhase: newPhase });
+      if (newPhase === 'preparing' && isDebugging) {
+        resetState({ storyId });
+      }
       if (newPhase === 'playing') {
         resetState({ storyId, isDebugging });
       }

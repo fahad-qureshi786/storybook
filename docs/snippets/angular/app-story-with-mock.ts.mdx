@@ -1,7 +1,7 @@
 ```ts
 // App.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { AppComponent } from './app.component';
 
@@ -14,7 +14,7 @@ export default {
   component: AppComponent,
 } as Meta;
 
-const Template: Story = () => ({
+const Template: StoryFn = () => ({
   props: {},
 });
 

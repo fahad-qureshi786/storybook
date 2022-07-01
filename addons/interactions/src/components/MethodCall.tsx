@@ -112,7 +112,7 @@ export const Node = ({
     case value === undefined:
       return <UndefinedNode {...props} />;
     case Array.isArray(value):
-      return <ArrayNode {...props} value={value} />;
+      return <ArrayNode {...props} value={value} callsById={callsById} />;
     case typeof value === 'string':
       return <StringNode {...props} value={value} />;
     case typeof value === 'number':
@@ -191,12 +191,22 @@ export const BooleanNode = ({ value, ...props }: { value: boolean }) => {
   );
 };
 
-export const ArrayNode = ({ value, nested = false }: { value: any[]; nested?: boolean }) => {
+export const ArrayNode = ({
+  value,
+  nested = false,
+  callsById,
+}: {
+  value: any[];
+  nested?: boolean;
+  callsById?: Map<Call['id'], Call>;
+}) => {
   const colors = useThemeColors();
   if (nested) {
     return <span style={{ color: colors.base }}>[…]</span>;
   }
-  const nodes = value.slice(0, 3).map((v) => <Node key={v} value={v} nested />);
+  const nodes = value
+    .slice(0, 3)
+    .map((v) => <Node key={JSON.stringify(v)} value={v} nested callsById={callsById} />);
   const nodelist = interleave(nodes, <span>, </span>);
   if (value.length <= 3) {
     return <span style={{ color: colors.base }}>[{nodelist}]</span>;

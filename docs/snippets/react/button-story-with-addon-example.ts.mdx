@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { Button } from './Button';
 
@@ -22,5 +22,5 @@ export default {
   },
 } as ComponentMeta<typeof Button>;
 
-const Basic: ComponentStory<typeof Button> = () => <Button>hello</Button>;
+const Basic: ComponentStoryFn<typeof Button> = () => <Button>hello</Button>;
 ```

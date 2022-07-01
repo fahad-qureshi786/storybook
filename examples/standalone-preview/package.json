@@ -1,20 +1,20 @@
 {
   "name": "standalone-preview",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "private": true,
   "scripts": {
     "storybook": "cross-env STORYBOOK_DISPLAY_WARNING=true DISPLAY_WARNING=true storybook dev -p 9011 -c ../official-storybook --no-manager-cache --preview-url=http://localhost:1337/external-iframe.html",
     "storybook-preview": "cross-env PREVIEW_URL=external-iframe.html parcel ./storybook.html --port 1337"
   },
   "devDependencies": {
-    "@storybook/addon-docs": "7.0.0-alpha.3",
-    "@storybook/cli": "7.0.0-alpha.3",
-    "@storybook/react": "7.0.0-alpha.3",
-    "@storybook/react-webpack5": "7.0.0-alpha.3",
+    "@storybook/addon-docs": "7.0.0-alpha.8",
+    "@storybook/cli": "7.0.0-alpha.8",
+    "@storybook/react": "7.0.0-alpha.8",
+    "@storybook/react-webpack5": "7.0.0-alpha.8",
     "cross-env": "^7.0.3",
     "parcel": "2.0.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "storybook": "7.0.0-alpha.3"
+    "storybook": "7.0.0-alpha.8"
   }
 }

@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import cpy from 'cpy';
 import fs from 'fs-extra';
 import path, { join } from 'path';
 import dedent from 'ts-dedent';
@@ -7,7 +6,6 @@ import global from 'global';
 
 import { logger } from '@storybook/node-logger';
 import { telemetry } from '@storybook/telemetry';
-
 import type {
   LoadOptions,
   CLIOptions,
@@ -29,7 +27,7 @@ import {
   copyAllStaticFilesRelativeToMain,
 } from './utils/copy-all-static-files';
 import { getBuilders } from './utils/get-builders';
-import { extractStoriesJson } from './utils/stories-json';
+import { extractStoriesJson, convertToIndexV3 } from './utils/stories-json';
 import { extractStorybookMetadata } from './utils/metadata';
 import { StoryIndexGenerator } from './utils/StoryIndexGenerator';
 
@@ -61,7 +59,7 @@ export async function buildStaticStandalone(
   }
   await fs.emptyDir(options.outputDir);
 
-  await cpy(defaultFavIcon, options.outputDir);
+  await fs.copyFile(defaultFavIcon, path.join(options.outputDir, path.basename(defaultFavIcon)));
 
   const { getPrebuiltDir } = await import('@storybook/manager-webpack5/prebuilt-manager');
 
@@ -141,8 +139,12 @@ export async function buildStaticStandalone(
     extractTasks.push(
       extractStoriesJson(
         path.join(options.outputDir, 'stories.json'),
-        initializedStoryIndexGenerator
+        initializedStoryIndexGenerator,
+        convertToIndexV3
       )
+    );
+    extractTasks.push(
+      extractStoriesJson(path.join(options.outputDir, 'index.json'), initializedStoryIndexGenerator)
     );
   }
 
@@ -157,7 +159,7 @@ export async function buildStaticStandalone(
       const payload = storyIndex
         ? {
             storyIndex: {
-              storyCount: Object.keys(storyIndex.stories).length,
+              storyCount: Object.keys(storyIndex.entries).length,
               version: storyIndex.v,
             },
           }
@@ -188,7 +190,7 @@ export async function buildStaticStandalone(
   const startTime = process.hrtime();
   // When using the prebuilt manager, we straight up copy it into the outputDir instead of building it
   const manager = prebuiltDir
-    ? cpy('**', options.outputDir, { cwd: prebuiltDir, parents: true }).then(() => {})
+    ? fs.copy(prebuiltDir, options.outputDir, { dereference: true }).then(() => {})
     : managerBuilder.build({ startTime, options: fullOptions });
 
   if (options.ignorePreview) {

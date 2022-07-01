@@ -413,7 +413,7 @@ Object {
                       },
                     ],
                   ],
-                  "test": "/\\\\.(mjs|jsx?)$/",
+                  "test": "/\\\\.(cjs|mjs|jsx?)$/",
                 },
               ],
               "plugins": Array [
@@ -459,7 +459,7 @@ Object {
                       },
                     ],
                   ],
-                  "test": "/\\\\.(mjs|jsx?)$/",
+                  "test": "/\\\\.(cjs|mjs|jsx?)$/",
                 },
               ],
               "plugins": Array [
@@ -494,6 +494,16 @@ Object {
           "inspectLocalDependencies": true,
         },
         "test": "/\\\\.(stories|story)\\\\.[tj]sx?$/",
+      },
+      Object {
+        "test": "/\\\\.m?js$/",
+        "type": "javascript/auto",
+      },
+      Object {
+        "resolve": Object {
+          "fullySpecified": false,
+        },
+        "test": "/\\\\.m?js$/",
       },
     ],
   },

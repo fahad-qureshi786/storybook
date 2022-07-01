@@ -151,7 +151,7 @@ export function groupArgsByTarget<TArgs = Args>({
 }: StoryContext<AnyFramework, TArgs>) {
   const groupedArgs: Record<string, Partial<TArgs>> = {};
   (Object.entries(args) as [keyof TArgs, any][]).forEach(([name, value]) => {
-    const { target = NO_TARGET_NAME } = (argTypes[name] || {}) as { target: string };
+    const { target = NO_TARGET_NAME } = (argTypes[name] || {}) as { target?: string };
 
     groupedArgs[target] = groupedArgs[target] || {};
     groupedArgs[target][name] = value;

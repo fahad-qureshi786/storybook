@@ -15,7 +15,7 @@ export interface SubState {
   settings: Settings;
 }
 
-export const init: ModuleFn = ({ store, navigate, fullAPI }) => {
+export const init: ModuleFn<SubAPI, SubState> = ({ store, navigate, fullAPI }) => {
   const isSettingsScreenActive = () => {
     const { path } = fullAPI.getUrlState();
     return !!(path || '').match(/^\/settings/);
@@ -49,9 +49,5 @@ export const init: ModuleFn = ({ store, navigate, fullAPI }) => {
     },
   };
 
-  const initModule = async () => {
-    await store.setState({ settings: { lastTrackedStoryId: null } });
-  };
-
-  return { init: initModule, api };
+  return { state: { settings: { lastTrackedStoryId: null } }, api };
 };

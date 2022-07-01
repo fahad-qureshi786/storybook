@@ -1,7 +1,7 @@
 ```ts
 // LoginForm.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -18,13 +18,13 @@ export default {
   component: LoginForm,
 } as Meta;
 
-const Template: Story = (args) => ({
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const EmptyForm: Story = Template.bind({});
+export const EmptyForm: StoryFn = Template.bind({});
 
-export const FilledForm: Story = Template.bind({});
+export const FilledForm: StoryFn = Template.bind({});
 FilledForm.play = async ({ canvasElement }) => {
   // Starts querying the component from its root element
   const canvas = within(canvasElement);

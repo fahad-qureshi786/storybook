@@ -12,6 +12,7 @@ import type {
   StoryKind,
   StoryName,
   Args,
+  ComponentTitle,
 } from '@storybook/csf';
 
 import { Addon } from './index';
@@ -50,19 +51,32 @@ export interface StorySortObjectParameter {
   includeNames?: boolean;
 }
 
-interface StoryIndexEntry {
+type Path = string;
+interface BaseIndexEntry {
   id: StoryId;
   name: StoryName;
-  title: string;
-  importPath: string;
+  title: ComponentTitle;
+  importPath: Path;
 }
+export type StoryIndexEntry = BaseIndexEntry & {
+  type: 'story';
+};
+
+export type DocsIndexEntry = BaseIndexEntry & {
+  storiesImports: Path[];
+  type: 'docs';
+  legacy?: boolean;
+};
+export type IndexEntry = StoryIndexEntry | DocsIndexEntry;
 
 // The `any` here is the story store's `StoreItem` record. Ideally we should probably only
 // pass a defined subset of that full data, but we pass it all so far :shrug:
 export type StorySortComparator = Comparator<[StoryId, any, Parameters, Parameters]>;
 export type StorySortParameter = StorySortComparator | StorySortObjectParameter;
-export type StorySortComparatorV7 = Comparator<StoryIndexEntry>;
+export type StorySortComparatorV7 = Comparator<IndexEntry>;
 export type StorySortParameterV7 = StorySortComparatorV7 | StorySortObjectParameter;
+
+// TODO: remove all these types, they belong in the renderer and csf-package
 
 export interface OptionsParameter extends Object {
   storySort?: StorySortParameter;
@@ -82,7 +96,8 @@ export interface Parameters {
   [key: string]: any;
 }
 
-export type StoryContext = StoryContextForFramework<AnyFramework>;
+export type StoryContext<TFramework extends AnyFramework = AnyFramework> =
+  StoryContextForFramework<TFramework>;
 export type StoryContextUpdate = Partial<StoryContext>;
 
 type ReturnTypeFramework<ReturnType> = { component: any; storyResult: ReturnType };

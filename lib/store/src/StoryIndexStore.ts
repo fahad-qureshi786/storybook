@@ -1,20 +1,25 @@
 import dedent from 'ts-dedent';
-import { Channel } from '@storybook/addons';
 import type { StoryId } from '@storybook/csf';
+import memoize from 'memoizerific';
 
-import type { StorySpecifier, StoryIndex, StoryIndexEntry } from './types';
+import type { StorySpecifier, StoryIndex, IndexEntry, Path } from './types';
+
+const getImportPathMap = memoize(1)((entries: StoryIndex['entries']) =>
+  Object.values(entries).reduce((acc, entry) => {
+    acc[entry.importPath] = acc[entry.importPath] || entry;
+    return acc;
+  }, {} as Record<Path, IndexEntry>)
+);
 
 export class StoryIndexStore {
-  channel: Channel;
+  entries: StoryIndex['entries'];
 
-  stories: StoryIndex['stories'];
-
-  constructor({ stories }: StoryIndex = { v: 3, stories: {} }) {
-    this.stories = stories;
+  constructor({ entries }: StoryIndex = { v: 4, entries: {} }) {
+    this.entries = entries;
   }
 
   storyIdFromSpecifier(specifier: StorySpecifier) {
-    const storyIds = Object.keys(this.stories);
+    const storyIds = Object.keys(this.entries);
     if (specifier === '*') {
       // '*' means select the first story. If there is none, we have no selection.
       return storyIds[0];
@@ -31,23 +36,27 @@ export class StoryIndexStore {
 
     // Try and find a story matching the name/kind, setting no selection if they don't exist.
     const { name, title } = specifier;
-    const match = Object.entries(this.stories).find(
+    const match = Object.entries(this.entries).find(
       ([id, story]) => story.name === name && story.title === title
     );
 
     return match && match[0];
   }
 
-  storyIdToEntry(storyId: StoryId): StoryIndexEntry {
-    const storyEntry = this.stories[storyId];
+  storyIdToEntry(storyId: StoryId): IndexEntry {
+    const storyEntry = this.entries[storyId];
     if (!storyEntry) {
       throw new Error(dedent`Couldn't find story matching '${storyId}' after HMR.
       - Did you remove it from your CSF file?
       - Are you sure a story with that id exists?
-      - Please check your stories field of your main.js config.
+      - Please check your entries field of your main.js config.
       - Also check the browser console and terminal for error messages.`);
     }
 
     return storyEntry;
+  }
+
+  importPathToEntry(importPath: Path): IndexEntry {
+    return getImportPathMap(this.entries)[importPath];
   }
 }

@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { MyComponent } from './MyComponent.component';
 
@@ -21,7 +21,7 @@ const image = {
   alt: 'my image',
 };
 
-export const WithAnImage: Story () => ({
+export const WithAnImage: StoryFn () => ({
   template: `<img src="{{src}}" alt="{{alt}}" />`,
   props: {
     src: image.src,

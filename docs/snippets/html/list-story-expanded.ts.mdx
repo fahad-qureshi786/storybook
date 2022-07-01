@@ -1,0 +1,29 @@
+
+```ts
+// List.stories.ts
+
+import { Meta, StoryFn } from '@storybook/html';
+
+import { createList, ListArgs } from  './List';
+import { createListItem } from './ListItem';
+
+export default {
+  title: 'List',
+} as Meta<ListArgs>;
+
+export const Empty: StoryFn<ListArgs> = (args) => createList(args);
+
+export const OneItem: StoryFn<ListArgs> = (args) => {
+  const list = createList(args);
+  list.appendChild(createListItem());
+  return list;
+};
+
+export const ManyItems: StoryFn<ListArgs> = (args) => {
+  const list = createList(args);
+  list.appendChild(createListItem());
+  list.appendChild(createListItem());
+  list.appendChild(createListItem());
+  return list;
+};
+```

@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { MyComponent } from './MyComponent';
 
@@ -23,7 +23,7 @@ export default {
 export const simpleData = { foo: 1, bar: 'baz' };
 export const complexData = { foo: 1, foobar: { bar: 'baz', baz: someData } };
 
-const Template: ComponentStory<typeof MyComponent> = (args) => <MyComponent {...args} />;
+const Template: ComponentStoryFn<typeof MyComponent> = (args) => <MyComponent {...args} />;
 
 export const SimpleStory = Template.bind({});
 SimpleStory.args = {

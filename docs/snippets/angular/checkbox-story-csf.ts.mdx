@@ -1,7 +1,7 @@
 ```ts
 // Checkbox.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { Checkbox } from './Checkbox.component';
 
@@ -14,7 +14,7 @@ export default {
   component: Checkbox,
 } as Meta;
 
-export const allCheckboxes: Story = () => ({
+export const allCheckboxes: StoryFn = () => ({
   template: `
     <form>
       <Checkbox id="Unchecked" label="Unchecked" />

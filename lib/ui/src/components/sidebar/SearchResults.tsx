@@ -158,7 +158,7 @@ const Result: FunctionComponent<
     );
   }
 
-  const TreeNode = item.isComponent ? ComponentNode : StoryNode;
+  const TreeNode = item.type === 'component' ? ComponentNode : StoryNode;
   return (
     <ResultRow {...props}>
       <TreeNode isExpanded={false} depth={0} onClick={onClick} title={title}>

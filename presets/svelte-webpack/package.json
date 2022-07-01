@@ -1,6 +1,6 @@
 {
   "name": "@storybook/preset-svelte-webpack",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.8",
   "description": "Storybook for Svelte: Develop Svelte Component in isolation with Hot Reloading.",
   "keywords": [
     "storybook"
@@ -19,22 +19,53 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./preset": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/framework-preset-svelte-docs": {
+      "require": "./dist/framework-preset-svelte-docs.js",
+      "import": "./dist/framework-preset-svelte-docs.mjs",
+      "types": "./dist/framework-preset-svelte-docs.d.ts"
+    },
+    "./dist/framework-preset-svelte": {
+      "require": "./dist/framework-preset-svelte.js",
+      "import": "./dist/framework-preset-svelte.mjs",
+      "types": "./dist/framework-preset-svelte.d.ts"
+    },
+    "./dist/svelte-docgen-loader": {
+      "require": "./dist/svelte-docgen-loader.js",
+      "import": "./dist/svelte-docgen-loader.mjs",
+      "types": "./dist/svelte-docgen-loader.d.ts"
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json",
+      "types": "./package.json"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
-    "templates/**/*",
     "README.md",
     "*.js",
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/core-webpack": "7.0.0-alpha.3",
-    "@storybook/node-logger": "7.0.0-alpha.3",
+    "@storybook/core-webpack": "7.0.0-alpha.8",
+    "@storybook/node-logger": "7.0.0-alpha.8",
     "core-js": "^3.8.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
@@ -42,6 +73,7 @@
     "ts-dedent": "^2.0.0"
   },
   "devDependencies": {
+    "@digitak/esrun": "^3.2.2",
     "svelte": "^3.31.2",
     "svelte-loader": "^3.1.2"
   },
@@ -56,5 +88,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "629b056190993bcee6445471b8cb27208eb401a9"
+  "bundlerEntrypoint": [
+    "./src/index.ts",
+    "./src/framework-preset-svelte-docs.ts",
+    "./src/framework-preset-svelte.ts",
+    "./src/svelte-docgen-loader.ts"
+  ],
+  "gitHead": "24725501c32a073cebc6bf2674a47357136fbe3a"
 }

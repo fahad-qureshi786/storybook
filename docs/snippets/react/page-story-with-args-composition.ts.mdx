@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
 
 import { DocumentScreen } from './YourPage';
 
@@ -21,7 +21,7 @@ export default {
 } as ComponentMeta<typeof DocumentScreen>;
 
 
-const Template: ComponentStory<typeof DocumentScreen> = (args) => <DocumentScreen {...args} />;
+const Template: ComponentStoryFn<typeof DocumentScreen> = (args) => <DocumentScreen {...args} />;
 
 export const Simple = Template.bind({});
 Simple.args = {

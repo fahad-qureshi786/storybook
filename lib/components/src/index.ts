@@ -37,6 +37,7 @@ export type {
   SyntaxHighlighterRendererProps,
 } from './syntaxhighlighter/syntaxhighlighter-types';
 export { SyntaxHighlighter } from './syntaxhighlighter/lazy-syntaxhighlighter';
+export { createCopyToClipboardFunction } from './syntaxhighlighter/syntaxhighlighter';
 
 // UI
 export { ActionBar } from './ActionBar/ActionBar';
@@ -44,6 +45,7 @@ export { Spaced } from './spaced/Spaced';
 export { Placeholder } from './placeholder/placeholder';
 export { ScrollArea } from './ScrollArea/ScrollArea';
 export { Zoom } from './Zoom/Zoom';
+export type { ActionItem } from './ActionBar/ActionBar';
 
 // Forms
 export { Button } from './Button/Button';
@@ -57,7 +59,7 @@ export { TooltipLinkList } from './tooltip/TooltipLinkList';
 
 // Toolbar and subcomponents
 export { Tabs, TabsState, TabBar, TabWrapper } from './tabs/tabs';
-export { IconButton, TabButton } from './bar/button';
+export { IconButton, IconButtonSkeleton, TabButton } from './bar/button';
 export { Separator, interleaveSeparators } from './bar/separator';
 export { Bar, FlexBar } from './bar/bar';
 export { AddonPanel } from './addon-panel/addon-panel';
@@ -68,10 +70,6 @@ export { Icons, Symbols } from './icon/icon';
 export { StorybookLogo } from './brand/StorybookLogo';
 export { StorybookIcon } from './brand/StorybookIcon';
 
-// Doc blocks
-export * from './blocks';
-export * from './controls';
-
 // Loader
 export { Loader } from './Loader/Loader';
 
@@ -79,6 +77,9 @@ export { Loader } from './Loader/Loader';
 export { getStoryHref } from './utils/getStoryHref';
 
 export * from './typography/DocumentFormatting';
+export * from './typography/ResetWrapper';
+
+export { withReset, codeCommon } from './typography/lib/common';
 
 // eslint-disable-next-line prefer-destructuring
 export const components = typography.components;

@@ -1,7 +1,7 @@
 ```ts
 // Button.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, StoryFn } from '@storybook/angular';
 
 import { Button } from './button.component';
 
@@ -14,7 +14,7 @@ export default {
   component: Button,
 };
 
-export const Primary: Story = () => ({
+export const Primary: StoryFn = () => ({
   props: {
     label: 'Button',
     backgroundColor: '#ff0',
@@ -22,14 +22,14 @@ export const Primary: Story = () => ({
 });
 
 
-export const Secondary: Story = () => ({
+export const Secondary: StoryFn = () => ({
   props: {
     label: '😄👍😍💯',
     backgroundColor: '#ff0',
   },
 });
 
-export const Tertiary: Story = () => ({
+export const Tertiary: StoryFn = () => ({
   props: {
     label: '📚📕📈🤓',
     backgroundColor: '#ff0',

@@ -1,4 +1,4 @@
-import type { Options, StorybookConfig as BaseStorybookConfig } from '@storybook/core-common';
+import type { Options, StorybookConfig as StorybookConfigBase } from '@storybook/core-common';
 
 export type { Options, Preset, BuilderResult, TypescriptOptions } from '@storybook/core-common';
 
@@ -10,33 +10,33 @@ export type ModuleConfig = {
 
 export type ResolveConfig = {
   extensions?: string[];
-  mainFields?: string[] | string[][];
+  mainFields?: (string | string[])[] | undefined;
   alias?: any;
 };
 
-export interface CommonWebpackConfiguration {
+export interface WebpackConfiguration {
   plugins?: any[];
   module?: ModuleConfig;
   resolve?: ResolveConfig;
   optimization?: any;
-  devtool?: boolean | string;
+  devtool?: false | string;
 }
 
-export interface StorybookWebpackConfig<TConfiguration = CommonWebpackConfiguration> {
+export type StorybookConfig<TWebpackConfiguration = WebpackConfiguration> = StorybookConfigBase & {
   /**
    * Modify or return a custom Webpack config after the Storybook's default configuration
    * has run (mostly used by addons).
    */
-  webpack?: (config: TConfiguration, options: Options) => TConfiguration | Promise<TConfiguration>;
+  webpack?: (
+    config: TWebpackConfiguration,
+    options: Options
+  ) => TWebpackConfiguration | Promise<TWebpackConfiguration>;
 
   /**
    * Modify or return a custom Webpack config after every addon has run.
    */
   webpackFinal?: (
-    config: TConfiguration,
+    config: TWebpackConfiguration,
     options: Options
-  ) => TConfiguration | Promise<TConfiguration>;
-}
-
-export type StorybookConfig<TWebpackConfiguration = CommonWebpackConfiguration> =
-  BaseStorybookConfig & StorybookWebpackConfig<TWebpackConfiguration>;
+  ) => TWebpackConfiguration | Promise<TWebpackConfiguration>;
+};

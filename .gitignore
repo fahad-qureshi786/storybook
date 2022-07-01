@@ -36,6 +36,7 @@ lib/manager-webpack5/prebuilt
 lib/manager-webpack5/prebuilt
 examples/angular-cli/addon-jest.testresults.json
 junit.xml
+.next
 
 # Yarn stuff
 /**/.yarn/*
@@ -44,3 +45,4 @@ junit.xml
 !/**/.yarn/sdks
 !/**/.yarn/versions
 /**/.pnp.*
+config.bat

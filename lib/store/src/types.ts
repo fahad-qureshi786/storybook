@@ -22,16 +22,27 @@ import type {
   PartialStoryFn,
   Parameters,
 } from '@storybook/csf';
+import type { StoryIndexEntry, DocsIndexEntry, IndexEntry } from '@storybook/addons';
 
+export type { StoryIndexEntry, DocsIndexEntry, IndexEntry };
 export type { StoryId, Parameters };
 export type Path = string;
-export type ModuleExports = Record<string, any>;
+export type ModuleExport = any;
+export type ModuleExports = Record<string, ModuleExport>;
 export type PromiseLike<T> = Promise<T> | SynchronousPromise<T>;
 export type ModuleImportFn = (path: Path) => PromiseLike<ModuleExports>;
 
+type MaybePromise<T> = Promise<T> | T;
+
+export type TeardownRenderToDOM = () => MaybePromise<void>;
+export type RenderToDOM<TFramework extends AnyFramework> = (
+  context: RenderContext<TFramework>,
+  element: Element
+) => MaybePromise<void | TeardownRenderToDOM>;
+
 export type WebProjectAnnotations<TFramework extends AnyFramework> =
   ProjectAnnotations<TFramework> & {
-    renderToDOM?: (context: RenderContext<TFramework>, element: Element) => Promise<void> | void;
+    renderToDOM?: RenderToDOM<TFramework>;
   };
 
 export type NormalizedProjectAnnotations<TFramework extends AnyFramework = AnyFramework> =
@@ -42,8 +53,9 @@ export type NormalizedProjectAnnotations<TFramework extends AnyFramework = AnyFr
 
 export type NormalizedComponentAnnotations<TFramework extends AnyFramework = AnyFramework> =
   ComponentAnnotations<TFramework> & {
-    // Useful to guarantee that id exists
+    // Useful to guarantee that id & title exists
     id: ComponentId;
+    title: ComponentTitle;
     argTypes?: StrictArgTypes;
   };
 
@@ -51,9 +63,11 @@ export type NormalizedStoryAnnotations<TFramework extends AnyFramework = AnyFram
   StoryAnnotations<TFramework>,
   'storyName' | 'story'
 > & {
+  moduleExport: ModuleExport;
   // You cannot actually set id on story annotations, but we normalize it to be there for convience
   id: StoryId;
   argTypes?: StrictArgTypes;
+  name: StoryName;
   userStoryFn?: StoryFn<TFramework>;
 };
 
@@ -64,13 +78,16 @@ export type CSFFile<TFramework extends AnyFramework = AnyFramework> = {
 
 export type Story<TFramework extends AnyFramework = AnyFramework> =
   StoryContextForEnhancers<TFramework> & {
+    moduleExport: ModuleExport;
     originalStoryFn: StoryFn<TFramework>;
     undecoratedStoryFn: LegacyStoryFn<TFramework>;
     unboundStoryFn: LegacyStoryFn<TFramework>;
     applyLoaders: (
       context: StoryContextForLoaders<TFramework>
-    ) => Promise<StoryContext<TFramework>>;
-    playFunction: (context: StoryContext<TFramework>) => Promise<void> | void;
+    ) => Promise<
+      StoryContextForLoaders<TFramework> & { loaded: StoryContext<TFramework>['loaded'] }
+    >;
+    playFunction?: (context: StoryContext<TFramework>) => Promise<void> | void;
   };
 
 export type BoundStory<TFramework extends AnyFramework = AnyFramework> = Story<TFramework> & {
@@ -88,22 +105,20 @@ export declare type RenderContext<TFramework extends AnyFramework = AnyFramework
     unboundStoryFn: LegacyStoryFn<TFramework>;
   };
 
-export interface StoryIndexEntry {
-  id: StoryId;
-  name: StoryName;
-  title: ComponentTitle;
-  importPath: Path;
-}
-
-export interface V2CompatIndexEntry extends StoryIndexEntry {
+export interface V2CompatIndexEntry extends Omit<StoryIndexEntry, 'type'> {
   kind: StoryIndexEntry['title'];
   story: StoryIndexEntry['name'];
   parameters: Parameters;
 }
 
+export interface StoryIndexV3 {
+  v: number;
+  stories: Record<StoryId, V2CompatIndexEntry>;
+}
+
 export interface StoryIndex {
   v: number;
-  stories: Record<StoryId, StoryIndexEntry>;
+  entries: Record<StoryId, IndexEntry>;
 }
 
 export type StorySpecifier = StoryId | { name: StoryName; title: ComponentTitle } | '*';

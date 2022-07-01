@@ -1,17 +1,49 @@
-import type { StorybookConfig as BaseConfig } from '@storybook/core-common';
+import type {
+  StorybookConfig as StorybookConfigBase,
+  TypescriptOptions as TypescriptOptionsReact,
+} from '@storybook/core-webpack';
+import type {
+  StorybookConfigWebpack,
+  BuilderOptions,
+  TypescriptOptions as TypescriptOptionsBuilder,
+} from '@storybook/builder-webpack5';
 
-export interface AngularOptions {
-  enableIvy: boolean;
-}
+type FrameworkName = '@storybook/angular';
+type BuilderName = '@storybook/builder-webpack5';
+
+export type FrameworkOptions = AngularOptions & {
+  builder?: BuilderOptions;
+};
+
+type StorybookConfigFramework = {
+  framework:
+    | FrameworkName
+    | {
+        name: FrameworkName;
+        options: FrameworkOptions;
+      };
+  core?: StorybookConfigBase['core'] & {
+    builder?:
+      | BuilderName
+      | {
+          name: BuilderName;
+          options: BuilderOptions;
+        };
+  };
+  typescript?: Partial<TypescriptOptionsBuilder & TypescriptOptionsReact> &
+    StorybookConfigBase['typescript'];
+};
 
 /**
  * The interface for Storybook configuration in `main.ts` files.
  */
-export interface StorybookConfig extends BaseConfig {
-  framework:
-    | string
-    | {
-        name: '@storybook/angular';
-        options: AngularOptions;
-      };
+export type StorybookConfig = Omit<
+  StorybookConfigBase,
+  keyof StorybookConfigWebpack | keyof StorybookConfigFramework
+> &
+  StorybookConfigWebpack &
+  StorybookConfigFramework;
+
+export interface AngularOptions {
+  enableIvy: boolean;
 }

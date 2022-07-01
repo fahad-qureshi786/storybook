@@ -1,17 +1,23 @@
-import type { StorybookConfig } from '@storybook/preset-react-webpack';
 import path from 'path';
+import type { PresetProperty } from '@storybook/core-common';
+import type { StorybookConfig } from './types';
 
-export const addons: StorybookConfig['addons'] = [
+export const addons: PresetProperty<'addons', StorybookConfig> = [
   path.dirname(require.resolve(path.join('@storybook/preset-react-webpack', 'package.json'))),
   path.dirname(require.resolve(path.join('@storybook/react', 'package.json'))),
 ];
 
-export const core = async (config: StorybookConfig['core']) => {
+export const core: PresetProperty<'core', StorybookConfig> = async (config, options) => {
+  const framework = await options.presets.apply<StorybookConfig['framework']>('framework');
+
   return {
     ...config,
-    builder: path.dirname(
-      require.resolve(path.join('@storybook/builder-webpack5', 'package.json'))
-    ),
+    builder: {
+      name: path.dirname(
+        require.resolve(path.join('@storybook/builder-webpack5', 'package.json'))
+      ) as '@storybook/builder-webpack5',
+      options: typeof framework === 'string' ? {} : framework.options.builder || {},
+    },
   };
 };
 

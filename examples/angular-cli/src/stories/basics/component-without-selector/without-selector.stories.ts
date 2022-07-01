@@ -1,4 +1,4 @@
-import { moduleMetadata, Story, Meta } from '@storybook/angular';
+import { moduleMetadata, StoryFn, Meta } from '@storybook/angular';
 import { WithoutSelectorComponent, WITHOUT_SELECTOR_DATA } from './without-selector.component';
 
 export default {
@@ -11,11 +11,11 @@ export default {
   ],
 } as Meta;
 
-export const SimpleComponent: Story = () => ({});
+export const SimpleComponent: StoryFn = () => ({});
 
 // Live changing of args by controls does not work for now. When changing args storybook does not fully
 // reload and therefore does not take into account the change of provider.
-export const WithInjectionTokenAndArgs: Story = (args) => ({
+export const WithInjectionTokenAndArgs: StoryFn = (args) => ({
   props: args,
   moduleMetadata: {
     providers: [
