@@ -6,17 +6,20 @@ title: 'Play function'
 
 ## Setup the interactions addon
 
-We recommend installing Storybook's [`addon-interactions`](/addons/@storybook/addon-interactions/) before you start writing stories with the `play` function. It's the perfect complement for it, including a handy set of UI controls to allow you command over the execution flow. At any time, you can pause, resume, rewind, and step through each interaction. Also providing you with an easy-to-use debugger for potential issues.
+We recommend installing Storybook's [`addon-interactions`](https://storybook.js.org/addons/@storybook/addon-interactions) before you start writing stories with the `play` function. It's the perfect complement for it, including a handy set of UI controls to allow you command over the execution flow. At any time, you can pause, resume, rewind, and step through each interaction. Also providing you with an easy-to-use debugger for potential issues.
 
 Run the following command to install the addon and the required dependencies.
 
-```shell
-# With npm
-npm install @storybook/addon-interactions @storybook/testing-library --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-interactions @storybook/testing-library
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-interactions-addon-full-install.yarn.js.mdx',
+    'common/storybook-addon-interactions-addon-full-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Update your Storybook configuration (in `.storybook/main.js`) to include the interactions addon.
 
@@ -29,8 +32,6 @@ Update your Storybook configuration (in `.storybook/main.js`) to include the int
 />
 
 <!-- prettier-ignore-end -->
-
-![Storybook's addon-interaction controls](./storybook-addon-interaction-controls.gif)
 
 ## Writing stories with the play function
 
@@ -187,7 +188,7 @@ If you need, you can also adjust your `play` function to find elements based on 
 <!-- prettier-ignore-end -->
 
 <div class="aside">
- 💡 <strong>Note:</strong> You can read more about the querying elements in the <a href="https://testing-library.com/docs/queries/about/"> Testing library documentation</a>.
+ 💡 You can read more about the querying elements in the <a href="https://testing-library.com/docs/queries/about/"> Testing library documentation</a>.
 </div>
 
 ## Working with the Canvas
@@ -212,4 +213,4 @@ By default, each interaction you write inside your `play` function will be execu
 
 <!-- prettier-ignore-end -->
 
-Applying these changes to your stories can provide a performance boost and improved error handling with [`addon-interactions`](/addons/@storybook/addon-interactions/).
+Applying these changes to your stories can provide a performance boost and improved error handling with [`addon-interactions`](https://storybook.js.org/addons/@storybook/addon-interactions).

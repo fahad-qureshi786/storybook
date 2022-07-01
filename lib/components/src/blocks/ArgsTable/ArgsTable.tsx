@@ -1,14 +1,16 @@
 import React, { FC } from 'react';
 import pickBy from 'lodash/pickBy';
-import { styled, ignoreSsrWarning } from '@storybook/theming';
+import { styled } from '@storybook/theming';
 import { opacify, transparentize, darken, lighten } from 'polished';
+import { includeConditionalArg } from '@storybook/csf';
+import { once } from '@storybook/client-logger';
 import { Icons } from '../../icon/icon';
 import { ArgRow } from './ArgRow';
 import { SectionRow } from './SectionRow';
-import { ArgType, ArgTypes, Args } from './types';
+import { ArgType, ArgTypes, Args, Globals } from './types';
 import { EmptyBlock } from '../EmptyBlock';
 import { Link } from '../../typography/link/link';
-import { ResetWrapper } from '../../typography/DocumentFormatting';
+import { ResetWrapper } from '../../typography/ResetWrapper';
 
 export const TableWrapper = styled.table<{
   compact?: boolean;
@@ -109,20 +111,20 @@ export const TableWrapper = styled.table<{
       marginLeft: inAddonPanel ? 0 : 1,
       marginRight: inAddonPanel ? 0 : 1,
 
-      [`tr:first-child${ignoreSsrWarning}`]: {
-        [`td:first-child${ignoreSsrWarning}, th:first-child${ignoreSsrWarning}`]: {
+      [`tr:first-child`]: {
+        [`td:first-child, th:first-child`]: {
           borderTopLeftRadius: inAddonPanel ? 0 : theme.appBorderRadius,
         },
-        [`td:last-child${ignoreSsrWarning}, th:last-child${ignoreSsrWarning}`]: {
+        [`td:last-child, th:last-child`]: {
           borderTopRightRadius: inAddonPanel ? 0 : theme.appBorderRadius,
         },
       },
 
-      [`tr:last-child${ignoreSsrWarning}`]: {
-        [`td:first-child${ignoreSsrWarning}, th:first-child${ignoreSsrWarning}`]: {
+      [`tr:last-child`]: {
+        [`td:first-child, th:first-child`]: {
           borderBottomLeftRadius: inAddonPanel ? 0 : theme.appBorderRadius,
         },
-        [`td:last-child${ignoreSsrWarning}, th:last-child${ignoreSsrWarning}`]: {
+        [`td:last-child, th:last-child`]: {
           borderBottomRightRadius: inAddonPanel ? 0 : theme.appBorderRadius,
         },
       },
@@ -170,7 +172,7 @@ export const TableWrapper = styled.table<{
                     : lighten(0.05, theme.background.content),
               }
             : {
-                [`&:not(:first-child${ignoreSsrWarning})`]: {
+                [`&:not(:first-child)`]: {
                   borderTopWidth: 1,
                   borderTopStyle: 'solid',
                   borderTopColor:
@@ -270,6 +272,7 @@ export interface ArgsTableOptionProps {
 export interface ArgsTableDataProps {
   rows: ArgTypes;
   args?: Args;
+  globals?: Globals;
 }
 
 export interface ArgsTableErrorProps {
@@ -371,6 +374,22 @@ const groupRows = (rows: ArgType, sort: SortType) => {
 };
 
 /**
+ * Wrap CSF's `includeConditionalArg` in a try catch so that invalid
+ * conditionals don't break the entire UI. We can safely swallow the
+ * error because `includeConditionalArg` is also called in the preview
+ * in `prepareStory`, and that exception will be bubbled up into the
+ * UI in a red screen. Nevertheless, we log the error here just in case.
+ */
+const safeIncludeConditionalArg = (row: ArgType, args: Args, globals: Globals) => {
+  try {
+    return includeConditionalArg(row, args, globals);
+  } catch (err) {
+    once.warn(err.message);
+    return false;
+  }
+};
+
+/**
  * Display the props for a component as a props table. Each row is a collection of
  * ArgDefs, usually derived from docgen info for the component.
  */
@@ -395,10 +414,13 @@ export const ArgsTable: FC<ArgsTableProps> = (props) => {
     sort = 'none',
   } = props;
   const isLoading = 'isLoading' in props;
-  const { rows, args } = 'rows' in props ? props : argsTableLoadingData;
+  const { rows, args, globals } = 'rows' in props ? props : argsTableLoadingData;
 
   const groups = groupRows(
-    pickBy(rows, (row) => !row?.table?.disable),
+    pickBy(
+      rows,
+      (row) => !row?.table?.disable && safeIncludeConditionalArg(row, args || {}, globals || {})
+    ),
     sort
   );
 

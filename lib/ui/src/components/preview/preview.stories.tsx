@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { parsePath, createPath } from 'history';
-import { Provider as ManagerProvider, Combo, Consumer } from '@storybook/api';
+import type { Combo } from '@storybook/api';
+import { Provider as ManagerProvider, Consumer } from '@storybook/api';
 import { Location, BaseLocationProvider } from '@storybook/router';
 
 import { ThemeProvider, ensure as ensureTheme, themes } from '@storybook/theming';
 
-import { DecoratorFn } from '@storybook/react';
+import type { DecoratorFn } from '@storybook/react';
 import { Preview } from './preview';
 
 import { PrettyFakeProvider } from '../../FakeProvider';
@@ -114,6 +115,7 @@ export const HideAllDefaultTools = () => (
             parameters: {
               toolbar: {
                 title: { hidden: true },
+                remount: { hidden: true },
                 zoom: { hidden: true },
                 eject: { hidden: true },
                 copy: { hidden: true },
@@ -136,3 +138,17 @@ export const WithCanvasTab = () => (
 );
 
 export const WithTabs = () => <Preview {...previewProps} />;
+
+export const WithTabsHidden = () => (
+  <Consumer>
+    {({ api }: Combo) => {
+      return (
+        <Preview
+          {...previewProps}
+          options={{ ...previewProps.options, showTabs: false }}
+          api={{ ...api, getElements: () => ({}) }}
+        />
+      );
+    }}
+  </Consumer>
+);

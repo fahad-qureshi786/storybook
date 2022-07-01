@@ -4,7 +4,7 @@ import { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 import { CallStates } from '@storybook/instrumenter';
 import { styled } from '@storybook/theming';
 
-import { getCall } from './mocks';
+import { getCalls, getInteractions } from './mocks';
 import { AddonPanelPure } from './Panel';
 import SubnavStories from './components/Subnav/Subnav.stories';
 
@@ -20,6 +20,8 @@ const StyledWrapper = styled.div(({ theme }) => ({
   overflow: 'auto',
 }));
 
+const interactions = getInteractions(CallStates.DONE);
+
 export default {
   title: 'Addons/Interactions/Panel',
   component: AddonPanelPure,
@@ -34,10 +36,10 @@ export default {
     layout: 'fullscreen',
   },
   args: {
-    calls: new Map(),
+    calls: new Map(getCalls(CallStates.DONE).map((call) => [call.id, call])),
     controls: SubnavStories.args.controls,
     controlStates: SubnavStories.args.controlStates,
-    interactions: [getCall(CallStates.DONE)],
+    interactions,
     fileName: 'addon-interactions.stories.tsx',
     hasException: false,
     isPlaying: false,
@@ -52,14 +54,14 @@ type Story = ComponentStoryObj<typeof AddonPanelPure>;
 
 export const Passing: Story = {
   args: {
-    interactions: [getCall(CallStates.DONE)],
+    interactions: getInteractions(CallStates.DONE),
   },
 };
 
 export const Paused: Story = {
   args: {
     isPlaying: true,
-    interactions: [getCall(CallStates.WAITING)],
+    interactions: getInteractions(CallStates.WAITING),
     controlStates: {
       debugger: true,
       start: false,
@@ -68,20 +70,21 @@ export const Paused: Story = {
       next: true,
       end: true,
     },
+    pausedAt: interactions[interactions.length - 1].id,
   },
 };
 
 export const Playing: Story = {
   args: {
     isPlaying: true,
-    interactions: [getCall(CallStates.ACTIVE)],
+    interactions: getInteractions(CallStates.ACTIVE),
   },
 };
 
 export const Failed: Story = {
   args: {
     hasException: true,
-    interactions: [getCall(CallStates.ERROR)],
+    interactions: getInteractions(CallStates.ERROR),
   },
 };
 

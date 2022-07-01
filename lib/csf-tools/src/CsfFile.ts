@@ -127,8 +127,8 @@ const sortExports = (exportByName: Record<string, any>, order: string[]) => {
 };
 
 export interface CsfOptions {
-  defaultTitle: string;
   fileName?: string;
+  makeTitle: (userTitle: string) => string;
 }
 
 export class NoMetaError extends Error {
@@ -144,9 +144,9 @@ export class NoMetaError extends Error {
 export class CsfFile {
   _ast: t.File;
 
-  _defaultTitle: string;
-
   _fileName: string;
+
+  _makeTitle: (title: string) => string;
 
   _meta?: Meta;
 
@@ -162,10 +162,10 @@ export class CsfFile {
 
   _namedExportsOrder?: string[];
 
-  constructor(ast: t.File, { defaultTitle, fileName }: CsfOptions) {
+  constructor(ast: t.File, { fileName, makeTitle }: CsfOptions) {
     this._ast = ast;
-    this._defaultTitle = defaultTitle;
     this._fileName = fileName;
+    this._makeTitle = makeTitle;
   }
 
   _parseTitle(value: t.Node) {
@@ -213,20 +213,20 @@ export class CsfFile {
       ExportDefaultDeclaration: {
         enter({ node, parent }) {
           let metaNode: t.ObjectExpression;
-          if (t.isObjectExpression(node.declaration)) {
+          const decl =
+            t.isIdentifier(node.declaration) && t.isProgram(parent)
+              ? findVarInitialization(node.declaration.name, parent)
+              : node.declaration;
+
+          if (t.isObjectExpression(decl)) {
             // export default { ... };
-            metaNode = node.declaration;
+            metaNode = decl;
           } else if (
             // export default { ... } as Meta<...>
-            t.isTSAsExpression(node.declaration) &&
-            t.isObjectExpression(node.declaration.expression)
+            t.isTSAsExpression(decl) &&
+            t.isObjectExpression(decl.expression)
           ) {
-            metaNode = node.declaration.expression;
-          } else if (t.isIdentifier(node.declaration) && t.isProgram(parent)) {
-            const init = findVarInitialization(node.declaration.name, parent);
-            if (t.isObjectExpression(init)) {
-              metaNode = init;
-            }
+            metaNode = decl.expression;
           }
 
           if (!self._meta && metaNode && t.isProgram(parent)) {
@@ -270,6 +270,10 @@ export class CsfFile {
                         __isArgsStory = isArgsStory(p.value as t.Expression, parent, self);
                       } else if (p.key.name === 'name' && t.isStringLiteral(p.value)) {
                         name = p.value.value;
+                      } else if (p.key.name === 'storyName' && t.isStringLiteral(p.value)) {
+                        logger.warn(
+                          `Unexpected usage of "storyName" in "${exportName}". Please use "name" instead.`
+                        );
                       }
                       self._storyAnnotations[exportName][p.key.name] = p.value;
                     }
@@ -369,7 +373,7 @@ export class CsfFile {
 
     // default export can come at any point in the file, so we do this post processing last
     const entries = Object.entries(self._stories);
-    self._meta.title = self._meta.title || this._defaultTitle;
+    self._meta.title = this._makeTitle(self._meta.title);
     self._stories = entries.reduce((acc, [key, story]) => {
       if (isExportStory(key, self._meta)) {
         const id = toId(self._meta.id || self._meta.title, storyNameFromExport(key));
@@ -390,8 +394,18 @@ export class CsfFile {
     });
 
     if (self._namedExportsOrder) {
+      const unsortedExports = Object.keys(self._storyExports);
       self._storyExports = sortExports(self._storyExports, self._namedExportsOrder);
       self._stories = sortExports(self._stories, self._namedExportsOrder);
+
+      const sortedExports = Object.keys(self._storyExports);
+      if (unsortedExports.length !== sortedExports.length) {
+        throw new Error(
+          `Missing exports after sort: ${unsortedExports.filter(
+            (key) => !sortedExports.includes(key)
+          )}`
+        );
+      }
     }
 
     traverse(this._ast, {

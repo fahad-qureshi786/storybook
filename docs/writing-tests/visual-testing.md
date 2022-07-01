@@ -10,7 +10,7 @@ Ideal for verifying what the user sees: layout, color, size, and contrast. Story
 
 There are [many tools](https://github.com/mojoaxel/awesome-regression-testing) for visual testing. We recommend [Chromatic](https://www.chromatic.com) by Storybook maintainers to run visual tests in a lightning-fast cloud browser environment.
 
-For a self-managed alternative to Chromatic, we offer [StoryShots](https://github.com/storybookjs/storybook/tree/master/addons/storyshots). It allows you to run visual tests on stories by integrating with [jest-image-snapshot](https://github.com/storybookjs/storybook/tree/master/addons/storyshots#configure-storyshots-for-image-snapshots).
+For a self-managed alternative to Chromatic, we offer [StoryShots](https://github.com/storybookjs/storybook/tree/main/addons/storyshots). It allows you to run visual tests on stories by integrating with [jest-image-snapshot](https://github.com/storybookjs/storybook/tree/main/addons/storyshots/storyshots-puppeteer#imagesnapshots).
 
 ## Setup Chromatic addon
 
@@ -20,13 +20,18 @@ To get started, sign up with your [GitHub](https://github.com/), [GitLab](https:
 
 Next, install the [chromatic](https://www.npmjs.com/package/chromatic) CLI package from npm:
 
-```shell
-# With npm
-npm install chromatic --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev chromatic
-```
+<CodeSnippets
+  paths={[
+    'common/chromatic-install.yarn.js.mdx',
+    'common/chromatic-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+
 
 Run the following command after the package finishes installing:
 
@@ -35,7 +40,9 @@ npx chromatic --project-token <your-project-token>
 ```
 
 <div class="aside">
- <strong>Note:</strong> Don't forget to replace <code>your-project-token</code> with the one provided by Chromatic.
+ 
+ Don't forget to replace `your-project-token` with the one provided by Chromatic.
+ 
 </div>
 
 ```shell
@@ -44,7 +51,11 @@ Build 1 published.
 View it online at https://www.chromatic.com/build?appId=...&number=1.
 ```
 
-When Chromatic finishes, it should have successfully deployed your Storybook and established the baselines (i.e., starting point) for all your component's stories. Additionally, providing you with a link to the published Storybook that you can share with your team to gather feedback.
+<div class="aside">
+💡 Before running Chromatic's CLI ensure you have at least two commits added to the repository to prevent build failures, as Chromatic relies on a full Git history graph to establish the baselines. Read more about baselines in Chromatic's <a href="https://www.chromatic.com/docs/branching-and-baselines"> documentation</a>
+</div>
+
+When Chromatic finishes, it should have successfully deployed your Storybook and established the baselines, that is to say, the starting point for all your component's stories. Additionally, providing you with a link to the published Storybook that you can share with your team to gather feedback.
 
 ![Chromatic project first build](./chromatic-first-build-optimized.png)
 
@@ -68,6 +79,7 @@ Snapshot tests compare the rendered markup of every story against known baseline
 
 #### Learn about other UI tests
 
+- [Test runner](./test-runner.md) to automate test execution
 - Visual tests for appearance
 - [Accessibility tests](./accessibility-testing.md) for accessibility
 - [Interaction tests](./interaction-testing.md) for user behavior simulation

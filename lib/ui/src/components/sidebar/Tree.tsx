@@ -15,7 +15,7 @@ import {
 } from './TreeNode';
 import { useExpanded, ExpandAction, ExpandedState } from './useExpanded';
 import { Highlight, Item } from './types';
-import { createId, getAncestorIds, getDescendantIds, getLink } from './utils';
+import { isStoryHoistable, createId, getAncestorIds, getDescendantIds, getLink } from './utils';
 
 export const Action = styled.button(({ theme }) => ({
   display: 'inline-flex',
@@ -190,7 +190,6 @@ const Node = React.memo<NodeProps>(
           data-ref-id={refId}
           data-item-id={item.id}
           data-nodetype="root"
-          aria-expanded={isExpanded}
         >
           <CollapseButton
             type="button"
@@ -199,6 +198,7 @@ const Node = React.memo<NodeProps>(
               event.preventDefault();
               setExpanded({ ids: [item.id], value: !isExpanded });
             }}
+            aria-expanded={isExpanded}
           >
             <CollapseIcon isExpanded={isExpanded} />
             {item.renderLabel?.(item) || item.name}
@@ -331,12 +331,13 @@ export const Tree = React.memo<{
     const singleStoryComponentIds = useMemo(() => {
       return orphansFirst.filter((nodeId) => {
         const { children = [], isComponent, isLeaf, name } = data[nodeId];
+
         return (
           !isLeaf &&
           isComponent &&
           children.length === 1 &&
           isStory(data[children[0]]) &&
-          data[children[0]].name === name
+          isStoryHoistable(data[children[0]].name, name)
         );
       });
     }, [data, orphansFirst]);

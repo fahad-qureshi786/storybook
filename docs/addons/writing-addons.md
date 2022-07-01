@@ -50,14 +50,23 @@ Once you've gone through the prompts, your `package.json` should look like:
 
 ### Build system
 
-We'll need to add the necessary dependencies and make some adjustments. Run the following commands:
+We'll need to add the necessary dependencies and make some adjustments. Run the following command to install the required dependencies:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/storybook-write-addon-install-dependencies.yarn.js.mdx',
+    'common/storybook-write-addon-install-dependencies.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+Initialize a local Storybook instance to allow you to test your addon.
 
 ```shell
-# Installs React and Babel CLI
-yarn add react react-dom @babel/cli
-
-# Adds Storybook:
-npx sb init
+npx storybook init
 ```
 
 <div class="aside">

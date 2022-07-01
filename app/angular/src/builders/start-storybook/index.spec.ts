@@ -124,7 +124,7 @@ describe('Start Storybook Builder', () => {
   });
 
   it('should throw error', async () => {
-    buildStandaloneMock.mockRejectedValue(new Error());
+    buildStandaloneMock.mockRejectedValue(true);
 
     const run = await architect.scheduleBuilder('@storybook/angular:start-storybook', {
       browserTarget: 'angular-cli:build-2',
@@ -137,7 +137,7 @@ describe('Start Storybook Builder', () => {
 
       expect(false).toEqual('Throw expected');
     } catch (error) {
-      // eslint-disable-next-line jest/no-try-expect, jest/no-conditional-expect
+      // eslint-disable-next-line jest/no-try-expect
       expect(error).toEqual(
         'Broken build, fix the error above.\nYou may need to refresh the browser.'
       );
@@ -154,14 +154,15 @@ describe('Start Storybook Builder', () => {
     await run.stop();
 
     expect(output.success).toBeTruthy();
-    expect(cpSpawnMock.spawn).toHaveBeenCalledWith('compodoc', [
-      '-p',
-      './storybook/tsconfig.ts',
-      '-d',
-      '',
-      '-e',
-      'json',
-    ]);
+    expect(cpSpawnMock.spawn).toHaveBeenCalledWith(
+      'npx',
+      ['compodoc', '-p', './storybook/tsconfig.ts', '-d', '', '-e', 'json'],
+      {
+        cwd: '',
+        env: process.env,
+        shell: true,
+      }
+    );
     expect(buildStandaloneMock).toHaveBeenCalledWith({
       angularBrowserTarget: 'angular-cli:build-2',
       angularBuilderContext: expect.any(Object),

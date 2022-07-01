@@ -1,6 +1,7 @@
-/* eslint-disable jest/no-interpolation-in-snapshots */
-import { Configuration } from 'webpack';
+import path from 'path';
+import type { Configuration } from 'webpack';
 import { logger } from '@storybook/node-logger';
+import { normalize, getSystemPath } from '@angular-devkit/core';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import { webpackFinal } from './framework-preset-angular-cli';
 import { PresetOptions } from './options';
@@ -21,7 +22,7 @@ afterEach(() => {
 });
 
 function initMockWorkspace(name: string) {
-  workspaceRoot = `${testPath}/__mocks-ng-workspace__/${name}`;
+  workspaceRoot = path.join(__dirname, '__mocks-ng-workspace__', name);
   cwdSpy.mockReturnValue(workspaceRoot);
 }
 
@@ -263,7 +264,7 @@ describe('framework-preset-angular-cli', () => {
 
       expect(webpackFinalConfig.resolve.modules).toEqual([
         ...baseWebpackConfig.resolve.modules,
-        `${workspaceRoot}/src`,
+        getSystemPath(normalize(path.join(workspaceRoot, 'src'))).replace(/\\/g, '/'),
       ]);
     });
 
@@ -274,7 +275,9 @@ describe('framework-preset-angular-cli', () => {
       expect(webpackFinalConfig.resolve.plugins).toMatchInlineSnapshot(`
         Array [
           TsconfigPathsPlugin {
-            "absoluteBaseUrl": "${workspaceRoot}/src/",
+            "absoluteBaseUrl": "${(
+              getSystemPath(normalize(path.join(workspaceRoot, 'src'))) + path.sep
+            ).replace(/\\/g, '\\\\')}",
             "baseUrl": "./",
             "extensions": Array [
               ".ts",
@@ -307,8 +310,8 @@ describe('framework-preset-angular-cli', () => {
         ...baseWebpackConfig,
         entry: [
           ...(baseWebpackConfig.entry as any[]),
-          `${workspaceRoot}/src/styles.css`,
-          `${workspaceRoot}/src/styles.scss`,
+          path.join(workspaceRoot, 'src', 'styles.css'),
+          path.join(workspaceRoot, 'src', 'styles.scss'),
         ],
         module: { ...baseWebpackConfig.module, rules: expect.anything() },
         plugins: expect.anything(),
@@ -325,45 +328,48 @@ describe('framework-preset-angular-cli', () => {
     it('should set webpack "module.rules"', async () => {
       const baseWebpackConfig = newWebpackConfiguration();
       const webpackFinalConfig = await webpackFinal(baseWebpackConfig, options);
-
+      const stylePaths = [
+        path.join(workspaceRoot, 'src', 'styles.css'),
+        path.join(workspaceRoot, 'src', 'styles.scss'),
+      ];
       expect(webpackFinalConfig.module.rules).toEqual([
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
@@ -398,8 +404,8 @@ describe('framework-preset-angular-cli', () => {
         ...baseWebpackConfig,
         entry: [
           ...(baseWebpackConfig.entry as any[]),
-          `${workspaceRoot}/src/styles.css`,
-          `${workspaceRoot}/src/styles.scss`,
+          path.join(workspaceRoot, 'src', 'styles.css'),
+          path.join(workspaceRoot, 'src', 'styles.scss'),
         ],
         module: { ...baseWebpackConfig.module, rules: expect.anything() },
         plugins: expect.anything(),
@@ -416,45 +422,49 @@ describe('framework-preset-angular-cli', () => {
     it('should set webpack "module.rules"', async () => {
       const baseWebpackConfig = newWebpackConfiguration();
       const webpackFinalConfig = await webpackFinal(baseWebpackConfig, options);
+      const stylePaths = [
+        path.join(workspaceRoot, 'src', 'styles.css'),
+        path.join(workspaceRoot, 'src', 'styles.scss'),
+      ];
 
       expect(webpackFinalConfig.module.rules).toEqual([
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
@@ -476,8 +486,8 @@ describe('framework-preset-angular-cli', () => {
         ...baseWebpackConfig,
         entry: [
           ...(baseWebpackConfig.entry as any[]),
-          `${workspaceRoot}/src/styles.css`,
-          `${workspaceRoot}/src/styles.scss`,
+          path.join(workspaceRoot, 'src', 'styles.css'),
+          path.join(workspaceRoot, 'src', 'styles.scss'),
         ],
         module: { ...baseWebpackConfig.module, rules: expect.anything() },
         plugins: expect.anything(),
@@ -498,45 +508,49 @@ describe('framework-preset-angular-cli', () => {
     it('should set webpack "module.rules"', async () => {
       const baseWebpackConfig = newWebpackConfiguration();
       const webpackFinalConfig = await webpackFinal(baseWebpackConfig, options);
+      const stylePaths = [
+        path.join(workspaceRoot, 'src', 'styles.css'),
+        path.join(workspaceRoot, 'src', 'styles.scss'),
+      ];
 
       expect(webpackFinalConfig.module.rules).toEqual([
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          exclude: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          exclude: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.css$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.scss$|\.sass$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.less$/,
           use: expect.anything(),
         },
         {
-          include: [`${workspaceRoot}/src/styles.css`, `${workspaceRoot}/src/styles.scss`],
+          include: stylePaths,
           test: /\.styl$/,
           use: expect.anything(),
         },
@@ -699,7 +713,10 @@ describe('framework-preset-angular-cli', () => {
 
         expect(webpackFinalConfig).toEqual({
           ...baseWebpackConfig,
-          entry: [...(baseWebpackConfig.entry as any[]), `${workspaceRoot}/src/styles.css`],
+          entry: [
+            ...(baseWebpackConfig.entry as any[]),
+            path.join(workspaceRoot, 'src', 'styles.css'),
+          ],
           module: { ...baseWebpackConfig.module, rules: expect.anything() },
           plugins: expect.anything(),
           resolve: {
@@ -749,8 +766,8 @@ const newWebpackConfiguration = (
     bail: false,
     devtool: 'cheap-module-source-map',
     entry: [
-      '/Users/joe/storybook/lib/core-server/dist/cjs/globals/polyfills.js',
-      '/Users/joe/storybook/lib/core-server/dist/cjs/globals/globals.js',
+      '/Users/joe/storybook/lib/core-server/dist/esm/globals/polyfills.js',
+      '/Users/joe/storybook/lib/core-server/dist/esm/globals/globals.js',
       '/Users/joe/storybook/examples/angular-cli/.storybook/storybook-init-framework-entry.js',
       '/Users/joe/storybook/addons/docs/dist/esm/frameworks/common/config.js-generated-other-entry.js',
       '/Users/joe/storybook/addons/docs/dist/esm/frameworks/angular/config.js-generated-other-entry.js',
@@ -780,9 +797,6 @@ const newWebpackConfiguration = (
       modules: ['node_modules'],
       mainFields: ['browser', 'main'],
       alias: {
-        '@emotion/core': '/Users/joe/storybook/node_modules/@emotion/core',
-        '@emotion/styled': '/Users/joe/storybook/node_modules/@emotion/styled',
-        'emotion-theming': '/Users/joe/storybook/node_modules/emotion-theming',
         '@storybook/addons': '/Users/joe/storybook/lib/addons',
         '@storybook/api': '/Users/joe/storybook/lib/api',
         '@storybook/channels': '/Users/joe/storybook/lib/channels',

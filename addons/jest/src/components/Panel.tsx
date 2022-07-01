@@ -1,4 +1,3 @@
-/* eslint-disable react/default-props-match-prop-types */
 import React, { Fragment } from 'react';
 import { styled, themes, convert } from '@storybook/theming';
 import { ScrollArea, TabsState, Link, Placeholder } from '@storybook/components';
@@ -100,13 +99,13 @@ const getColorByType = (type: string) => {
   // using switch to allow for new types to be added
   switch (type) {
     case StatusTypes.PASSED_TYPE:
-      return convert(themes.normal).color.positive;
+      return convert(themes.light).color.positive;
     case StatusTypes.FAILED_TYPE:
-      return convert(themes.normal).color.negative;
+      return convert(themes.light).color.negative;
     case StatusTypes.PENDING_TYPE:
-      return convert(themes.normal).color.warning;
+      return convert(themes.light).color.warning;
     case StatusTypes.TODO_TYPE:
-      return convert(themes.normal).color.purple;
+      return convert(themes.light).color.purple;
     default:
       return null;
   }
@@ -155,7 +154,7 @@ const Content = styled(({ tests, className }: ContentProps) => (
                 </SuiteHead>
                 <TabsState
                   initial="failing-tests"
-                  backgroundColor={convert(themes.normal).background.hoverable}
+                  backgroundColor={convert(themes.light).background.hoverable}
                 >
                   <div
                     id="failing-tests"

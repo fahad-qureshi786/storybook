@@ -10,7 +10,7 @@ Learn how and why to write stories in [the introduction](./introduction.md#using
 
 ## Args object
 
-The `args` object can be defined at the [story](#story-args) and [component level](#component-args). It is a JSON serializable object composed of string keys with matching valid value types that can be passed into a component for your framework.
+The `args` object can be defined at the [story](#story-args), [component](#component-args) and [global level](#global-args). It is a JSON serializable object composed of string keys with matching valid value types that can be passed into a component for your framework.
 
 ## Story args
 
@@ -33,12 +33,14 @@ To define the args of a single story, use the `args` CSF story key:
     'svelte/button-story-with-args.native-format.mdx',
     'svelte/button-story-with-args.mdx.mdx',
     'web-components/button-story-with-args.js.mdx',
+    'html/button-story-with-args.ts.mdx',
+    'html/button-story-with-args.js.mdx',
   ]}
 />
 
 <!-- prettier-ignore-end -->
 
-These args will only apply to the story for which they are attached, although you can [reuse](../workflows/build-pages-with-storybook.md#args-composition-for-presentational-screens) them via JavaScript object reuse:
+These args will only apply to the story for which they are attached, although you can [reuse](./build-pages-with-storybook.md#args-composition-for-presentational-screens) them via JavaScript object reuse:
 
 <!-- prettier-ignore-start -->
 
@@ -76,6 +78,20 @@ You can also define args at the component level; they will apply to all the comp
 
 <!-- prettier-ignore-end -->
 
+## Global args
+
+You can also define args at the global level; they will apply to every component's stories unless you overwrite them. To do so, export the `args` key in your `preview.js`:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/button-story-project-args-theme.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
 ## Args composition
 
 You can separate the arguments to a story to compose in other stories. Here's how you can combine args for multiple stories of the same component.
@@ -92,7 +108,7 @@ You can separate the arguments to a story to compose in other stories. Here's ho
 
 <div class="aside">
 
-💡<strong>Note:</strong> If you find yourself re-using the same args for most of a component's stories, you should consider using [component-level args](#component-args).
+💡 If you find yourself re-using the same args for most of a component's stories, you should consider using [component-level args](#component-args).
 
 </div>
 

@@ -12,7 +12,7 @@ export default {
   component: Button,
 };
 
-export const Template = (args) => ({
+const Template = (args) => ({
   //👇 Your template goes here
 });
 
@@ -20,7 +20,9 @@ export const CustomSource = Template.bind({});
 CustomSource.parameters = {
   docs: {
     source: {
-      code: 'Some custom string here',
+      code: 'Your code snippet goes here.',
+      language: "yml",
+      type: "auto",
     },
   },
 };

@@ -18,7 +18,7 @@ It has three different modes:
 
 Storybook works with evergreen browsers by default.
 
-If you want to run Storybook in IE11, make sure to [disable](../essentials/introduction#disabling-addons) the docs-addon that is part of `@storybook/addon-essentials`, as this currently [causes issues in IE11](https://github.com/storybookjs/storybook/issues/8884).
+If you want to run Storybook in IE11, make sure to [disable](../essentials/introduction.md#disabling-addons) the docs-addon that is part of `@storybook/addon-essentials`, as this currently [causes issues in IE11](https://github.com/storybookjs/storybook/issues/8884).
 
 Here are some key features of Storybook's Babel configurations.
 
@@ -38,7 +38,7 @@ You can also place a `.storybook/.babelrc` file to use a unique configuration fo
 
 ### Custom configuration
 
-If you need, you can customize the default Babel configuration used by Storybook. Update your [`.storybook/main.js`](./overview#configure-your-storybook-project) and add the `babel` field with the options you want to use:
+If you need, you can customize the default Babel configuration used by Storybook. Update your [`.storybook/main.js`](./overview.md#configure-your-storybook-project) and add the `babel` field with the options you want to use:
 
 <!-- prettier-ignore-start -->
 
@@ -81,7 +81,7 @@ For detailed instructions on migrating from `V6` mode, please see [MIGRATION.md]
 If your app does not include a babelrc file, and you need one, you can create it by running the following command in your project directory:
 
 ```sh
-npx sb@next babelrc
+npx storybook@next babelrc
 ```
 
 Once the command completes, you should have a `.babelrc.json` file created in the root directory of your project, similar to the following example:
@@ -162,6 +162,8 @@ BABEL_SHOW_CONFIG_FOR=.storybook/preview.js yarn storybook
 
 When the command finishes running, it will display the available babel configuration for the `.storybook/preview.js` file. You can use this information to debug issues with transpilation.
 
-> NOTE: Due to what appears to be a Babel bug, setting this flag causes Babel transpilation to fail on the file provided. Thus you cannot actually _RUN_ Storybook using this command. However, it will print out the configuration information as advertised, and therefore you can use this to debug your Storybook. You'll need to remove the flag to actually run your Storybook.
+<div class="aside">
+💡 Due to what appears to be a Babel bug, setting this flag causes Babel transpilation to fail on the file provided. Thus you cannot actually <strong>run</strong> Storybook using this command. However, it will print out the configuration information as advertised, and therefore you can use this to debug your Storybook. You'll need to remove the flag to actually run your Storybook.
+</div>
 
 For more info, please refer to the [Babel documentation](https://babeljs.io/docs/en/configuration#print-effective-configs).

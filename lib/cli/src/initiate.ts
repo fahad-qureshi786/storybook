@@ -1,8 +1,9 @@
 import { UpdateNotifier, Package } from 'update-notifier';
 import chalk from 'chalk';
 import prompts from 'prompts';
-import { detect, isStorybookInstalled, detectLanguage } from './detect';
-import { installableProjectTypes, ProjectType, Builder, CoreBuilder } from './project_types';
+import { telemetry } from '@storybook/telemetry';
+import { installableProjectTypes, ProjectType, Builder } from './project_types';
+import { detect, isStorybookInstalled, detectLanguage, detectBuilder } from './detect';
 import { commandLog, codeLog, paddedLog } from './helpers';
 import angularGenerator from './generators/ANGULAR';
 import aureliaGenerator from './generators/AURELIA';
@@ -26,7 +27,7 @@ import preactGenerator from './generators/PREACT';
 import svelteGenerator from './generators/SVELTE';
 import raxGenerator from './generators/RAX';
 import serverGenerator from './generators/SERVER';
-import { JsPackageManagerFactory, readPackageJson } from './js-package-manager';
+import { JsPackageManagerFactory, JsPackageManager } from './js-package-manager';
 import { NpmOptions } from './NpmOptions';
 import { automigrate } from './automigrate';
 
@@ -43,11 +44,14 @@ type CommandOptions = {
   builder?: Builder;
   linkable?: boolean;
   commonJs?: boolean;
+  disableTelemetry?: boolean;
 };
 
-const installStorybook = (projectType: ProjectType, options: CommandOptions): Promise<void> => {
-  const packageManager = JsPackageManagerFactory.getPackageManager(options.useNpm);
-
+const installStorybook = (
+  projectType: ProjectType,
+  packageManager: JsPackageManager,
+  options: CommandOptions
+): Promise<void> => {
   const npmOptions: NpmOptions = {
     installAsDevDependencies: true,
     skipInstall: options.skipInstall,
@@ -57,25 +61,10 @@ const installStorybook = (projectType: ProjectType, options: CommandOptions): Pr
 
   const generatorOptions = {
     language,
-    builder: options.builder || CoreBuilder.Webpack4,
+    builder: options.builder || detectBuilder(packageManager),
     linkable: !!options.linkable,
     commonJs: options.commonJs,
   };
-
-  const end = () => {
-    if (!options.skipInstall) {
-      packageManager.installDependencies();
-    }
-
-    logger.log('\nTo run your Storybook, type:\n');
-    codeLog([packageManager.getRunStorybookCommand()]);
-    logger.log('\nFor more information visit:', chalk.cyan('https://storybook.js.org'));
-
-    // Add a new line for the clear visibility.
-    logger.log();
-  };
-
-  const REACT_NATIVE_REPO = 'https://github.com/storybookjs/react-native';
 
   const runGenerator: () => Promise<void> = () => {
     switch (projectType) {
@@ -92,139 +81,130 @@ const installStorybook = (projectType: ProjectType, options: CommandOptions): Pr
       case ProjectType.UPDATE_PACKAGE_ORGANIZATIONS:
         return updateOrganisationsGenerator(packageManager, options.parser, npmOptions)
           .then(() => null) // commandLog doesn't like to see output
-          .then(commandLog('Upgrading your project to the new Storybook packages.'))
-          .then(end);
+          .then(commandLog('Upgrading your project to the new Storybook packages.\n'));
 
       case ProjectType.REACT_SCRIPTS:
-        return reactScriptsGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Create React App" based project'))
-          .then(end);
+        return reactScriptsGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Create React App" based project')
+        );
 
       case ProjectType.REACT:
-        return reactGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "React" app'))
-          .then(end);
+        return reactGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "React" app\n')
+        );
 
       case ProjectType.REACT_NATIVE: {
-        return (options.yes
-          ? Promise.resolve({ server: true })
-          : (prompts([
-              {
-                type: 'confirm',
-                name: 'server',
-                message:
-                  'Do you want to install dependencies necessary to run Storybook server? You can manually do it later by install @storybook/react-native-server',
-                initial: false,
-              },
-            ]) as Promise<{ server: boolean }>)
+        return (
+          options.yes
+            ? Promise.resolve({ server: true })
+            : (prompts([
+                {
+                  type: 'confirm',
+                  name: 'server',
+                  message:
+                    'Do you want to install dependencies necessary to run Storybook server? You can manually do it later by install @storybook/react-native-server',
+                  initial: false,
+                },
+              ]) as Promise<{ server: boolean }>)
         )
           .then(({ server }) => reactNativeGenerator(packageManager, npmOptions, server))
-          .then(commandLog('Adding Storybook support to your "React Native" app'))
-          .then(end)
-          .then(() => {
-            logger.log(chalk.red('NOTE: installation is not 100% automated.'));
-            logger.log(`To quickly run Storybook, replace contents of your app entry with:\n`);
-            codeLog(["export {default} from './storybook';"]);
-            logger.log('\n For more in information, see the github readme:\n');
-            logger.log(chalk.cyan(REACT_NATIVE_REPO));
-            logger.log();
-          });
+          .then(commandLog('Adding Storybook support to your "React Native" app\n'));
       }
 
       case ProjectType.METEOR:
-        return meteorGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Meteor" app'))
-          .then(end);
+        return meteorGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Meteor" app\n')
+        );
 
       case ProjectType.WEBPACK_REACT:
-        return webpackReactGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Webpack React" app'))
-          .then(end);
+        return webpackReactGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Webpack React" app\n')
+        );
 
       case ProjectType.REACT_PROJECT:
-        return reactGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "React" library'))
-          .then(end);
+        return reactGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "React" library\n')
+        );
 
       case ProjectType.SFC_VUE:
-        return sfcVueGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Single File Components Vue" app'))
-          .then(end);
+        return sfcVueGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Single File Components Vue" app\n')
+        );
 
       case ProjectType.VUE:
-        return vueGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Vue" app'))
-          .then(end);
+        return vueGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Vue" app\n')
+        );
 
       case ProjectType.VUE3:
-        return vue3Generator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Vue 3" app'))
-          .then(end);
+        return vue3Generator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Vue 3" app\n')
+        );
 
       case ProjectType.ANGULAR:
-        return angularGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Angular" app'))
-          .then(end);
+        return angularGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Angular" app\n')
+        );
 
       case ProjectType.EMBER:
-        return emberGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Ember" app'))
-          .then(end);
+        return emberGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Ember" app\n')
+        );
 
       case ProjectType.MITHRIL:
-        return mithrilGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Mithril" app'))
-          .then(end);
+        return mithrilGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Mithril" app\n')
+        );
 
       case ProjectType.MARIONETTE:
-        return marionetteGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Marionette.js" app'))
-          .then(end);
+        return marionetteGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Marionette.js" app\n')
+        );
 
       case ProjectType.MARKO:
-        return markoGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Marko" app'))
-          .then(end);
+        return markoGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Marko" app\n')
+        );
 
       case ProjectType.HTML:
-        return htmlGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "HTML" app'))
-          .then(end);
+        return htmlGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "HTML" app\n')
+        );
 
       case ProjectType.WEB_COMPONENTS:
-        return webComponentsGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "web components" app'))
-          .then(end);
+        return webComponentsGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "web components" app\n')
+        );
 
       case ProjectType.RIOT:
-        return riotGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "riot.js" app'))
-          .then(end);
+        return riotGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "riot.js" app\n')
+        );
 
       case ProjectType.PREACT:
-        return preactGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Preact" app'))
-          .then(end);
+        return preactGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Preact" app\n')
+        );
 
       case ProjectType.SVELTE:
-        return svelteGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Svelte" app'))
-          .then(end);
+        return svelteGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Svelte" app\n')
+        );
 
       case ProjectType.RAX:
-        return raxGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Rax" app'))
-          .then(end);
+        return raxGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Rax" app\n')
+        );
 
       case ProjectType.AURELIA:
-        return aureliaGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Aurelia" app'))
-          .then(end);
+        return aureliaGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Aurelia" app\n')
+        );
 
       case ProjectType.SERVER:
-        return serverGenerator(packageManager, npmOptions, generatorOptions)
-          .then(commandLog('Adding Storybook support to your "Server" app'))
-          .then(end);
+        return serverGenerator(packageManager, npmOptions, generatorOptions).then(
+          commandLog('Adding Storybook support to your "Server" app\n')
+        );
 
       case ProjectType.UNSUPPORTED:
         paddedLog(`We detected a project type that we don't support yet.`);
@@ -246,7 +226,7 @@ const installStorybook = (projectType: ProjectType, options: CommandOptions): Pr
         // Add a new line for the clear visibility.
         logger.log();
 
-        return projectTypeInquirer(options);
+        return projectTypeInquirer(options, packageManager);
     }
   };
 
@@ -256,7 +236,10 @@ const installStorybook = (projectType: ProjectType, options: CommandOptions): Pr
   });
 };
 
-const projectTypeInquirer = async (options: { yes?: boolean }) => {
+const projectTypeInquirer = async (
+  options: { yes?: boolean },
+  packageManager: JsPackageManager
+) => {
   const manualAnswer = options.yes
     ? true
     : await prompts([
@@ -279,14 +262,19 @@ const projectTypeInquirer = async (options: { yes?: boolean }) => {
         })),
       },
     ]);
-    return installStorybook(frameworkAnswer.manualFramework, options);
+    return installStorybook(frameworkAnswer.manualFramework, packageManager, options);
   }
   return Promise.resolve();
 };
 
 export async function initiate(options: CommandOptions, pkg: Package): Promise<void> {
-  const welcomeMessage = 'sb init - the simplest way to add a Storybook to your project.';
+  const packageManager = JsPackageManagerFactory.getPackageManager(options.useNpm);
+  const welcomeMessage = 'storybook init - the simplest way to add a Storybook to your project.';
   logger.log(chalk.inverse(`\n ${welcomeMessage} \n`));
+
+  if (!options.disableTelemetry) {
+    telemetry('init');
+  }
 
   // Update notify code.
   new UpdateNotifier({
@@ -301,7 +289,7 @@ export async function initiate(options: CommandOptions, pkg: Package): Promise<v
     : 'Detecting project type';
   const done = commandLog(infoText);
 
-  const packageJson = readPackageJson();
+  const packageJson = packageManager.retrievePackageJson();
   const isEsm = packageJson && packageJson.type === 'module';
 
   try {
@@ -327,10 +315,33 @@ export async function initiate(options: CommandOptions, pkg: Package): Promise<v
   }
   done();
 
-  await installStorybook(projectType, {
+  await installStorybook(projectType, packageManager, {
     ...options,
     ...(isEsm ? { commonJs: true } : undefined),
   });
 
-  return automigrate();
+  if (!options.skipInstall) {
+    packageManager.installDependencies();
+  }
+
+  await automigrate({ yes: process.env.CI === 'true' });
+
+  logger.log('\nTo run your Storybook, type:\n');
+  codeLog([packageManager.getRunStorybookCommand()]);
+  logger.log('\nFor more information visit:', chalk.cyan('https://storybook.js.org'));
+
+  if (projectType === ProjectType.REACT_NATIVE) {
+    const REACT_NATIVE_REPO = 'https://github.com/storybookjs/react-native';
+
+    logger.log();
+    logger.log(chalk.red('NOTE: installation is not 100% automated.'));
+    logger.log(`To quickly run Storybook, replace contents of your app entry with:\n`);
+    codeLog(["export {default} from './storybook';"]);
+    logger.log('\n For more in information, see the github readme:\n');
+    logger.log(chalk.cyan(REACT_NATIVE_REPO));
+    logger.log();
+  }
+
+  // Add a new line for the clear visibility.
+  logger.log();
 }

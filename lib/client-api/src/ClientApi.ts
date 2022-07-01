@@ -2,30 +2,25 @@ import deprecate from 'util-deprecate';
 import dedent from 'ts-dedent';
 import global from 'global';
 import { logger } from '@storybook/client-logger';
-import {
+import { toId, sanitize } from '@storybook/csf';
+import type {
+  Args,
+  ArgTypes,
   AnyFramework,
-  toId,
   DecoratorFunction,
   Parameters,
   ArgTypesEnhancer,
   ArgsEnhancer,
   LoaderFunction,
   StoryFn,
-  sanitize,
   ComponentTitle,
   Globals,
   GlobalTypes,
   LegacyStoryFn,
 } from '@storybook/csf';
-import {
-  NormalizedComponentAnnotations,
-  Path,
-  ModuleImportFn,
-  combineParameters,
-  StoryStore,
-  normalizeInputTypes,
-} from '@storybook/store';
-import { ClientApiAddons, StoryApi } from '@storybook/addons';
+import { combineParameters, StoryStore, normalizeInputTypes } from '@storybook/store';
+import type { NormalizedComponentAnnotations, Path, ModuleImportFn } from '@storybook/store';
+import type { ClientApiAddons, StoryApi } from '@storybook/addons';
 
 import { StoryStoreFacade } from './StoryStoreFacade';
 
@@ -101,6 +96,16 @@ export const addParameters = (parameters: Parameters, deprecationWarning = true)
 export const addLoader = (loader: LoaderFunction<AnyFramework>, deprecationWarning = true) => {
   checkMethod('addLoader', deprecationWarning);
   singleton.addLoader(loader);
+};
+
+export const addArgs = (args: Args) => {
+  checkMethod('addArgs', false);
+  singleton.addArgs(args);
+};
+
+export const addArgTypes = (argTypes: ArgTypes) => {
+  checkMethod('addArgTypes', false);
+  singleton.addArgTypes(argTypes);
 };
 
 export const addArgsEnhancer = (enhancer: ArgsEnhancer<AnyFramework>) => {
@@ -209,6 +214,20 @@ export class ClientApi<TFramework extends AnyFramework> {
 
   addLoader = (loader: LoaderFunction<TFramework>) => {
     this.facade.projectAnnotations.loaders.push(loader);
+  };
+
+  addArgs = (args: Args) => {
+    this.facade.projectAnnotations.args = {
+      ...this.facade.projectAnnotations.args,
+      ...args,
+    };
+  };
+
+  addArgTypes = (argTypes: ArgTypes) => {
+    this.facade.projectAnnotations.argTypes = {
+      ...this.facade.projectAnnotations.argTypes,
+      ...normalizeInputTypes(argTypes),
+    };
   };
 
   addArgsEnhancer = (enhancer: ArgsEnhancer<TFramework>) => {

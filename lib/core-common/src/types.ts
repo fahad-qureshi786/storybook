@@ -1,11 +1,11 @@
 import type ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import type { Options as TelejsonOptions } from 'telejson';
 import type { PluginOptions } from '@storybook/react-docgen-typescript-plugin';
-import { Configuration, Stats } from 'webpack';
-import { TransformOptions } from '@babel/core';
+import type { Configuration, Stats } from 'webpack';
+import type { TransformOptions } from '@babel/core';
 import { Router } from 'express';
-import { FileSystemCache } from 'file-system-cache';
 import { Server } from 'http';
+import type { FileSystemCache } from './utils/file-cache';
 
 /**
  * ⚠️ This file contains internal WIP types they MUST NOT be exported outside this package for now!
@@ -32,6 +32,7 @@ export interface Webpack5BuilderConfig extends BuilderConfigObject {
   name: 'webpack5';
   options?: {
     fsCache?: boolean;
+    lazyCompilation?: boolean;
   };
 }
 
@@ -49,6 +50,28 @@ export interface CoreConfig {
   builder: BuilderConfig;
   disableWebpackDefaults?: boolean;
   channelOptions?: Partial<TelejsonOptions>;
+  /**
+   * Disables the generation of project.json, a file containing Storybook metadata
+   */
+  disableProjectJson?: boolean;
+  /**
+   * Disables Storybook telemetry
+   * @see https://storybook.js.org/telemetry
+   */
+  disableTelemetry?: boolean;
+  /**
+   * Enable crash reports to be sent to Storybook telemetry
+   * @see https://storybook.js.org/telemetry
+   */
+  enableCrashReports?: boolean;
+  /**
+   * enable CORS headings to run document in a "secure context"
+   * see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+   * This enables these headers in development-mode:
+   *   Cross-Origin-Opener-Policy: same-origin
+   *   Cross-Origin-Embedder-Policy: require-corp
+   */
+  crossOriginIsolated?: boolean;
 }
 
 interface DirectoryMapping {
@@ -132,6 +155,11 @@ export interface PackageJson {
   version: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
+  eslintConfig?: Record<string, any>;
+  type?: 'module';
+  [key: string]: any;
 }
 
 // TODO: This could be exported to the outside world and used in `options.ts` file of each `@storybook/APP`
@@ -156,6 +184,8 @@ export interface CLIOptions {
   ignorePreview?: boolean;
   previewUrl?: string;
   forceBuildPreview?: boolean;
+  disableTelemetry?: boolean;
+  enableCrashReports?: boolean;
   host?: string;
   /**
    * @deprecated Use 'staticDirs' Storybook Configuration option instead
@@ -316,12 +346,12 @@ export interface StorybookConfig {
   logLevel?: string;
   features?: {
     /**
-     * Allows to disable deprecated implicit PostCSS loader.
+     * Allows to disable deprecated implicit PostCSS loader. (will be removed in 7.0)
      */
     postcss?: boolean;
 
     /**
-     * Allows to disable deprecated implicit PostCSS loader.
+     * Allows to disable emotion webpack alias for emotion packages. (will be removed in 7.0)
      */
     emotionAlias?: boolean;
 
@@ -372,6 +402,11 @@ export interface StorybookConfig {
      * Will be removed in 7.0.
      */
     warnOnLegacyHierarchySeparator?: boolean;
+
+    /**
+     * Preview MDX2 support, will become default in 7.0
+     */
+    previewMdx2?: boolean;
   };
 
   /**
@@ -406,6 +441,13 @@ export interface StorybookConfig {
 
   /**
    * Add additional scripts to run in the preview a la `.storybook/preview.js`
+   *
+   * @deprecated use `previewAnnotations` or `/preview.js` file instead
    */
   config?: (entries: Entry[], options: Options) => Entry[];
+
+  /**
+   * Add additional scripts to run in the preview a la `.storybook/preview.js`
+   */
+  previewAnnotations?: (entries: Entry[], options: Options) => Entry[];
 }

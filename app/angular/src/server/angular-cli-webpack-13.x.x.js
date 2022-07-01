@@ -5,7 +5,8 @@ const {
 const {
   getCommonConfig,
   getStylesConfig,
-  getTypescriptWorkerPlugin,
+  getDevServerConfig,
+  getTypeScriptConfig,
 } = require('@angular-devkit/build-angular/src/webpack/configs');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
@@ -41,7 +42,11 @@ exports.getWebpackConfig = async (baseConfig, { builderOptions, builderContext }
       aot: false,
     },
     builderContext,
-    (wco) => [getCommonConfig(wco), getStylesConfig(wco), getTypescriptWorkerPlugin(wco)]
+    (wco) => [
+      getCommonConfig(wco),
+      getStylesConfig(wco),
+      getTypeScriptConfig ? getTypeScriptConfig(wco) : getDevServerConfig(wco),
+    ]
   );
 
   /**

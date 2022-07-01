@@ -2,7 +2,7 @@
 title: 'Story rendering'
 ---
 
-In Storybook, your stories render in a particular “preview” iframe (Canvas tab) inside the larger Storybook web application. The JavaScript build configuration of the preview is controlled by a [webpack](./webpack.md) config, but you also may want to directly control the rendered HTML to help your stories render correctly.
+In Storybook, your stories render in a particular “preview” iframe (Canvas tab) inside the larger Storybook web application. The JavaScript build configuration of the preview is controlled by a [webpack](../builders/webpack.md) config, but you also may want to directly control the rendered HTML to help your stories render correctly.
 
 ## Adding to &#60;head&#62;
 
@@ -60,4 +60,4 @@ Storybook will inject these tags into the _preview iframe_ where your components
 
 </div>
 
-Similarly to the preview head HTML, preview body HTML can also be updated programmtically using a preset. See [Preview/Manager templates](../addons/writing-presets.md#previewmanager-templates) for more information.
+Similarly to the preview head HTML, preview body HTML can also be updated programmatically using a preset. See [Preview/Manager templates](../addons/writing-presets.md#previewmanager-templates) for more information.

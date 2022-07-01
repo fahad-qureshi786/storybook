@@ -35,6 +35,12 @@ export const Demo: CSF2Story = (args) => (
 Demo.play = async ({ args, canvasElement }) => {
   await userEvent.click(within(canvasElement).getByRole('button'));
   await expect(args.onSubmit).toHaveBeenCalledWith(expect.stringMatching(/([A-Z])\w+/gi));
+  await expect([{ name: 'John', age: 42 }]).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ name: 'John' }),
+      expect.objectContaining({ age: 42 }),
+    ])
+  );
 };
 
 export const FindBy: CSF2Story = (args) => {
@@ -131,7 +137,7 @@ export const StandardEmailFailed: CSF3Story = {
     await userEvent.click(canvas.getByRole('button', { name: /create account/i }));
 
     await canvas.findByText('Please enter a correctly formatted email address');
-    expect(args.onSubmit).not.toHaveBeenCalled();
+    await expect(args.onSubmit).not.toHaveBeenCalled();
   },
 };
 
@@ -179,7 +185,7 @@ export const Verification: CSF3Story = {
   argTypes: { onSubmit: { action: 'clicked' } },
 };
 
-export const VerificationPasssword1: CSF3Story = {
+export const VerificationPassword: CSF3Story = {
   ...Verification,
   play: async (context) => {
     const canvas = within(context.canvasElement);
