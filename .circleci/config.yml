@@ -269,7 +269,7 @@ jobs:
           name: Run @storybook/bench on repro
           command: |
             cd ../cra-bench
-            npx @storybook/bench@1.0.0--canary.12.22336b6.0 'echo noop' --label cra
+            npx @storybook/bench@1.0.0--canary.11.52d1ee7.1 'echo noop' --label cra
   e2e-tests-pnp:
     executor:
       class: medium

@@ -24,6 +24,7 @@
     "storybook": "./index.js"
   },
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {

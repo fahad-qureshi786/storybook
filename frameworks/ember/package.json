@@ -26,6 +26,7 @@
     "*.d.ts"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {
@@ -40,6 +41,9 @@
     "react-dom": "16.14.0",
     "read-pkg-up": "^7.0.1",
     "ts-dedent": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~4.6.3"
   },
   "peerDependencies": {
     "@babel/core": "*",

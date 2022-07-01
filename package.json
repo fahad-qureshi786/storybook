@@ -58,6 +58,7 @@
     "build-storybooks": "cross-env STORYBOOK_DISPLAY_WARNING=true DISPLAY_WARNING=true node -r esm ./scripts/build-storybooks.js",
     "changelog": "pr-log --sloppy --cherry-pick",
     "changelog:next": "pr-log --sloppy --since-prerelease",
+    "check": "NODE_ENV=production node ./scripts/check-package.js",
     "clean:dist": "del **/dist",
     "coverage": "codecov",
     "danger": "danger",

@@ -9,10 +9,7 @@ const createModuleInfo = (m: keyof typeof Keys): Required<ModuleInfo> => ({
   defaultExport: true,
 });
 
-export const definitions: Definitions = Object.keys(Keys).reduce<Definitions>(
-  (acc, key: keyof typeof Keys) => {
-    acc[key] = createModuleInfo(key);
-    return acc;
-  },
-  {} as Definitions
-);
+export const definitions: Definitions = Object.keys(Keys).reduce<Definitions>((acc, key) => {
+  acc[key as keyof typeof Keys] = createModuleInfo(key as keyof typeof Keys);
+  return acc;
+}, {} as Definitions);

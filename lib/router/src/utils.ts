@@ -148,11 +148,19 @@ type Match = { path: string };
 
 export const getMatch = memoize(1000)(
   (current: string, target: string, startsWith = true): Match | null => {
-    const startsWithTarget = current && startsWith && current.startsWith(target);
+    if (startsWith) {
+      const startsWithTarget = current && current.startsWith(target);
+      if (startsWithTarget) {
+        return { path: current };
+      }
+
+      return null;
+    }
+
     const currentIsTarget = typeof target === 'string' && current === target;
     const matchTarget = current && target && current.match(target);
 
-    if (startsWithTarget || currentIsTarget || matchTarget) {
+    if (currentIsTarget || matchTarget) {
       return { path: current };
     }
 

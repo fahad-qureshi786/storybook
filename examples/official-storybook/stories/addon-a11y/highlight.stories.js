@@ -22,7 +22,7 @@ export const Passes = () => {
   useEffect(() => {
     emit(HIGHLIGHT, {
       elements: ['p'],
-      color: convert(themes.normal).color.positive,
+      color: convert(themes.light).color.positive,
     });
   }, []);
 
@@ -35,7 +35,7 @@ export const Incomplete = () => {
   useEffect(() => {
     emit(HIGHLIGHT, {
       elements: ['p'],
-      color: convert(themes.normal).color.warning,
+      color: convert(themes.light).color.warning,
     });
   }, []);
 
@@ -48,7 +48,7 @@ export const Violations = () => {
   useEffect(() => {
     emit(HIGHLIGHT, {
       elements: ['p'],
-      color: convert(themes.normal).color.negative,
+      color: convert(themes.light).color.negative,
     });
   }, []);
 

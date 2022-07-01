@@ -38,6 +38,7 @@
     "!__testfixtures__"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {
@@ -56,7 +57,8 @@
   },
   "devDependencies": {
     "jest": "^26.6.3",
-    "jest-specific-snapshot": "^4.0.0"
+    "jest-specific-snapshot": "^4.0.0",
+    "typescript": "~4.6.3"
   },
   "publishConfig": {
     "access": "public"

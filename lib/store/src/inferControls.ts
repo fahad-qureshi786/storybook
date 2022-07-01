@@ -23,9 +23,11 @@ const inferControl = (argType: StrictInputType, name: string, matchers: Controls
       return { control: { type: 'color' } };
     }
 
-    logger.warn(
-      `Addon controls: Control of type color only supports string, received "${controlType}" instead`
-    );
+    if (controlType !== 'enum') {
+      logger.warn(
+        `Addon controls: Control of type color only supports string, received "${controlType}" instead`
+      );
+    }
   }
 
   // args that end with date e.g. purchaseDate

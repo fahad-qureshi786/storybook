@@ -46,6 +46,7 @@
     "*.d.ts"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "esrun ../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
@@ -61,7 +62,8 @@
   },
   "devDependencies": {
     "@digitak/esrun": "^3.2.2",
-    "preact": "^10.5.13"
+    "preact": "^10.5.13",
+    "typescript": "~4.6.3"
   },
   "peerDependencies": {
     "preact": "^8.0.0||^10.0.0"

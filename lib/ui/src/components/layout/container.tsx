@@ -569,10 +569,11 @@ class Layout extends Component<LayoutProps, LayoutState> {
                       marginTop: -margin,
                     }
                   : {
-                      marginLeft: -margin,
+                      marginLeft: 1,
                     }
               }
               axis={isPanelBottom ? 'y' : 'x'}
+              reverse
             />
           </Draggable>
         )}

@@ -31,6 +31,7 @@
     "*.d.ts"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {
@@ -44,11 +45,12 @@
     "core-js": "^3.8.2",
     "estraverse": "^5.2.0",
     "prop-types": "^15.7.2",
-    "react-syntax-highlighter": "^15.4.5"
+    "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
     "@types/react": "^16.14.23",
-    "@types/react-syntax-highlighter": "11.0.5"
+    "@types/react-syntax-highlighter": "11.0.5",
+    "typescript": "~4.6.3"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",

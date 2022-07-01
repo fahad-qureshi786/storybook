@@ -30,6 +30,7 @@
     "*.d.ts"
   ],
   "scripts": {
+    "check": "tsc --noEmit",
     "prepare": "ts-node ../../scripts/prebundle.ts"
   },
   "dependencies": {
@@ -46,7 +47,8 @@
     "react-router": "6.0.2",
     "react-router-dom": "6.0.2",
     "ts-dedent": "^2.0.0",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "typescript": "~4.6.3"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",

@@ -58,7 +58,7 @@ export const ExternalDocsContainer: React.FC<{ projectAnnotations: any }> = ({
 
   return (
     <DocsContext.Provider value={docsContext}>
-      <ThemeProvider theme={ensure(themes.normal)}>{children}</ThemeProvider>
+      <ThemeProvider theme={ensure(themes.light)}>{children}</ThemeProvider>
     </DocsContext.Provider>
   );
 };
