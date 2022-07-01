@@ -2,12 +2,9 @@ import React from 'react';
 import { API, useParameter } from '@storybook/api';
 import { styled } from '@storybook/theming';
 import { Link } from '@storybook/router';
-import {
-  SyntaxHighlighter,
-  SyntaxHighlighterProps,
-  SyntaxHighlighterRendererProps,
-} from '@storybook/components';
+import { SyntaxHighlighter } from '@storybook/components';
 
+// TODO this is just broken. We need to figure out how to get selected & click-able areas on this new syntax-highlighter
 // @ts-expect-error Typedefs don't currently expose `createElement` even though it exists
 import { createElement as createSyntaxHighlighterElement } from 'react-syntax-highlighter';
 
@@ -29,7 +26,7 @@ const SelectedStoryHighlight = styled.div(({ theme }) => ({
   borderRadius: theme.appBorderRadius,
 }));
 
-const StyledSyntaxHighlighter = styled(SyntaxHighlighter)<SyntaxHighlighterProps>(({ theme }) => ({
+const StyledSyntaxHighlighter = styled(SyntaxHighlighter)(({ theme }) => ({
   fontSize: theme.typography.size.s2 - 1,
 }));
 
@@ -67,8 +64,8 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({ api }) => {
     }
   }, [selectedStoryRef.current]);
 
-  const createPart = ({ rows, stylesheet, useInlineStyles }: SyntaxHighlighterRendererProps) =>
-    rows.map((node, i) =>
+  const createPart = ({ rows, stylesheet, useInlineStyles }: any) =>
+    rows.map((node: any, i: number) =>
       createSyntaxHighlighterElement({
         node,
         stylesheet,
@@ -84,7 +81,14 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({ api }) => {
     location,
     id,
     refId,
-  }: SyntaxHighlighterRendererProps & { location: SourceBlock; id: string; refId?: string }) => {
+  }: {
+    location: SourceBlock;
+    id: string;
+    refId?: string;
+    rows: any;
+    stylesheet: any;
+    useInlineStyles: any;
+  }) => {
     const first = location.startLoc.line - 1;
     const last = location.endLoc.line;
 
@@ -106,7 +110,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({ api }) => {
     );
   };
 
-  const createParts = ({ rows, stylesheet, useInlineStyles }: SyntaxHighlighterRendererProps) => {
+  const createParts = ({ rows, stylesheet, useInlineStyles }: any) => {
     const parts = [];
     let lastRow = 0;
 
@@ -134,17 +138,15 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({ api }) => {
     return parts;
   };
 
-  const lineRenderer = ({
-    rows,
-    stylesheet,
-    useInlineStyles,
-  }: SyntaxHighlighterRendererProps): React.ReactNode => {
+  const lineRenderer = ({ rows, stylesheet, useInlineStyles }: any): React.ReactNode => {
     // because of the usage of lineRenderer, all lines will be wrapped in a span
     // these spans will receive all classes on them for some reason
     // which makes colours cascade incorrectly
     // this removed that list of classnames
+    // @ts-ignore
     const myrows = rows.map(({ properties, ...rest }) => ({
       ...rest,
+      // @ts-ignore
       properties: { className: [] },
     }));
 
