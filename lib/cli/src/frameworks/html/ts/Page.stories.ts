@@ -1,5 +1,5 @@
 import { within, userEvent } from '@storybook/testing-library';
-import { Story, Meta } from '@storybook/html';
+import { StoryFn, Meta } from '@storybook/html';
 import { createPage } from './Page';
 
 export default {
@@ -10,7 +10,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story = () => createPage();
+const Template: StoryFn = () => createPage();
 
 export const LoggedOut = Template.bind({});
 

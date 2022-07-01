@@ -22,9 +22,9 @@ interface A11yContextStore {
 }
 
 const colorsByType = [
-  convert(themes.normal).color.negative, // VIOLATION,
-  convert(themes.normal).color.positive, // PASS,
-  convert(themes.normal).color.warning, // INCOMPLETION,
+  convert(themes.light).color.negative, // VIOLATION,
+  convert(themes.light).color.positive, // PASS,
+  convert(themes.light).color.warning, // INCOMPLETION,
 ];
 
 export const A11yContext = React.createContext<A11yContextStore>({

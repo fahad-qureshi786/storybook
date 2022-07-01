@@ -14,7 +14,7 @@ A major strength of Storybook are [addons](https://storybook.js.org/addons) that
 
 ### Installation
 
-If you ran `sb init` to include Storybook in your project, the Essentials addon ([`@storybook/addon-essentials`](https://storybook.js.org/addons/tag/essentials)) is already installed and configured for you. You can skip the rest of this section.
+If you ran `storybook init` to include Storybook in your project, the Essentials addon ([`@storybook/addon-essentials`](https://storybook.js.org/addons/tag/essentials)) is already installed and configured for you. You can skip the rest of this section.
 
 If you're upgrading from a previous Storybook version, you'll need to run the following command in your terminal:
 

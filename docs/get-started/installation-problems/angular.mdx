@@ -1,20 +1,19 @@
-- Storybook's CLI provides support for both [Yarn](https://yarnpkg.com/) and [npm](https://www.npmjs.com/) package managers.
-  If you have Yarn installed in your environment but prefer to use npm as your default package manager add the `--use-npm` flag to your installation command. For example:
+- Add the `--type angular` flag to the installation command to set up Storybook manually:
+
+  ```shell
+  npx storybook init --type angular
+  ```
+
+- Storybook's CLI provides support for both [Yarn](https://yarnpkg.com/) and [npm](https://www.npmjs.com/) package managers. If you have Yarn installed in your environment but prefer to use npm as your default package manager add the `--use-npm` flag to your installation command. For example:
 
   ```shell
   npx storybook init --use-npm
   ```
 
-- Add the `--type angular` flag to the installation command to set up Storybook manually:
-
-  ```shell
-  npx sb init --type angular
-  ```
-
 - Storybook supports Webpack 5 out of the box. If you're upgrading from a previous version, run the following command to enable it:
 
   ```shell
-  npx sb@next automigrate
+  npx storybook@next automigrate
   ```
 
   Check the [Migration Guide](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#automigrate) for more information on how to set up Webpack 5.
@@ -26,7 +25,7 @@
 - If you need further customization to the Storybook builder configuration, you can use the following table as a reference:
 
 | Configuration element        | Description                                                                                                                                                                                      |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `"browserTarget"`            | Build target to be served using the following format. <br/> `"example-project:builder:config"`                                                                                                   |
 | `"tsConfig"`                 | Location of the TypeScript configuration file, relative to the current workspace. <br/> `"tsConfig": "./tsconfig.json"`.                                                                         |
 | `"port"`                     | Port used by Storybook. <br/> `"port": 6006`                                                                                                                                                     |

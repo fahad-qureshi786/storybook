@@ -307,9 +307,10 @@ export const ColorControl: FC<ColorControlProps> = ({
   presetColors,
   startOpen,
 }) => {
+  const throttledOnChange = useCallback(throttle(onChange, 200), [onChange]);
   const { value, realValue, updateValue, color, colorSpace, cycleColorSpace } = useColorInput(
     initialValue,
-    throttle(onChange, 200)
+    throttledOnChange
   );
   const { presets, addPreset } = usePresets(presetColors, color, colorSpace);
   const Picker = ColorPicker[colorSpace];

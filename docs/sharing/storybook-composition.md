@@ -74,12 +74,12 @@ You can also compose Storybooks based on the current development environment (e.
 So far we've seen how we can use composition with local or published Storybooks. One thing worth mentioning as your Storybook will grow in time with your own stories, or through composition with other Storybooks, is that you can optimize the deployment process by including the following command in your workflow, run from your project root:
 
 ```shell
-npx sb extract
+npx storybook extract
 ```
 
 <div class="aside">
 
-`sb extract` uses [Puppeteer](https://www.npmjs.com/package/puppeteer), which downloads and installs Chromium. Set the environment `SB_CHROMIUM_PATH` to configure your local Chromium installation.
+`storybook extract` uses [Puppeteer](https://www.npmjs.com/package/puppeteer), which downloads and installs Chromium. Set the environment `SB_CHROMIUM_PATH` to configure your local Chromium installation.
 
 </div>
 
@@ -100,7 +100,7 @@ Linking to a Storybook deployed using this approach will yield all the stories a
 If you need, you can also add additional arguments to this command. For instance, if you want to generate the stories.json file into a custom directory you can use the following:
 
 ```shell
-npx sb extract my-built-storybook-directory my-other-directory/stories.json
+npx storybook extract my-built-storybook-directory my-other-directory/stories.json
 ```
 
 When executed it will lookup a built Storybook in the `my-built-storybook-directory` and create the `stories.json` file in the `my-other-directory` with all the necessary information.

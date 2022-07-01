@@ -36,6 +36,7 @@ import type {
   StoriesRaw,
   SetStoriesPayload,
   StoryIndex,
+  StoryKey,
 } from '../lib/stories';
 
 import { Args, ModuleFn } from '../index';
@@ -78,8 +79,8 @@ export interface SubAPI {
     parameterName?: ParameterName
   ) => Story['parameters'] | any;
   getCurrentParameter<S>(parameterName?: ParameterName): S;
-  updateStoryArgs(story: Story, newArgs: Args): void;
-  resetStoryArgs: (story: Story, argNames?: string[]) => void;
+  updateStoryArgs(story: Story | StoryKey, newArgs: Args): void;
+  resetStoryArgs: (story: Story | StoryKey, argNames?: string[]) => void;
   findLeafStoryId(StoriesHash: StoriesHash, storyId: StoryId): StoryId;
   findSiblingStoryId(
     storyId: StoryId,

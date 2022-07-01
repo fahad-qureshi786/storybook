@@ -21,7 +21,7 @@ Make sure you have:
 First, open a terminal and run the following command:
 
 ```shell
-npx sb@next repro
+npx storybook@next repro
 ```
 
 <div class="aside">

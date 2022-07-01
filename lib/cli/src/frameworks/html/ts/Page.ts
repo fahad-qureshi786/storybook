@@ -7,12 +7,12 @@ type User = {
 
 export const createPage = () => {
   const article = document.createElement('article');
-  let user: User = null;
-  let header = null;
+  let user: User | undefined;
+  let header: HTMLElement | null = null;
 
   const rerenderHeader = () => {
     const wrapper = document.getElementsByTagName('article')[0];
-    wrapper.replaceChild(createHeaderElement(), wrapper.firstChild);
+    wrapper.replaceChild(createHeaderElement(), wrapper.firstChild as HTMLElement);
   };
 
   const onLogin = () => {
@@ -21,7 +21,7 @@ export const createPage = () => {
   };
 
   const onLogout = () => {
-    user = null;
+    user = undefined;
     rerenderHeader();
   };
 

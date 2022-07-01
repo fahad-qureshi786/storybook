@@ -447,13 +447,14 @@ export function useArgs(): [Args, (newArgs: Args) => void, (argNames?: string[])
 
   const data = getCurrentStoryData();
   const args = isStory(data) ? data.args : {};
+  const { id, refId } = data;
   const updateArgs = useCallback(
-    (newArgs: Args) => updateStoryArgs(data as Story, newArgs),
-    [data, updateStoryArgs]
+    (newArgs: Args) => updateStoryArgs({ id, refId }, newArgs),
+    [id, refId, updateStoryArgs]
   );
   const resetArgs = useCallback(
-    (argNames?: string[]) => resetStoryArgs(data as Story, argNames),
-    [data, resetStoryArgs]
+    (argNames?: string[]) => resetStoryArgs({ id, refId }, argNames),
+    [id, refId, resetStoryArgs]
   );
 
   return [args, updateArgs, resetArgs];
