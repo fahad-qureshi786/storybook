@@ -1,0 +1,14 @@
+```ts
+// List.stories.ts
+
+import { Meta, StoryFn } from '@storybook/html';
+
+import { createList, ListArgs } from  './List';
+
+export default {
+  title: 'List',
+} as Meta<ListArgs>;
+
+// Always an empty list, not super interesting
+const Template: StoryFn<ListArgs> = (args) => createList(args);
+```

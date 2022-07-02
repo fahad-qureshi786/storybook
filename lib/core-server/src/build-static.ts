@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import cpy from 'cpy';
 import fs from 'fs-extra';
 import path from 'path';
 import dedent from 'ts-dedent';
@@ -56,7 +55,7 @@ export async function buildStaticStandalone(options: CLIOptions & LoadOptions & 
   }
   await fs.emptyDir(options.outputDir);
 
-  await cpy(defaultFavIcon, options.outputDir);
+  await fs.copyFile(defaultFavIcon, path.join(options.outputDir, path.basename(defaultFavIcon)));
 
   const previewBuilder: Builder<unknown, unknown> = await getPreviewBuilder(options.configDir);
   const managerBuilder: Builder<unknown, unknown> = await getManagerBuilder(options.configDir);
@@ -169,7 +168,7 @@ export async function buildStaticStandalone(options: CLIOptions & LoadOptions & 
   const startTime = process.hrtime();
   // When using the prebuilt manager, we straight up copy it into the outputDir instead of building it
   const manager = prebuiltDir
-    ? cpy('**', options.outputDir, { cwd: prebuiltDir, parents: true }).then(() => {})
+    ? fs.copy(prebuiltDir, options.outputDir, { dereference: true }).then(() => {})
     : managerBuilder.build({ startTime, options: fullOptions });
 
   if (options.ignorePreview) {
@@ -222,7 +221,9 @@ export async function buildStatic({ packageJson, ...loadOptions }: LoadOptions) 
   try {
     await buildStaticStandalone(options);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(error.stack || error.message);
+    }
 
     const presets = loadAllPresets({
       corePresets: [require.resolve('./presets/common-preset')],

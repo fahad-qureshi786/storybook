@@ -14,13 +14,16 @@ Storybook is a helpful tool for snapshot testing because every story is essentia
 
 Run the following command to install Storyshots:
 
-```shell
-# With npm
-npm install @storybook/addon-storyshots --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-storyshots
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-storyshots-install.yarn.js.mdx',
+    'common/storybook-addon-storyshots-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Add a test file to your environment with the following contents to configure Storyshots:
 

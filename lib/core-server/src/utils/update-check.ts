@@ -38,7 +38,7 @@ export function createUpdateMessage(updateInfo: VersionCheck, version: string): 
 
   try {
     const suffix = semver.prerelease(updateInfo.data.latest.version) ? '--prerelease' : '';
-    const upgradeCommand = `npx sb@latest upgrade ${suffix}`.trim();
+    const upgradeCommand = `npx storybook@latest upgrade ${suffix}`.trim();
     updateMessage =
       updateInfo.success && semver.lt(version, updateInfo.data.latest.version)
         ? dedent`
@@ -48,7 +48,9 @@ export function createUpdateMessage(updateInfo: VersionCheck, version: string): 
 
           ${chalk.gray('Upgrade now:')} ${colors.green(upgradeCommand)}
 
-          ${chalk.gray('Read full changelog:')} ${chalk.gray.underline('https://github.com/storybookjs/storybook/blob/next/CHANGELOG.md')}
+          ${chalk.gray('Read full changelog:')} ${chalk.gray.underline(
+            'https://github.com/storybookjs/storybook/blob/next/CHANGELOG.md'
+          )}
         `
         : '';
   } catch (e) {

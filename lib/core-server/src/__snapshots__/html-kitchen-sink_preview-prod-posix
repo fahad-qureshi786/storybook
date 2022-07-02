@@ -38,7 +38,7 @@ Object {
         "include": Array [
           "ROOT",
         ],
-        "test": "/\\\\.(mjs|tsx?|jsx?)$/",
+        "test": "/\\\\.(cjs|mjs|tsx?|jsx?)$/",
         "use": Array [
           Object {
             "loader": "NODE_MODULES/babel-loader/lib/index.js",

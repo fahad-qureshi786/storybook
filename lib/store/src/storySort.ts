@@ -79,7 +79,8 @@ export const storySort =
       }
 
       // If a nested array is provided for a name, use it for ordering.
-      const index = order.indexOf(nameA);
+      let index = order.indexOf(nameA);
+      if (index === -1) index = order.indexOf('*');
       order = index !== -1 && Array.isArray(order[index + 1]) ? order[index + 1] : [];
 
       // We'll need to look at the next part of the name.

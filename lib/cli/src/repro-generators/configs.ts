@@ -13,6 +13,11 @@ export interface Parameters {
   autoDetect?: boolean;
   /** Dependencies to add before building Storybook */
   additionalDeps?: string[];
+  /** Files to add before installing Storybook */
+  additionalFiles?: {
+    path: string;
+    contents: string;
+  }[];
   /** Add typescript dependency and creates a tsconfig.json file */
   typescript?: boolean;
   /** Merge configurations to main.js before running the tests */
@@ -119,7 +124,7 @@ const baseAngular: Parameters = {
   framework: 'angular',
   name: 'angular',
   version: 'latest',
-  generator: `npx -p @angular/cli@{{version}} ng new {{appName}} --routing=true --minimal=true --style=scss --skipInstall=true --strict`,
+  generator: `npx -p @angular/cli@{{version}} ng new {{appName}} --routing=true --minimal=true --style=scss --skip-install=true --strict`,
 };
 
 export const angular10: Parameters = {
@@ -155,7 +160,7 @@ export const angular13: Parameters = {
 export const angular_modern_inline_rendering: Parameters = {
   ...baseAngular,
   name: 'angular_modern_inline_rendering',
-  additionalDeps: ['jest', '@storybook/test-runner'],
+  additionalDeps: ['jest@27', '@storybook/test-runner'],
   mainOverrides: {
     features: {
       storyStoreV7: true,

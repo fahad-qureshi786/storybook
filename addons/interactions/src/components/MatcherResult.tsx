@@ -50,7 +50,7 @@ export const MatcherResult = ({ message }: { message: string }) => {
     <pre
       style={{
         margin: 0,
-        padding: '8px 10px 8px 30px',
+        padding: '8px 10px 8px 36px',
         fontSize: typography.size.s1,
       }}
     >

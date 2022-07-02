@@ -12,9 +12,9 @@ const ListWrapper = styled.ul({
 const Wrapper = styled.div({
   display: 'flex',
   width: '100%',
-  borderBottom: `1px solid ${convert(themes.normal).appBorderColor}`,
+  borderBottom: `1px solid ${convert(themes.light).appBorderColor}`,
   '&:hover': {
-    background: convert(themes.normal).background.hoverable,
+    background: convert(themes.light).background.hoverable,
   },
 });
 
@@ -22,7 +22,7 @@ const Icon = styled(Icons)<IconsProps>({
   height: 10,
   width: 10,
   minWidth: 10,
-  color: convert(themes.normal).color.mediumdark,
+  color: convert(themes.light).color.mediumdark,
   marginRight: 10,
   transition: 'transform 0.1s ease-in-out',
   alignSelf: 'center',
@@ -30,8 +30,8 @@ const Icon = styled(Icons)<IconsProps>({
 });
 
 const HeaderBar = styled.div({
-  padding: convert(themes.normal).layoutMargin,
-  paddingLeft: convert(themes.normal).layoutMargin - 3,
+  padding: convert(themes.light).layoutMargin,
+  paddingLeft: convert(themes.light).layoutMargin - 3,
   background: 'none',
   color: 'inherit',
   textAlign: 'left',
@@ -41,13 +41,13 @@ const HeaderBar = styled.div({
 
   '&:focus': {
     outline: '0 none',
-    borderLeft: `3px solid ${convert(themes.normal).color.secondary}`,
+    borderLeft: `3px solid ${convert(themes.light).color.secondary}`,
   },
 });
 
 const Description = styled.div({
-  padding: convert(themes.normal).layoutMargin,
-  marginBottom: convert(themes.normal).layoutMargin,
+  padding: convert(themes.light).layoutMargin,
+  marginBottom: convert(themes.light).layoutMargin,
   fontStyle: 'italic',
 });
 
@@ -69,7 +69,7 @@ export const ListItem: React.FC<ListItemProps> = ({ item }) => {
         <HeaderBar onClick={() => onToggle(!open)} role="button">
           <Icon
             icon="chevrondown"
-            color={convert(themes.normal).appBorderColor}
+            color={convert(themes.light).appBorderColor}
             style={{
               transform: `rotate(${open ? 0 : -90}deg)`,
             }}

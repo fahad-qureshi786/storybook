@@ -2,7 +2,7 @@ import type { StrictArgTypes } from '@storybook/csf';
 import type { ArgTypesExtractor } from '@storybook/docs-tools';
 import { hasDocgen, extractComponentProps, convert } from '@storybook/docs-tools';
 
-const SECTIONS = ['props', 'events', 'slots'];
+const SECTIONS = ['props', 'events', 'slots', 'methods'];
 
 export const extractArgTypes: ArgTypesExtractor = (component) => {
   if (!hasDocgen(component)) {

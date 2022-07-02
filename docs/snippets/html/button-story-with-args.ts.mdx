@@ -1,5 +1,12 @@
 ```ts
+// Button.stories.ts
+
 import { Meta, StoryFn } from '@storybook/html';
+
+type ButtonArgs = {
+  primary: boolean;
+  label: string;
+}
 
 export default {
   /* 👇 The title prop is optional.
@@ -7,10 +14,10 @@ export default {
    * to learn how to generate automatic titles
    */
   title: 'Button',
-} as Meta;
+} as Meta<ButtonArgs>;
 
 //👇 We create a “template” of how args map to rendering
-const Template: StoryFn = (args): HTMLButtonElement => {
+const Template: StoryFn<ButtonArgs> = (args): HTMLButtonElement => {
   const btn = document.createElement('button');
   btn.innerText = args.label;
 

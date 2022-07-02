@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 import { addons, mockChannel } from '@storybook/addons';
+import { logger } from '@storybook/client-logger';
 import {
   FORCE_REMOUNT,
   SET_CURRENT_STORY,
@@ -10,6 +11,8 @@ import global from 'global';
 
 import { EVENTS, Instrumenter } from './instrumenter';
 import type { Options } from './types';
+
+jest.mock('@storybook/client-logger');
 
 const callSpy = jest.fn();
 const syncSpy = jest.fn();
@@ -38,6 +41,8 @@ const setRenderPhase = (newPhase: string) =>
 let instrumenter: Instrumenter;
 const instrument = <TObj extends Record<string, any>>(obj: TObj, options: Options = {}) =>
   instrumenter.instrument(obj, options);
+
+const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 beforeEach(() => {
   jest.useRealTimers();
@@ -296,25 +301,40 @@ describe('Instrumenter', () => {
     );
   });
 
-  it('catches thrown errors and returns the error', () => {
+  it('catches thrown errors and throws an ignoredException instead', () => {
     const { fn } = instrument({
       fn: () => {
         throw new Error('Boom!');
       },
     });
-    expect(fn()).toEqual(new Error('Boom!'));
-    expect(() => setRenderPhase('played')).toThrow(new Error('Boom!'));
+    expect(fn).toThrow('ignoredException');
   });
 
-  it('forwards nested exceptions', () => {
+  it('catches nested exceptions and throws an ignoredException instead', () => {
     const { fn1, fn2 } = instrument({
-      fn1: (...args: any) => {}, // doesn't forward args
+      fn1: (_: any) => {},
       fn2: () => {
         throw new Error('Boom!');
       },
     });
-    expect(fn1(fn2())).toEqual(new Error('Boom!'));
-    expect(() => setRenderPhase('played')).toThrow(new Error('Boom!'));
+    expect(() => fn1(fn2())).toThrow('ignoredException');
+  });
+
+  it('bubbles child exceptions up to parent (in callback)', () => {
+    const { fn1, fn2 } = instrument({
+      fn1: jest.fn((callback: Function) => callback()),
+      fn2: () => {
+        throw new Error('Boom!');
+      },
+    });
+    expect(() =>
+      fn1(() => {
+        fn2();
+      })
+    ).toThrow('ignoredException');
+    expect(fn1).toHaveBeenCalled();
+    expect(logger.warn).toHaveBeenCalledWith(new Error('Boom!'));
+    expect((logger.warn as any).mock.calls[0][0].callId).toBe('kind--story [0] fn1 [0] fn2');
   });
 
   it("re-throws anything that isn't an error", () => {
@@ -357,6 +377,45 @@ describe('Instrumenter', () => {
   describe('with intercept: true', () => {
     const options = { intercept: true };
 
+    it('only includes intercepted calls in the log', async () => {
+      const fn = (callback?: Function) => callback && callback();
+      const { fn1, fn2 } = instrument({ fn1: fn, fn2: fn }, options);
+      const { fn3 } = instrument({ fn3: fn }, { intercept: false });
+      fn1();
+      fn2();
+      fn3();
+      await tick();
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          logItems: [
+            { callId: 'kind--story [0] fn1', status: 'done' },
+            { callId: 'kind--story [1] fn2', status: 'done' },
+          ],
+        })
+      );
+    });
+
+    it('also includes child calls in the log', async () => {
+      const fn = (callback?: Function) => callback && callback();
+      const { fn1, fn2 } = instrument({ fn1: fn, fn2: fn }, options);
+      fn1(() => {
+        fn2();
+      });
+      await tick();
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          logItems: [
+            { callId: 'kind--story [0] fn1', status: 'done' },
+            {
+              callId: 'kind--story [0] fn1 [0] fn2',
+              status: 'done',
+              parentId: 'kind--story [0] fn1',
+            },
+          ],
+        })
+      );
+    });
+
     it('emits a call event with error data when the function throws', () => {
       const { fn } = instrument(
         {
@@ -374,34 +433,10 @@ describe('Instrumenter', () => {
             name: 'Error',
             message: 'Boom!',
             stack: expect.stringContaining('Error: Boom!'),
+            callId: 'kind--story [0] fn',
           },
         })
       );
-    });
-
-    it('catches thrown errors and throws an ignoredException instead', () => {
-      const { fn } = instrument(
-        {
-          fn: () => {
-            throw new Error('Boom!');
-          },
-        },
-        options
-      );
-      expect(fn).toThrow('ignoredException');
-    });
-
-    it('catches forwarded exceptions and throws an ignoredException instead', () => {
-      const { fn1, fn2 } = instrument(
-        {
-          fn1: (_: any) => {},
-          fn2: () => {
-            throw new Error('Boom!');
-          },
-        },
-        options
-      );
-      expect(() => fn1(fn2())).toThrow('ignoredException');
     });
   });
 
@@ -443,12 +478,13 @@ describe('Instrumenter', () => {
     });
 
     it.skip('starts debugging at the first non-nested interceptable call', () => {
-      const { fn } = instrument({ fn: jest.fn((...args: any) => args) }, { intercept: true });
-      fn(fn(), fn()); // setup the dependencies
+      const fn = (...args) => args;
+      const { fn1, fn2, fn3 } = instrument({ fn1: fn, fn2: fn, fn3: fn }, { intercept: true });
+      fn3(fn1(), fn2()); // setup the dependencies
       addons.getChannel().emit(EVENTS.START, { storyId });
-      const a = fn('a');
-      const b = fn('b');
-      const c = fn(a, b);
+      const a = fn1('a');
+      const b = fn2('b');
+      const c = fn3(a, b);
       expect(a).toEqual(['a']);
       expect(b).toEqual(['b']);
       expect(c).toEqual(expect.any(Promise));
@@ -476,13 +512,13 @@ describe('Instrumenter', () => {
       expect(fn).toHaveBeenCalledTimes(0);
 
       addons.getChannel().emit(EVENTS.NEXT, { storyId });
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await tick();
 
       expect(mockedInstrumentedFn).toHaveBeenCalledTimes(2);
       expect(fn).toHaveBeenCalledTimes(1);
 
       addons.getChannel().emit(EVENTS.END, { storyId });
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await tick();
 
       expect(mockedInstrumentedFn).toHaveBeenCalledTimes(3);
       expect(fn).toHaveBeenCalledTimes(3);

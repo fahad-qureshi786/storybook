@@ -83,7 +83,11 @@ jest.mock('@storybook/store', () => {
   };
 });
 
-jest.mock('cpy', () => () => Promise.resolve());
+jest.mock('fs-extra', () => ({
+  ...jest.requireActual('fs-extra'),
+  copyFile: jest.fn().mockResolvedValue(Promise.resolve()),
+  copy: jest.fn().mockResolvedValue(Promise.resolve()),
+}));
 jest.mock('http', () => ({
   ...jest.requireActual('http'),
   createServer: () => ({ listen: (_options, cb) => cb(), on: jest.fn() }),

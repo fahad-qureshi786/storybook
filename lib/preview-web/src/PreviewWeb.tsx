@@ -1,7 +1,24 @@
 import deprecate from 'util-deprecate';
 import dedent from 'ts-dedent';
 import global from 'global';
-import Events, { IGNORED_EXCEPTION } from '@storybook/core-events';
+import {
+  CURRENT_STORY_WAS_SET,
+  IGNORED_EXCEPTION,
+  PRELOAD_STORIES,
+  PREVIEW_KEYDOWN,
+  SET_CURRENT_STORY,
+  SET_STORIES,
+  STORY_ARGS_UPDATED,
+  STORY_CHANGED,
+  STORY_ERRORED,
+  STORY_MISSING,
+  STORY_PREPARED,
+  STORY_RENDER_PHASE_CHANGED,
+  STORY_SPECIFIED,
+  STORY_THREW_EXCEPTION,
+  STORY_UNCHANGED,
+  UPDATE_QUERY_PARAMS,
+} from '@storybook/core-events';
 import { logger } from '@storybook/client-logger';
 import { AnyFramework, StoryId, ProjectAnnotations, Args, Globals } from '@storybook/csf';
 import type {
@@ -64,9 +81,9 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
 
     globalWindow.onkeydown = this.onKeydown.bind(this);
 
-    this.channel.on(Events.SET_CURRENT_STORY, this.onSetCurrentStory.bind(this));
-    this.channel.on(Events.UPDATE_QUERY_PARAMS, this.onUpdateQueryParams.bind(this));
-    this.channel.on(Events.PRELOAD_STORIES, this.onPreloadStories.bind(this));
+    this.channel.on(SET_CURRENT_STORY, this.onSetCurrentStory.bind(this));
+    this.channel.on(UPDATE_QUERY_PARAMS, this.onUpdateQueryParams.bind(this));
+    this.channel.on(PRELOAD_STORIES, this.onPreloadStories.bind(this));
   }
 
   initializeWithProjectAnnotations(projectAnnotations: WebProjectAnnotations<TFramework>) {
@@ -87,7 +104,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
   initializeWithStoryIndex(storyIndex: StoryIndex): PromiseLike<void> {
     return super.initializeWithStoryIndex(storyIndex).then(() => {
       if (!global.FEATURES?.storyStoreV7) {
-        this.channel.emit(Events.SET_STORIES, this.storyStore.getSetStoriesPayload());
+        this.channel.emit(SET_STORIES, this.storyStore.getSetStoriesPayload());
       }
 
       return this.selectSpecifiedStory();
@@ -130,9 +147,9 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     }
 
     this.urlStore.setSelection({ storyId, viewMode });
-    this.channel.emit(Events.STORY_SPECIFIED, this.urlStore.selection);
+    this.channel.emit(STORY_SPECIFIED, this.urlStore.selection);
 
-    this.channel.emit(Events.CURRENT_STORY_WAS_SET, this.urlStore.selection);
+    this.channel.emit(CURRENT_STORY_WAS_SET, this.urlStore.selection);
 
     await this.renderSelection({ persistedArgs: args });
   }
@@ -161,7 +178,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     super.onStoriesChanged({ importFn, storyIndex });
 
     if (!global.FEATURES?.storyStoreV7) {
-      this.channel.emit(Events.SET_STORIES, await this.storyStore.getSetStoriesPayload());
+      this.channel.emit(SET_STORIES, await this.storyStore.getSetStoriesPayload());
     }
 
     if (this.urlStore.selection) {
@@ -176,15 +193,15 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     if (!this.currentRender?.disableKeyListeners && !focusInInput(event)) {
       // We have to pick off the keys of the event that we need on the other side
       const { altKey, ctrlKey, metaKey, shiftKey, key, code, keyCode } = event;
-      this.channel.emit(Events.PREVIEW_KEYDOWN, {
+      this.channel.emit(PREVIEW_KEYDOWN, {
         event: { altKey, ctrlKey, metaKey, shiftKey, key, code, keyCode },
       });
     }
   }
 
   onSetCurrentStory(selection: Selection) {
-    this.urlStore.setSelection(selection);
-    this.channel.emit(Events.CURRENT_STORY_WAS_SET, this.urlStore.selection);
+    this.urlStore.setSelection({ viewMode: 'story', ...selection });
+    this.channel.emit(CURRENT_STORY_WAS_SET, this.urlStore.selection);
     this.renderSelection();
   }
 
@@ -290,7 +307,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     // Don't re-render the story if nothing has changed to justify it
     if (lastRender && !storyIdChanged && !implementationChanged && !viewModeChanged) {
       this.currentRender = lastRender;
-      this.channel.emit(Events.STORY_UNCHANGED, storyId);
+      this.channel.emit(STORY_UNCHANGED, storyId);
       this.view.showMain();
       return;
     }
@@ -301,11 +318,11 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
 
     // If we are rendering something new (as opposed to re-rendering the same or first story), emit
     if (lastSelection && (storyIdChanged || viewModeChanged)) {
-      this.channel.emit(Events.STORY_CHANGED, storyId);
+      this.channel.emit(STORY_CHANGED, storyId);
     }
 
     if (global.FEATURES?.storyStoreV7) {
-      this.channel.emit(Events.STORY_PREPARED, {
+      this.channel.emit(STORY_PREPARED, {
         id: storyId,
         parameters,
         initialArgs,
@@ -318,7 +335,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     // If the implementation changed, or args were persisted, the args may have changed,
     // and the STORY_PREPARED event above may not be respected.
     if (implementationChanged || persistedArgs) {
-      this.channel.emit(Events.STORY_ARGS_UPDATED, { storyId, args });
+      this.channel.emit(STORY_ARGS_UPDATED, { storyId, args });
     }
 
     if (selection.viewMode === 'docs' || parameters.docsOnly) {
@@ -411,20 +428,20 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
 
   renderMissingStory() {
     this.view.showNoPreview();
-    this.channel.emit(Events.STORY_MISSING);
+    this.channel.emit(STORY_MISSING);
   }
 
   renderStoryLoadingException(storySpecifier: StorySpecifier, err: Error) {
     logger.error(`Unable to load story '${storySpecifier}':`);
     logger.error(err);
     this.view.showErrorDisplay(err);
-    this.channel.emit(Events.STORY_MISSING, storySpecifier);
+    this.channel.emit(STORY_MISSING, storySpecifier);
   }
 
   // renderException is used if we fail to render the story and it is uncaught by the app layer
   renderException(storyId: StoryId, err: Error) {
-    this.channel.emit(Events.STORY_THREW_EXCEPTION, err);
-    this.channel.emit(Events.STORY_RENDER_PHASE_CHANGED, { newPhase: 'errored', storyId });
+    this.channel.emit(STORY_THREW_EXCEPTION, err);
+    this.channel.emit(STORY_RENDER_PHASE_CHANGED, { newPhase: 'errored', storyId });
 
     // Ignored exceptions exist for control flow purposes, and are typically handled elsewhere.
     if (err !== IGNORED_EXCEPTION) {
@@ -438,8 +455,8 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
   // wrong -- for instance returned the wrong thing from a story
   renderError(storyId: StoryId, { title, description }: { title: string; description: string }) {
     logger.error(`Error rendering story ${title}: ${description}`);
-    this.channel.emit(Events.STORY_ERRORED, { title, description });
-    this.channel.emit(Events.STORY_RENDER_PHASE_CHANGED, { newPhase: 'errored', storyId });
+    this.channel.emit(STORY_ERRORED, { title, description });
+    this.channel.emit(STORY_RENDER_PHASE_CHANGED, { newPhase: 'errored', storyId });
     this.view.showErrorDisplay({
       message: title,
       stack: description,

@@ -18,13 +18,16 @@ The interactions are written using a Storybook-instrumented version of [Testing 
 
 Since Interactions is still experimental, it doesn't yet ship with Storybook by default. As such, you'll have to install it. You may also want to add our wrappers for Testing Library and Jest.
 
-```shell
-# With npm
-npm install @storybook/addon-interactions @storybook/jest @storybook/testing-library --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-interactions @storybook/jest @storybook/testing-library
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-interactions-addon-full-install.yarn.js.mdx',
+    'common/storybook-addon-interactions-addon-full-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Next, update [`.storybook/main.js`](../configure/overview.md#configure-story-rendering) to the following:
 

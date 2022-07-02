@@ -28,7 +28,7 @@ The `main.js` configuration file is a [preset](../addons/addon-types.md) and, as
 
 - `stories` - an array of globs that indicates the [location of your story files](#configure-story-loading), relative to `main.js`.
 - `addons` - a list of the [addons](https://storybook.js.org/addons/) you are using.
-- `webpackFinal` - custom [webpack configuration](./webpack.md#extending-storybooks-webpack-config).
+- `webpackFinal` - custom [webpack configuration](../builders/webpack.md#extending-storybooks-webpack-config).
 - `babel` - custom [babel configuration](./babel.md).
 - `framework` - framework specific configurations to help the loading and building process.
 
@@ -45,11 +45,12 @@ Additionally, you can also provide additional feature flags to your Storybook co
 | Configuration element | Description                                                                                                                                                                                                                          |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `storyStoreV7`        | Configures Storybook to load stories [on demand](#on-demand-story-loading), rather than during boot up. <br/> `features: { storyStoreV7: true }`                                                                                     |
-| `buildStoriesJson`    | Generates a `stories.json` file to help story loading with the on demand mode. <br/> `features: { buildStoriesJson: true }`                                                                           |
+| `buildStoriesJson`    | Generates a `stories.json` file to help story loading with the on demand mode. <br/> `features: { buildStoriesJson: true }`                                                                                                          |
 | `emotionAlias`        | Provides backwards compatibility for Emotion. See the [migration documentation](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#emotion11-quasi-compatibility) for context.<br/> `features: { emotionAlias: false }` |
 | `babelModeV7`         | Enables the new [Babel configuration](./babel.md#v7-mode) mode for Storybook. <br/> `features: { babelModeV7: true }`                                                                                                                |
 | `postcss`             | Disables the implicit PostCSS warning. See the [migration documentation](https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#deprecated-implicit-postcss-loader) for context. <br/> `features: { postcss: false }`       |
 | `modernInlineRender`  | Enables Storybook's modern inline rendering mode. <br/> `features: { modernInlineRender: false }`                                                                                                                                    |
+| `previewMdx2`         | Enables experimental support for [MDX 2](../writing-docs/mdx.md#mdx-2).<br/>`features: { previewMdx2: true }`                                                                                                                        |
 
 ## Configure story loading
 
@@ -177,14 +178,15 @@ You can also use Storybook's API to configure your project with TypeScript. Unde
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `stories`             | The array of globs that indicates the [location of your story files](#configure-story-loading), relative to `main.ts`                                                            |
 | `staticDirs`          | Sets a list of directories of [static files](./images-and-assets.md#serving-static-files-via-storybook-configuration) to be loaded by Storybook <br/> `staticDirs:['../public']` |
-| `addons`              | Sets the list of [addons](/addons) loaded by Storybook <br/> `addons:['@storybook/addon-essentials']`                                                                            |
+| `addons`              | Sets the list of [addons](https://storybook.js.org/addons/) loaded by Storybook <br/> `addons:['@storybook/addon-essentials']`                                                   |
 | `typescript`          | Configures how Storybook handles [TypeScript files](./typescript.md) <br/> `typescript: { check: false, checkOptions: {} }`                                                      |
 | `framework`           | Configures Storybook based on a set of framework-specific settings <br/> `framework:'@storybook/svelte'`                                                                         |
-| `core`                | Sets Storybook's Webpack configuration <br/> `core:{ builder: 'webpack5'}`                                                                                                       |
-| `features`            | Enables Storybook's additional features <br/>. See table below for a list of available features `features: { storyStoreV7: true }`                                               |
+| `core`                | Configures Storybook's internal features.<br/> `core: { builder: 'webpack5' }`                                                                                                   |
+| `features`            | Enables Storybook's additional features.<br/> See table below for a list of available features `features: { storyStoreV7: true }`                                                |
 | `refs`                | Configures [Storybook composition](../sharing/storybook-composition.md) <br/> `refs:{ example: { title: 'ExampleStorybook', url:'https://your-url.com' } }`                      |
-| `logLevel`            | Configures Storybook's logs in the browser terminal. Useful for debugging <br/> `logLevel: 'debug'`                                                                                      |
-| `webpackFinal`        | Customize Storybook's [Webpack](./webpack.md) setup <br/> `webpackFinal: async (config:any) => { return config; }`                                                               |
+| `logLevel`            | Configures Storybook's logs in the browser terminal. Useful for debugging <br/> `logLevel: 'debug'`                                                                              |
+| `webpackFinal`        | Customize Storybook's [Webpack](../builders/webpack.md) setup <br/> `webpackFinal: async (config:any) => { return config; }`                                                     |
+| `env`                 | Defines custom Storybook [environment variables](./environment-variables.md#using-storybook-configuration). <br/> `env: (config) => ({...config, EXAMPLE_VAR: 'Example var' }),` |
 
 ## Configure story rendering
 

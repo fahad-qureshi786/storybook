@@ -122,10 +122,18 @@ export interface StoryIndexStory {
   name: StoryName;
   title: ComponentTitle;
   importPath: Path;
+
+  // v2 or v2-compatible story index includes this
+  parameters?: Parameters;
 }
 export interface StoryIndex {
   v: number;
   stories: Record<StoryId, StoryIndexStory>;
+}
+
+export interface StoryKey {
+  id: StoryId;
+  refId?: string;
 }
 
 export type SetStoriesPayload =
@@ -183,16 +191,19 @@ export const transformStoryIndexToStoriesHash = (
   { provider }: { provider: Provider }
 ): StoriesHash => {
   const countByTitle = countBy(Object.values(index.stories), 'title');
-  const input = Object.entries(index.stories).reduce((acc, [id, { title, name, importPath }]) => {
-    const docsOnly = name === 'Page' && countByTitle[title] === 1;
-    acc[id] = {
-      id,
-      kind: title,
-      name,
-      parameters: { fileName: importPath, options: {}, docsOnly },
-    };
-    return acc;
-  }, {} as StoriesRaw);
+  const input = Object.entries(index.stories).reduce(
+    (acc, [id, { title, name, importPath, parameters }]) => {
+      const docsOnly = name === 'Page' && countByTitle[title] === 1;
+      acc[id] = {
+        id,
+        kind: title,
+        name,
+        parameters: { fileName: importPath, options: {}, docsOnly, ...parameters },
+      };
+      return acc;
+    },
+    {} as StoriesRaw
+  );
 
   return transformStoriesRawToStoriesHash(input, { provider, prepared: false });
 };
@@ -276,9 +287,12 @@ export const transformStoriesRawToStoriesHash = (
     rootAndGroups.forEach((group, index) => {
       const child = paths[index + 1];
       const { id } = group;
+      // @ts-ignore
+      const { parameters: originalParameters = group.parameters } = acc[id] || {};
       acc[id] = merge(acc[id] || {}, {
         ...group,
         ...(child && { children: [child] }),
+        parameters: originalParameters,
       });
     });
 

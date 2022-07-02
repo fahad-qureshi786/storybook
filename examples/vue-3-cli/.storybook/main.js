@@ -10,6 +10,8 @@ module.exports = {
     disableTelemetry: true,
   },
   features: {
+    storyStoreV7: !global.navigator?.userAgent?.match?.('jsdom'),
     buildStoriesJson: true,
+    channelOptions: { allowFunction: false, maxDepth: 10 },
   },
 };

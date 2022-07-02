@@ -6,7 +6,13 @@ import {
   StoryContextForLoaders,
   StoryContext,
 } from '@storybook/csf';
-import { Story, RenderContext, StoryStore } from '@storybook/store';
+import {
+  Story,
+  RenderContext,
+  StoryStore,
+  RenderToDOM,
+  TeardownRenderToDOM,
+} from '@storybook/store';
 import { Channel } from '@storybook/addons';
 import { STORY_RENDER_PHASE_CHANGED, STORY_RENDERED } from '@storybook/core-events';
 
@@ -62,13 +68,12 @@ export class StoryRender<TFramework extends AnyFramework> implements Render<TFra
 
   public disableKeyListeners = false;
 
+  private teardownRender: TeardownRenderToDOM = () => {};
+
   constructor(
     public channel: Channel,
     public store: StoryStore<TFramework>,
-    private renderToScreen: (
-      renderContext: RenderContext<TFramework>,
-      canvasElement: HTMLElement
-    ) => void | Promise<void>,
+    private renderToScreen: RenderToDOM<TFramework>,
     private callbacks: RenderContextCallbacks<TFramework>,
     public id: StoryId,
     public viewMode: ViewMode,
@@ -190,9 +195,10 @@ export class StoryRender<TFramework extends AnyFramework> implements Render<TFra
         unboundStoryFn,
       };
 
-      await this.runPhase(abortSignal, 'rendering', async () =>
-        this.renderToScreen(renderContext, this.canvasElement)
-      );
+      await this.runPhase(abortSignal, 'rendering', async () => {
+        this.teardownRender =
+          (await this.renderToScreen(renderContext, this.canvasElement)) || (() => {});
+      });
       this.notYetRendered = false;
       if (abortSignal.aborted) return;
 
@@ -241,7 +247,11 @@ export class StoryRender<TFramework extends AnyFramework> implements Render<TFra
     // Wait several ticks that may be needed to handle the abort, then try again.
     // Note that there's a max of 5 nested timeouts before they're no longer "instant".
     for (let i = 0; i < 3; i += 1) {
-      if (!this.isPending()) return;
+      if (!this.isPending()) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.teardownRender();
+        return;
+      }
       // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) => setTimeout(resolve, 0));
     }

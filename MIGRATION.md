@@ -1,7 +1,9 @@
 <h1>Migration</h1>
 
 - [From version 6.4.x to 6.5.0](#from-version-64x-to-650)
+  - [Vue 3 upgrade](#vue-3-upgrade)
   - [React18 new root API](#react18-new-root-api)
+  - [Renamed isToolshown to showToolbar](#renamed-istoolshown-to-showtoolbar)
   - [Deprecated register.js](#deprecated-registerjs)
   - [Dropped support for addon-actions addDecorators](#dropped-support-for-addon-actions-adddecorators)
   - [Vite builder renamed](#vite-builder-renamed)
@@ -10,6 +12,7 @@
   - [CSF3 auto-title improvements](#csf3-auto-title-improvements)
     - [Auto-title filename case](#auto-title-filename-case)
     - [Auto-title redundant filename](#auto-title-redundant-filename)
+    - [Auto-title always prefixes](#auto-title-always-prefixes)
 - [From version 6.3.x to 6.4.0](#from-version-63x-to-640)
   - [Automigrate](#automigrate)
   - [CRA5 upgrade](#cra5-upgrade)
@@ -200,6 +203,10 @@
 
 ## From version 6.4.x to 6.5.0
 
+### Vue 3 upgrade
+
+Storybook 6.5 supports Vue 3 out of the box when you install it fresh. However, if you're upgrading your project from a previous version, you'll need to [follow the steps for opting-in to webpack 5](#webpack-5).
+
 ### React18 new root API
 
 React 18 introduces a [new root API](https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-client-rendering-apis). Starting in 6.5, Storybook for React will auto-detect your react version and use the new root API automatically if you're on React18.
@@ -210,6 +217,21 @@ If you wish to opt out of the new root API, set the `reactOptions.legacyRootApi`
 module.exports = {
   reactOptions: { legacyRootApi: true },
 };
+```
+
+### Renamed isToolshown to showToolbar
+
+Storybook's [manager API](docs/addons/addons-api.md) has deprecated the `isToolshown` option (to show/hide the toolbar) and renamed it to `showToolbar` for consistency with other similar UI options.
+
+Example:
+
+```js
+// .storybook/manager.js
+import { addons } from '@storybook/addons';
+
+addons.setConfig({
+  showToolbar: false,
+});
 ```
 
 ### Deprecated register.js
@@ -314,6 +336,36 @@ Since CSF3 is experimental, we are introducing this technically breaking change 
 export default { title: 'Atoms/Button/Button' };
 ```
 
+#### Auto-title always prefixes
+
+When the user provides a `prefix` in their `main.js` `stories` field, it now prefixes all titles to matching stories, whereas in 6.4 and earlier it only prefixed auto-titles.
+
+Consider the following example:
+
+```js
+// main.js
+module.exports = {
+  stories: [{ directory: '../src', titlePrefix: 'Custom' }]
+}
+
+// ../src/NoTitle.stories.js
+export default { component: Foo };
+
+// ../src/Title.stories.js
+export default { component: Bar, title: 'Bar' }
+```
+
+In 6.4, the final titles would be:
+
+- `NoTitle.stories.js` => `Custom/NoTitle`
+- `Title.stories.js` => `Bar`
+
+In 6.5, the final titles would be:
+
+- `NoTitle.stories.js` => `Custom/NoTitle`
+- `Title.stories.js` => `Custom/Bar`
+
+<!-- markdown-link-check-disable -->
 ## From version 6.3.x to 6.4.0
 
 ### Automigrate
@@ -327,7 +379,9 @@ For example, if you're in a webpack5 project but still use Storybook's default w
 You can run the existing suite of automigrations to see which ones apply to your project. This won't update any files unless you accept the changes:
 
 ```
+
 npx sb@next automigrate
+
 ```
 
 The automigration suite also runs when you create a new project (`sb init`) or when you update storybook (`sb upgrade`).
@@ -337,7 +391,9 @@ The automigration suite also runs when you create a new project (`sb init`) or w
 Storybook 6.3 supports CRA5 out of the box when you install it fresh. However, if you're upgrading your project from a previous version, you'll need to upgrade the configuration. You can do this automatically by running:
 
 ```
+
 npx sb@next automigrate
+
 ```
 
 Or you can do the following steps manually to force Storybook to use webpack 5 for building your project:
@@ -698,7 +754,29 @@ The `--static-dir` flag has been deprecated and will be removed in Storybook 7.0
 
 ### Webpack 5
 
-Storybook 6.3 brings opt-in support for building both your project and the manager UI with webpack 5. To do so:
+Storybook 6.3 brings opt-in support for building both your project and the manager UI with webpack 5. To do so, there are two ways:
+
+1 - Upgrade command
+
+If you're upgrading your Storybook version, run this command, which will both upgrade your dependencies but also detect whether you should migrate to webpack5 builders and apply the changes automatically:
+
+```shell
+npx sb upgrade
+```
+
+2 - Automigrate command
+
+If you don't want to change your Storybook version but want Storybook to detect whether you should migrate to webpack5 builders and apply the changes automatically:
+
+```shell
+npx sb automigrate
+```
+
+3 - Manually
+
+If either methods did not work or you just want to proceed manually, do the following steps:
+
+Install the dependencies:
 
 ```shell
 yarn add @storybook/builder-webpack5 @storybook/manager-webpack5 --dev
@@ -2166,7 +2244,7 @@ Theming has been rewritten in v5. If you used theming in v4, please consult the 
 
 ### Story hierarchy defaults
 
-Storybook's UI contains a hierarchical tree of stories that can be configured by `hierarchySeparator` and `hierarchyRootSeparator` [options](./addons/options/README.md).
+Storybook's UI contains a hierarchical tree of stories that can be configured by `hierarchySeparator` and `hierarchyRootSeparator` [options](https://github.com/storybookjs/deprecated-addons/blob/master/MIGRATION.md#options-addon-deprecated).
 
 In Storybook 4.x the values defaulted to `null` for both of these options, so that there would be no hierarchy by default.
 
@@ -2831,3 +2909,4 @@ If you **are** using these addons, it takes two steps to migrate:
   import { action } from '@storybook/addon-actions';
   import { linkTo } from '@storybook/addon-links';
   ```
+<!-- markdown-link-check-enable -->

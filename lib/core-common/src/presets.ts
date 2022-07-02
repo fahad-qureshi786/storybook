@@ -97,7 +97,7 @@ export const resolveAddonName = (
   const managerFile = safeResolve(`${path}/manager`);
   const registerFile = safeResolve(`${path}/register`) || safeResolve(`${path}/register-panel`);
   const previewFile = safeResolve(`${path}/preview`);
-  const presetFile = safeResolve(`${path}/preset`);
+  const presetFile = r(`${path}/preset`);
 
   if (!(managerFile || previewFile) && presetFile) {
     return {

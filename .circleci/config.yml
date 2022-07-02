@@ -277,9 +277,9 @@ jobs:
       - run:
           name: run e2e tests cra
           command: yarn test:e2e-framework --pnp cra
-      - run:
-          name: run e2e tests vue
-          command: yarn test:e2e-framework --pnp sfcVue
+      # - run:
+      #     name: run e2e tests vue
+      #     command: yarn test:e2e-framework --pnp sfcVue
       - run:
           name: prep artifacts
           when: always

@@ -5,7 +5,7 @@ export const babelLoader = () => {
   const { plugins, presets } = getStorybookBabelConfig();
 
   return {
-    test: /\.(mjs|tsx?|jsx?)$/,
+    test: /\.(cjs|mjs|tsx?|jsx?)$/,
     use: [
       {
         loader: require.resolve('babel-loader'),

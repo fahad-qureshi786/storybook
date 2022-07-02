@@ -1,7 +1,7 @@
 import path from 'path';
 import semver from '@storybook/semver';
 import {
-  isDefaultProjectSet,
+  checkForProjects,
   editStorybookTsConfig,
   getAngularAppTsConfigJson,
   getAngularAppTsConfigPath,
@@ -28,11 +28,8 @@ function editAngularAppTsConfig() {
 }
 
 const generator: Generator = async (packageManager, npmOptions, options) => {
-  if (!isDefaultProjectSet()) {
-    throw new Error(
-      'Could not find a default project in your Angular workspace.\nSet a defaultProject in your angular.json and re-run the installation.'
-    );
-  }
+  checkForProjects();
+
   const angularVersion = semver.coerce(
     packageManager.retrievePackageJson().dependencies['@angular/core']
   )?.version;

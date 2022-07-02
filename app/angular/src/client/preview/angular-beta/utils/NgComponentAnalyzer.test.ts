@@ -19,6 +19,7 @@ import {
   isComponent,
   isDeclarable,
   getComponentDecoratorMetadata,
+  isStandaloneComponent,
 } from './NgComponentAnalyzer';
 
 describe('getComponentInputsOutputs', () => {
@@ -232,6 +233,46 @@ describe('isComponent', () => {
     class FooDirective {}
 
     expect(isComponent(FooDirective)).toEqual(false);
+  });
+});
+
+describe('isStandaloneComponent', () => {
+  it('should return true with a Component with "standalone: true"', () => {
+    // TODO: `standalone` is only available in Angular v14. Remove cast to `any` once
+    // Angular deps are updated to v14.x.x.
+    @Component({ standalone: true } as any)
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(true);
+  });
+
+  it('should return false with a Component with "standalone: false"', () => {
+    // TODO: `standalone` is only available in Angular v14. Remove cast to `any` once
+    // Angular deps are updated to v14.x.x.
+    @Component({ standalone: false } as any)
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(false);
+  });
+
+  it('should return false with a Component without the "standalone" property', () => {
+    @Component({})
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(false);
+  });
+
+  it('should return false with simple class', () => {
+    class FooPipe {}
+
+    expect(isStandaloneComponent(FooPipe)).toEqual(false);
+  });
+
+  it('should return false with Directive', () => {
+    @Directive()
+    class FooDirective {}
+
+    expect(isStandaloneComponent(FooDirective)).toEqual(false);
   });
 });
 

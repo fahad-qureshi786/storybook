@@ -6,18 +6,21 @@ Contribute a new feature or bug fix to [Storybook's monorepo](https://github.com
 
 ## Initial setup
 
-First [fork](https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo) the Storybook repository then clone and build your fork locally. Run the following commands:
+Start by [forking](https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo) the Storybook monorepo and cloning it locally. 
 
 ```shell
 git clone https://github.com/your-username/storybook.git
-cd storybook
-yarn
-yarn bootstrap --core
+```
+
+Navigate to the `storybook` directory and install the required dependencies with the following commands:
+    
+```shell
+yarn && yarn bootstrap --core
 ```
 
 ## Run tests & examples
 
-Once you've completed the [initial setup](#run-tests-&-examples), you should have a fully functional version of Storybook built on your local machine. Before making any code changes, it's helpful to verify that everything is working as it should. More specifically, the test suite and examples.
+Once you've completed the [initial setup](#initial-setup), you should have a fully functional version of Storybook built on your local machine. Before making any code changes, it's helpful to verify that everything is working as it should. More specifically, the test suite and examples.
 
 Run the following command to execute the tests:
 
@@ -28,8 +31,7 @@ yarn test
 Once the tests finish, check if the examples are working with the following commands:
 
 ```shell
-cd examples/cra-ts-essentials
-yarn storybook
+cd examples/cra-ts-essentials && yarn storybook
 ```
 
 <div class="aside">
@@ -106,7 +108,7 @@ Storybook's monorepo is set up to rely on end-to-end testing with [Cypress](http
 
 Before submitting your contribution, run the test suite one last time with:
 
-```sh
+```shell
 yarn test
 ```
 
@@ -133,20 +135,20 @@ We encourage bug reports to include reproductions. In the same way that it's pos
 
 To do so, run the following command in the root of the monorepo:
 
-```sh
-npx sb@next link https://github.com/your-username/your-project.git
+```shell
+npx storybook@next link https://github.com/your-username/your-project.git
 ```
 
 This command creates a project `../storybook-repros/your-project`, and automatically links it to your local Storybook code. After connecting it, you should be able to run Storybook and develop as mentioned [above](#start-developing).
 
 If you already have a reproduction on your local machine, you can similarly link it to your monorepo dev setup with the `--local` flag:
 
-```sh
-npx sb@next link --local /path/to/local-repro-directory
+```shell
+npx storybook@next link --local /path/to/local-repro-directory
 ```
 
 <div class="aside">
-💡  The <code>sb link</code> command relies on <code>yarn 2</code> linking under the hood. It requires that the local repro is using <code>yarn 2</code>, which will be the case if you're using the [<code>sb repro</code> command](./how-to-reproduce) per our contributing guidelines. If you are trying to link to a non-<code>yarn 2</code> project, linking will fail.
+💡  The <code>storybook link</code> command relies on <code>yarn 2</code> linking under the hood. It requires that the local repro is using <code>yarn 2</code>, which will be the case if you're using the [<code>storybook repro</code> command](./how-to-reproduce) per our contributing guidelines. If you are trying to link to a non-<code>yarn 2</code> project, linking will fail.
 </div>
 
 ## Troubleshooting

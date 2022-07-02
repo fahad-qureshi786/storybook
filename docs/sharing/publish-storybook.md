@@ -21,7 +21,8 @@ First, we'll need to build Storybook as a static web application. The functional
   paths={[
     'angular/custom-build-script-production.script-for-builder.js.mdx',
     'angular/build-storybook-production-mode.with-builder.js.mdx',
-    'common/build-storybook-production-mode.js.mdx',
+    'common/build-storybook-production-mode.yarn.js.mdx',
+    'common/build-storybook-production-mode.npm.js.mdx',
   ]}
 />
 
@@ -49,13 +50,16 @@ To get started, sign up with your GitHub, GitLab, Bitbucket, or email and genera
 
 Next, install the [Chromatic CLI](https://www.npmjs.com/package/chromatic) package from npm:
 
-```shell
-# With npm
-npm install --save-dev chromatic
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev chromatic
-```
+<CodeSnippets
+  paths={[
+    'common/chromatic-install.yarn.js.mdx',
+    'common/chromatic-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Run the following command after the package finishes installing. Make sure that you replace `your-project-token` with your own project token.
 

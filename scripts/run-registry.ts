@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { remove, pathExists } from 'fs-extra';
 import chalk from 'chalk';
 import path from 'path';
 import program from 'commander';
@@ -176,6 +177,16 @@ const run = async () => {
 
   logger.log(`📐 reading version of storybook`);
   logger.log(`🚛 listing storybook packages`);
+
+  if (!process.env.CI) {
+    // when running e2e locally, clear cache to avoid EPUBLISHCONFLICT errors
+    const verdaccioCache = path.resolve(__dirname, '..', '.verdaccio-cache');
+    if (await pathExists(verdaccioCache)) {
+      logger.log(`🗑 cleaning up cache`);
+      await remove(verdaccioCache);
+    }
+  }
+
   logger.log(`🎬 starting verdaccio (this takes ±5 seconds, so be patient)`);
 
   const [verdaccioServer, packages, version] = await Promise.all<any, Package[], string>([

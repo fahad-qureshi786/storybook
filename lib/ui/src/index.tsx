@@ -7,12 +7,20 @@ import ReactDOM from 'react-dom';
 
 import { Location, LocationProvider, useNavigate } from '@storybook/router';
 import { Provider as ManagerProvider, Combo } from '@storybook/api';
-import { ThemeProvider, ensure as ensureTheme } from '@storybook/theming';
+import {
+  ThemeProvider,
+  ensure as ensureTheme,
+  CacheProvider,
+  createCache,
+} from '@storybook/theming';
 import { HelmetProvider } from 'react-helmet-async';
 
 import App from './app';
 
 import Provider from './provider';
+
+const emotionCache = createCache({ key: 'sto' });
+emotionCache.compat = true;
 
 const { DOCS_MODE } = global;
 
@@ -66,15 +74,17 @@ const Main: FC<{ provider: Provider }> = ({ provider }) => {
               : !state.storiesFailed && !state.storiesConfigured;
 
             return (
-              <ThemeProvider key="theme.provider" theme={ensureTheme(state.theme)}>
-                <App
-                  key="app"
-                  viewMode={state.viewMode}
-                  layout={isLoading ? { ...state.layout, showPanel: false } : state.layout}
-                  panelCount={panelCount}
-                  docsOnly={story && story.parameters && story.parameters.docsOnly}
-                />
-              </ThemeProvider>
+              <CacheProvider value={emotionCache}>
+                <ThemeProvider key="theme.provider" theme={ensureTheme(state.theme)}>
+                  <App
+                    key="app"
+                    viewMode={state.viewMode}
+                    layout={isLoading ? { ...state.layout, showPanel: false } : state.layout}
+                    panelCount={panelCount}
+                    docsOnly={story && story.parameters && story.parameters.docsOnly}
+                  />
+                </ThemeProvider>
+              </CacheProvider>
             );
           }}
         </ManagerProvider>

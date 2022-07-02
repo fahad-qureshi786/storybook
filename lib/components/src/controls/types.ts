@@ -61,7 +61,9 @@ export interface NormalizedOptionsConfig {
 }
 
 export type TextValue = string;
-export interface TextConfig {}
+export interface TextConfig {
+  maxLength?: number;
+}
 
 export type ControlType =
   | 'array'

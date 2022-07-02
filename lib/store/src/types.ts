@@ -29,9 +29,17 @@ export type ModuleExports = Record<string, any>;
 export type PromiseLike<T> = Promise<T> | SynchronousPromise<T>;
 export type ModuleImportFn = (path: Path) => PromiseLike<ModuleExports>;
 
+type MaybePromise<T> = Promise<T> | T;
+
+export type TeardownRenderToDOM = () => MaybePromise<void>;
+export type RenderToDOM<TFramework extends AnyFramework> = (
+  context: RenderContext<TFramework>,
+  element: Element
+) => MaybePromise<void | TeardownRenderToDOM>;
+
 export type WebProjectAnnotations<TFramework extends AnyFramework> =
   ProjectAnnotations<TFramework> & {
-    renderToDOM?: (context: RenderContext<TFramework>, element: Element) => Promise<void> | void;
+    renderToDOM?: RenderToDOM<TFramework>;
   };
 
 export type NormalizedProjectAnnotations<TFramework extends AnyFramework = AnyFramework> =

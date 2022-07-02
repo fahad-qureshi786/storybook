@@ -1,4 +1,4 @@
-import React, { ComponentType, ButtonHTMLAttributes } from 'react';
+import React, { ComponentType, ButtonHTMLAttributes, useEffect } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
@@ -12,8 +12,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ComponentType;
 }
 
-export const Button = ({ label = 'Hello', icon: Icon, ...props }: ButtonProps) => (
-  <button type="button" {...props}>
-    {Icon ? <Icon /> : null} {label}
-  </button>
-);
+export const Button = ({ label = 'Hello', icon: Icon, ...props }: ButtonProps) => {
+  useEffect(() => {
+    const fn = () => console.log(`click ${label}`);
+    global.window.document.querySelector('body')?.addEventListener('click', fn);
+    return () => global.window.document.querySelector('body')?.removeEventListener('click', fn);
+  });
+  return (
+    <button type="button" {...props}>
+      {Icon ? <Icon /> : null} {label}
+    </button>
+  );
+};

@@ -108,6 +108,18 @@ export const isComponent = (component: any): component is Type<unknown> => {
   return (decorators || []).some((d) => d instanceof Component);
 };
 
+export const isStandaloneComponent = (component: any): component is Type<unknown> => {
+  if (!component) {
+    return false;
+  }
+
+  const decorators = reflectionCapabilities.annotations(component);
+
+  // TODO: `standalone` is only available in Angular v14. Remove cast to `any` once
+  // Angular deps are updated to v14.x.x.
+  return (decorators || []).some((d) => d instanceof Component && (d as any).standalone);
+};
+
 /**
  * Returns all component decorator properties
  * is used to get all `@Input` and `@Output` Decorator

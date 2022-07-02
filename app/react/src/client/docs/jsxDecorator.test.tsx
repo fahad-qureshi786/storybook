@@ -284,4 +284,33 @@ describe('jsxDecorator', () => {
       '<div className="foo" />'
     );
   });
+
+  it('handles stories that trigger Suspense', async () => {
+    // if a story function uses a hook or other library that triggers suspense, it will throw a Promise until it is resolved
+    // and then it will return the story content after the promise is resolved
+    const storyFn = jest.fn();
+    storyFn
+      .mockImplementationOnce(() => {
+        throw Promise.resolve();
+      })
+      .mockImplementation(() => {
+        return <div>resolved args story</div>;
+      });
+    const jsx = '';
+    const context = makeContext('args', { __isArgsStory: true, jsx }, {});
+    expect(() => {
+      jsxDecorator(storyFn, context);
+    }).toThrow(Promise);
+    jsxDecorator(storyFn, context);
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(mockChannel.emit).toHaveBeenCalledTimes(2);
+    expect(mockChannel.emit).nthCalledWith(1, SNIPPET_RENDERED, 'jsx-test--args', '');
+    expect(mockChannel.emit).nthCalledWith(
+      2,
+      SNIPPET_RENDERED,
+      'jsx-test--args',
+      '<div>\n  resolved args story\n</div>'
+    );
+  });
 });

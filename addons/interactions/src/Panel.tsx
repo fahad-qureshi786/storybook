@@ -28,10 +28,16 @@ interface InteractionsPanelProps {
   active: boolean;
   controls: Controls;
   controlStates: ControlStates;
-  interactions: (Call & { status?: CallStates })[];
+  interactions: (Call & {
+    status?: CallStates;
+    childCallIds: Call['id'][];
+    isCollapsed: boolean;
+    toggleCollapsed: () => void;
+  })[];
   fileName?: string;
   hasException?: boolean;
   isPlaying?: boolean;
+  pausedAt?: Call['id'];
   calls: Map<string, any>;
   endRef?: React.Ref<HTMLDivElement>;
   onScrollToEnd?: () => void;
@@ -66,6 +72,7 @@ export const AddonPanelPure: React.FC<InteractionsPanelProps> = React.memo(
     fileName,
     hasException,
     isPlaying,
+    pausedAt,
     onScrollToEnd,
     endRef,
     isRerunAnimating,
@@ -87,15 +94,21 @@ export const AddonPanelPure: React.FC<InteractionsPanelProps> = React.memo(
           setIsRerunAnimating={setIsRerunAnimating}
         />
       )}
-      {interactions.map((call) => (
-        <Interaction
-          key={call.id}
-          call={call}
-          callsById={calls}
-          controls={controls}
-          controlStates={controlStates}
-        />
-      ))}
+      <div>
+        {interactions.map((call) => (
+          <Interaction
+            key={call.id}
+            call={call}
+            callsById={calls}
+            controls={controls}
+            controlStates={controlStates}
+            childCallIds={call.childCallIds}
+            isCollapsed={call.isCollapsed}
+            toggleCollapsed={call.toggleCollapsed}
+            pausedAt={pausedAt}
+          />
+        ))}
+      </div>
       <div ref={endRef} />
       {!isPlaying && interactions.length === 0 && (
         <Placeholder>
@@ -116,16 +129,16 @@ export const AddonPanelPure: React.FC<InteractionsPanelProps> = React.memo(
 export const Panel: React.FC<AddonPanelProps> = (props) => {
   const [storyId, setStoryId] = React.useState<StoryId>();
   const [controlStates, setControlStates] = React.useState<ControlStates>(INITIAL_CONTROL_STATES);
+  const [pausedAt, setPausedAt] = React.useState<Call['id']>();
   const [isPlaying, setPlaying] = React.useState(false);
   const [isRerunAnimating, setIsRerunAnimating] = React.useState(false);
   const [scrollTarget, setScrollTarget] = React.useState<HTMLElement>();
+  const [collapsed, setCollapsed] = React.useState<Set<Call['id']>>(new Set());
+  const [log, setLog] = React.useState<LogItem[]>([]);
 
   // Calls are tracked in a ref so we don't needlessly rerender.
   const calls = React.useRef<Map<Call['id'], Omit<Call, 'status'>>>(new Map());
   const setCall = ({ status, ...call }: Call) => calls.current.set(call.id, call);
-
-  const [log, setLog] = React.useState<LogItem[]>([]);
-  const interactions = log.map(({ callId, status }) => ({ ...calls.current.get(callId), status }));
 
   const endRef = React.useRef();
   React.useEffect(() => {
@@ -146,10 +159,12 @@ export const Panel: React.FC<AddonPanelProps> = (props) => {
       [EVENTS.SYNC]: (payload) => {
         setControlStates(payload.controlStates);
         setLog(payload.logItems);
+        setPausedAt(payload.pausedAt);
       },
       [STORY_RENDER_PHASE_CHANGED]: (event) => {
         setStoryId(event.storyId);
         setPlaying(event.newPhase === 'playing');
+        setPausedAt(undefined);
       },
     },
     []
@@ -177,6 +192,38 @@ export const Panel: React.FC<AddonPanelProps> = (props) => {
   const showStatus = log.length > 0 && !isPlaying;
   const hasException = log.some((item) => item.status === CallStates.ERROR);
 
+  const interactions = React.useMemo(() => {
+    const callsById = new Map<Call['id'], Call>();
+    const childCallMap = new Map<Call['id'], Call['id'][]>();
+    return log
+      .filter(({ callId, parentId }) => {
+        if (!parentId) return true;
+        childCallMap.set(parentId, (childCallMap.get(parentId) || []).concat(callId));
+        return !collapsed.has(parentId);
+      })
+      .map(({ callId, status }) => ({ ...calls.current.get(callId), status } as Call))
+      .map((call) => {
+        const status =
+          call.status === CallStates.ERROR &&
+          callsById.get(call.parentId)?.status === CallStates.ACTIVE
+            ? CallStates.ACTIVE
+            : call.status;
+        callsById.set(call.id, { ...call, status });
+        return {
+          ...call,
+          status,
+          childCallIds: childCallMap.get(call.id),
+          isCollapsed: collapsed.has(call.id),
+          toggleCollapsed: () =>
+            setCollapsed((ids) => {
+              if (ids.has(call.id)) ids.delete(call.id);
+              else ids.add(call.id);
+              return new Set(ids);
+            }),
+        };
+      });
+  }, [log, collapsed]);
+
   return (
     <React.Fragment key="interactions">
       <TabStatus>
@@ -191,6 +238,7 @@ export const Panel: React.FC<AddonPanelProps> = (props) => {
         fileName={fileName}
         hasException={hasException}
         isPlaying={isPlaying}
+        pausedAt={pausedAt}
         endRef={endRef}
         onScrollToEnd={scrollTarget && scrollToTarget}
         isRerunAnimating={isRerunAnimating}

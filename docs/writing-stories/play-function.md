@@ -10,13 +10,16 @@ We recommend installing Storybook's [`addon-interactions`](https://storybook.js.
 
 Run the following command to install the addon and the required dependencies.
 
-```shell
-# With npm
-npm install @storybook/addon-interactions @storybook/testing-library --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-interactions @storybook/testing-library
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-interactions-addon-full-install.yarn.js.mdx',
+    'common/storybook-addon-interactions-addon-full-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Update your Storybook configuration (in `.storybook/main.js`) to include the interactions addon.
 

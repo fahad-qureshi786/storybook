@@ -20,6 +20,7 @@ const SkipToSidebarLink = styled(Button)(({ theme }) => ({
   display: 'none',
   '@media (min-width: 600px)': {
     position: 'absolute',
+    display: 'block',
     top: 10,
     right: 15,
     padding: '10px 15px',

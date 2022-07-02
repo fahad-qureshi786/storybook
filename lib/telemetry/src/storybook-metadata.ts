@@ -12,22 +12,6 @@ import type { StorybookMetadata, Dependency, StorybookAddon } from './types';
 import { getActualPackageVersion, getActualPackageVersions } from './package-versions';
 import { getMonorepoType } from './get-monorepo-type';
 
-let cachedMetadata: StorybookMetadata;
-export const getStorybookMetadata = async (_configDir: string) => {
-  if (cachedMetadata) {
-    return cachedMetadata;
-  }
-
-  const packageJson = readPkgUp.sync({ cwd: process.cwd() }).packageJson as PackageJson;
-  const configDir =
-    (_configDir ||
-      (getStorybookConfiguration(packageJson.scripts.storybook, '-c', '--config-dir') as string)) ??
-    '.storybook';
-  const mainConfig = loadMainConfig({ configDir });
-  cachedMetadata = await computeStorybookMetadata({ mainConfig, packageJson });
-  return cachedMetadata;
-};
-
 export const metaFrameworks = {
   next: 'Next',
   'react-scripts': 'CRA',
@@ -147,7 +131,7 @@ export const computeStorybookMetadata = async ({
       let result;
       let options;
       if (typeof addon === 'string') {
-        result = addon.replace('/register', '');
+        result = addon.replace('/register', '').replace('/preset', '');
       } else {
         options = addon.options;
         result = addon.name;
@@ -187,9 +171,13 @@ export const computeStorybookMetadata = async ({
   const hasStorybookEslint = !!allDependencies['eslint-plugin-storybook'];
 
   const storybookInfo = getStorybookInfo(packageJson);
+
+  const storybookVersion =
+    storybookPackages[storybookInfo.frameworkPackage]?.version || storybookInfo.version;
+
   return {
     ...metadata,
-    storybookVersion: storybookInfo.version,
+    storybookVersion,
     language,
     storybookPackages,
     framework: {
@@ -199,4 +187,20 @@ export const computeStorybookMetadata = async ({
     addons,
     hasStorybookEslint,
   };
+};
+
+let cachedMetadata: StorybookMetadata;
+export const getStorybookMetadata = async (_configDir: string) => {
+  if (cachedMetadata) {
+    return cachedMetadata;
+  }
+
+  const packageJson = readPkgUp.sync({ cwd: process.cwd() }).packageJson as PackageJson;
+  const configDir =
+    (_configDir ||
+      (getStorybookConfiguration(packageJson.scripts.storybook, '-c', '--config-dir') as string)) ??
+    '.storybook';
+  const mainConfig = loadMainConfig({ configDir });
+  cachedMetadata = await computeStorybookMetadata({ mainConfig, packageJson });
+  return cachedMetadata;
 };

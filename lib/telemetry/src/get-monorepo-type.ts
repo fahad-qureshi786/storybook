@@ -28,6 +28,8 @@ export const getMonorepoType = (): MonorepoType => {
     return monorepoType;
   }
 
+  if (!fs.existsSync(path.join(projectRootPath, 'package.json'))) return undefined;
+
   const packageJson = fs.readJsonSync(path.join(projectRootPath, 'package.json')) as PackageJson;
 
   if (packageJson?.workspaces) {
