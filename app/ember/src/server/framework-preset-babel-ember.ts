@@ -49,5 +49,5 @@ export function babel(config: TransformOptions, options: Options): TransformOpti
 }
 
 export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entry = []) => {
-  return [...entry, findDistEsm(__dirname, 'client/preview/config')];
+  return [...entry, findDistEsm(__dirname, 'client/preview/config.js')];
 };

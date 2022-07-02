@@ -30,5 +30,5 @@ export function webpackFinal(config: Configuration): Configuration {
 }
 
 export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entry = []) => {
-  return [...entry, findDistEsm(__dirname, 'client/preview/config')];
+  return [...entry, findDistEsm(__dirname, 'client/preview/config.js')];
 };

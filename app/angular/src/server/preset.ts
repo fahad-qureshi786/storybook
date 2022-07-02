@@ -2,7 +2,7 @@ import type { StorybookConfig } from '@storybook/core-common';
 
 export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entries = []) => [
   ...entries,
-  require.resolve('../client/preview/config'),
+  require.resolve('../client/preview/config.js'),
 ];
 
 export const addons: StorybookConfig['addons'] = [

@@ -43,5 +43,5 @@ export async function babelDefault(config: TransformOptions): Promise<TransformO
 }
 
 export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entry = []) => {
-  return [...entry, findDistEsm(__dirname, 'client/preview/config')];
+  return [...entry, findDistEsm(__dirname, 'client/preview/config.js')];
 };

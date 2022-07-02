@@ -3,7 +3,7 @@ import type { StorybookConfig } from '@storybook/core-common';
 
 export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entries = []) => [
   ...entries,
-  findDistEsm(__dirname, 'client/preview/config'),
+  findDistEsm(__dirname, 'client/preview/config.js'),
 ];
 
 export const addons: StorybookConfig['addons'] = [
