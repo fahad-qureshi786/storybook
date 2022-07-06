@@ -1,4 +1,4 @@
-import React, { FC, useMemo, ComponentProps, FC } from 'react';
+import React, { useMemo, ComponentProps, FC } from 'react';
 
 import { styled } from '@storybook/theming';
 import { WithTooltip, TooltipLinkList, Button, Icons, IconButton } from '@storybook/components';
