@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
-import VueLoaderPlugin from 'vue-loader/lib/plugin';
-import type { Configuration } from 'webpack';
+import { VueLoaderPlugin } from 'vue-loader';
+import { findDistEsm } from '@storybook/core-common';
 
-import type { Options, TypescriptConfig } from '@storybook/core-common';
+import type { Configuration } from 'webpack';
+import type { Options, TypescriptConfig, StorybookConfig } from '@storybook/core-common';
 
 export async function webpack(config: Configuration, { presets }: Options) {
   const typescriptOptions = await presets.apply<TypescriptConfig>('typescript', {} as any);
@@ -14,7 +15,7 @@ export async function webpack(config: Configuration, { presets }: Options) {
     options: {},
   });
   config.module.rules.push({
-    test: /\.tsx?$/,
+    test: /\.ts$/,
     use: [
       {
         loader: require.resolve('ts-loader'),
@@ -25,9 +26,25 @@ export async function webpack(config: Configuration, { presets }: Options) {
       },
     ],
   });
+  config.module.rules.push({
+    test: /\.tsx$/,
+    use: [
+      {
+        loader: require.resolve('ts-loader'),
+        options: {
+          transpileOnly: true,
+          appendTsxSuffixTo: [/\.vue$/],
+        },
+      },
+    ],
+  });
 
   config.resolve.extensions.push('.vue');
   config.resolve.alias = { ...config.resolve.alias, vue$: require.resolve('vue/dist/vue.esm.js') };
 
   return config;
 }
+
+export const previewAnnotations: StorybookConfig['previewAnnotations'] = (entry = []) => {
+  return [...entry, findDistEsm(__dirname, 'client/preview/config')];
+};

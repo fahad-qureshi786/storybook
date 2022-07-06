@@ -4,25 +4,20 @@ import boxen from 'boxen';
 import dedent from 'ts-dedent';
 import Table from 'cli-table3';
 import prettyTime from 'pretty-hrtime';
-import { VersionCheck } from '@storybook/core-common';
+import type { VersionCheck } from '@storybook/core-common';
 import { createUpdateMessage } from './update-check';
 
 export function outputStartupInformation(options: {
   updateInfo: VersionCheck;
   version: string;
+  name: string;
   address: string;
   networkAddress: string;
   managerTotalTime?: [number, number];
   previewTotalTime?: [number, number];
 }) {
-  const {
-    updateInfo,
-    version,
-    address,
-    networkAddress,
-    managerTotalTime,
-    previewTotalTime,
-  } = options;
+  const { updateInfo, version, name, address, networkAddress, managerTotalTime, previewTotalTime } =
+    options;
 
   const updateMessage = createUpdateMessage(updateInfo, version);
 
@@ -67,7 +62,7 @@ export function outputStartupInformation(options: {
   console.log(
     boxen(
       dedent`
-          ${colors.green(`Storybook ${chalk.bold(version)} started`)}
+          ${colors.green(`Storybook ${chalk.bold(version)} for ${chalk.bold(name)} started`)}
           ${chalk.gray(timeStatement)}
 
           ${serveMessage.toString()}${updateMessage ? `\n\n${updateMessage}` : ''}

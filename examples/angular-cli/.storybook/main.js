@@ -7,6 +7,7 @@ module.exports = {
     '@storybook/addon-storysource',
     '@storybook/addon-actions',
     '@storybook/addon-viewport',
+    '@storybook/addon-interactions',
     '@storybook/addon-links',
     '@storybook/addon-jest',
     '@storybook/addon-backgrounds',
@@ -15,12 +16,18 @@ module.exports = {
   ],
   core: {
     builder: 'webpack4',
+    channelOptions: { allowFunction: false, maxDepth: 10 },
+    disableTelemetry: true,
   },
   angularOptions: {
     enableIvy: true,
   },
   // These are just here to test composition. They could be added to any storybook example project
   refs: {
+    react: {
+      title: 'ReactTS',
+      url: 'http://localhost:9011',
+    },
     first: {
       title: 'Composition test one',
       url: 'https://storybookjs.netlify.app/cra-ts-essentials',
@@ -33,5 +40,9 @@ module.exports = {
       title: 'Composition test three',
       url: 'https://storybookjs.netlify.app/cra-ts-essentials',
     },
+  },
+  staticDirs: ['../src/assets'],
+  features: {
+    buildStoriesJson: true,
   },
 };

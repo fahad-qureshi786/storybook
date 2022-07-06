@@ -1,4 +1,4 @@
-import { TemplateResult, SVGTemplateResult } from 'lit-html';
+import type { TemplateResult, SVGTemplateResult } from 'lit-html';
 
 export type { RenderContext } from '@storybook/core';
 export type { Args, ArgTypes, Parameters, StoryContext } from '@storybook/addons';
@@ -7,7 +7,7 @@ export type StoryFnHtmlReturnType = string | Node | TemplateResult | SVGTemplate
 
 export interface IStorybookStory {
   name: string;
-  render: () => any;
+  render: (context: any) => any;
 }
 
 export interface IStorybookSection {

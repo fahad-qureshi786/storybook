@@ -2,13 +2,7 @@
 title: 'DocsPage'
 ---
 
-<div class="aside">
-
-💡 <strong>NOTE</strong>: Currently there's an issue when using MDX stories with IE11. This issue does <strong>not</strong> apply to DocsPage. If you're interested in helping us fix this issue, read our <a href="https://github.com/storybookjs/storybook/blob/next/CONTRIBUTING.md">Contribution guidelines</a> and submit a pull request.
-
-</div>
-
-When you install [Storybook Docs](https://storybook.js.org/addons/@storybook/addon-docs), DocsPage is the zero-config default documentation that all stories get out of the box. It aggregates your [stories](../get-started/whats-a-story.md), text descriptions, docgen comments, [args tables](./doc-blocks.md#argstable), and code examples into a single page for each component.
+When you install [Storybook Docs](https://storybook.js.org/addons/@storybook/addon-docs), DocsPage is the zero-config default documentation that all stories get out of the box. It aggregates your [stories](../get-started/whats-a-story.md), text descriptions, docgen comments, [args tables](./doc-block-argstable.md), and code examples into a single page for each component.
 
 The best practice for docs is for each component to have its own set of documentation and stories.
 
@@ -54,7 +48,7 @@ If you want to organize your documentation differently for component groups, we 
 Replace the DocsPage template with your own to customize its contents.
 
 ### With null to remove docs
- 
+
 Override the `docs.page` [parameter](../writing-stories/parameters.md) with `null` to remove its contents.
 
 <!-- prettier-ignore-start -->
@@ -69,7 +63,7 @@ Override the `docs.page` [parameter](../writing-stories/parameters.md) with `nul
 
 ### With MDX documentation
 
-Write your documentation in MDX and update the `docs.page` [parameter](../writing-stories/parameters.md) to display it.
+Write your documentation in MDX and update the `docs.page` [parameter](../writing-stories/parameters.md) to display it. The `id` of reference follows the pattern: `group-subgroup-...--name`, where the `groups` and `subgroups` are defined as according to the [Grouping Documentation](https://storybook.js.org/docs/react/writing-stories/naming-components-and-hierarchy#grouping).
 
 <!-- prettier-ignore-start -->
 
@@ -91,7 +85,7 @@ For example, with Angular start by adding a `babel.config.js` file at the root o
 ```js
 // babel.config.js
 
-module.exports = function(api) {
+module.exports = function (api) {
   process.env.NODE_ENV === 'development' ? api.cache(false) : api.cache(true);
   const presets = [
     [
@@ -124,8 +118,8 @@ Then, update your `tsconfig.json` to include the following:
   },
 }
 ```
-Finally write your custom React component and and update the `docs.page` [parameter](../writing-stories/parameters.md) to render the custom documentation.
 
+Finally write your custom React component and update the `docs.page` [parameter](../writing-stories/parameters.md) to render the custom documentation.
 
 <!-- prettier-ignore-start -->
 
@@ -158,21 +152,37 @@ Here's an example of rebuilding DocsPage for the Button component using doc bloc
 
 <!-- prettier-ignore-end -->
 
-In addition, you can interleave your own components to customize the auto-generated contents of the page or pass in different options to the blocks to customize their appearance. Read more about [Doc Blocks](./doc-blocks.md).
+In addition, you can interleave your own components to customize the auto-generated contents of the page or pass in different options to the blocks to customize their appearance.
 
 ## Story file names
 
-Unless you use a custom [webpack configuration](../configure/webpack.md#extending-storybooks-webpack-config), all of your story files should have the suffix `*.stories.@(j|t)sx?`. For example, "Badge.stories.js" or "Badge.stories.tsx". This tells Storybook and its docs preset to display the docs based on the file contents.
+Unless you use a custom [Webpack configuration](../builders/webpack.md#extending-storybooks-webpack-config), all of your story files should have the suffix `*.stories.@(j|t)sx?`. For example, "Badge.stories.js" or "Badge.stories.tsx". This tells Storybook and its docs preset to display the docs based on the file contents.
 
 ## Inline stories vs. iframe stories
 
 DocsPage displays all the stories of a component on one page. You have the option of rendering those stories inline or in an iframe.
 
-By default, we render React and Vue stories inline. Stories from other supported frameworks will render in an `<iframe>` by default.
+The iframe creates a clean separation between your code and Storybook’s UI, which is useful if your stories are rendering correctly in the Canvas but not on the docs page, for instance with fixed positioned components like modals.
 
-The iframe creates a clean separation between your code and Storybook’s UI. But using an iframe has disadvantages. For example, you have to set the height of iframe stories explicitly, or you’ll see a scroll bar. And certain dev tools might not work right.
+But using an iframe has disadvantages. For example, you have to set the height of iframe stories explicitly, or you’ll see a scroll bar. Having more than a few iframe stories on a page can lead to performance issues. And certain dev tools might not work right.
 
-Render your framework’s stories inline using two docs configuration options in tandem, `inlineStories` and `prepareForInline`.
+Therefore, we recommend inline rendering where possible. It's the default mode for all the frameworks in which [we support it](../api/frameworks-feature-support.md). The one exception is Angular, where it's opt-in.
+
+To toggle the between the two settings, set `docs.inlineStories` in `.storybook/preview.js`. Like most [parameters](../writing-stories/parameters.md), you can also toggle at the component or story level:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/storybook-preview-optout-inline.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+### Custom inline rendering
+
+If your framework doesn't [support inline rendering](../api/frameworks-feature-support.md), you also need to provide a `prepareForInline` function in addition to the `inlineStories` parameter.
 
 Setting `inlineStories` to `true` tells Storybook to stop putting your stories in an iframe. The `prepareForInline` accepts a function that transforms story content from your given framework to something React can render (Storybook’s UI is built in React).
 

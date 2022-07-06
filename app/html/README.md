@@ -19,7 +19,12 @@ npx sb init -t html
 
 For more information visit: [storybook.js.org](https://storybook.js.org)
 
+### Typescript
+
+`npx sb init` will select `.ts` starter stories if your `package.json` has typescript as a dependency. If starting a new project,
+run `npm init` and `npm install typescript --save-dev` before initializing storybook to get the typescript starter stories.
+
 ---
 
-Storybook also comes with a lot of [addons](https://storybook.js.org/docs/html/configure/storybook-addons) and a great API to customize as you wish.
-You can also build a [static version](https://storybook.js.org/docs/html/workflows/publish-storybook) of your storybook and deploy it anywhere you want.
+Storybook also comes with a lot of [addons](https://storybook.js.org/addons) and a great API to customize as you wish.
+You can also build a [static version](https://storybook.js.org/docs/html/sharing/publish-storybook) of your Storybook and deploy it anywhere you want.

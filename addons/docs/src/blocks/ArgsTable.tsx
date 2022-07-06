@@ -1,24 +1,23 @@
-/* eslint-disable no-underscore-dangle */
 import React, { FC, useContext, useEffect, useState, useCallback } from 'react';
 import mapValues from 'lodash/mapValues';
 import {
   ArgsTable as PureArgsTable,
   ArgsTableProps as PureArgsTableProps,
   ArgsTableError,
-  ArgTypes,
   SortType,
   TabbedArgsTable,
 } from '@storybook/components';
-import { Args } from '@storybook/addons';
-import { StoryStore, filterArgTypes } from '@storybook/client-api';
-import type { PropDescriptor } from '@storybook/client-api';
+import { ArgTypesExtractor } from '@storybook/docs-tools';
+import { addons } from '@storybook/addons';
+import { filterArgTypes, PropDescriptor } from '@storybook/store';
 import Events from '@storybook/core-events';
+import { StrictArgTypes, Args, Globals } from '@storybook/csf';
 
 import { DocsContext, DocsContextProps } from './DocsContext';
 import { Component, CURRENT_SELECTION, PRIMARY_STORY } from './types';
-import { getComponentName, getDocsStories } from './utils';
-import { ArgTypesExtractor } from '../lib/docgen/types';
+import { getComponentName } from './utils';
 import { lookupStoryId } from './Story';
+import { useStory } from './useStory';
 
 interface BaseProps {
   include?: PropDescriptor;
@@ -43,44 +42,66 @@ type StoryProps = BaseProps & {
 
 type ArgsTableProps = BaseProps | OfProps | ComponentsProps | StoryProps;
 
-const useArgs = (
-  storyId: string,
-  storyStore: StoryStore
-): [Args, (args: Args) => void, (argNames?: string[]) => void] => {
-  const story = storyStore.fromId(storyId);
+const getContext = (storyId: string, context: DocsContextProps) => {
+  const story = context.storyById(storyId);
   if (!story) {
     throw new Error(`Unknown story: ${storyId}`);
   }
+  return context.getStoryContext(story);
+};
 
-  const { args: initialArgs } = story;
-  const [args, setArgs] = useState(initialArgs);
+const useArgs = (
+  storyId: string,
+  context: DocsContextProps
+): [Args, (args: Args) => void, (argNames?: string[]) => void] => {
+  const channel = addons.getChannel();
+  const storyContext = getContext(storyId, context);
+
+  const [args, setArgs] = useState(storyContext.args);
   useEffect(() => {
     const cb = (changed: { storyId: string; args: Args }) => {
       if (changed.storyId === storyId) {
         setArgs(changed.args);
       }
     };
-    storyStore._channel.on(Events.STORY_ARGS_UPDATED, cb);
-    return () => storyStore._channel.off(Events.STORY_ARGS_UPDATED, cb);
+    channel.on(Events.STORY_ARGS_UPDATED, cb);
+    return () => channel.off(Events.STORY_ARGS_UPDATED, cb);
   }, [storyId]);
-  const updateArgs = useCallback((newArgs) => storyStore.updateStoryArgs(storyId, newArgs), [
-    storyId,
-  ]);
+  const updateArgs = useCallback(
+    (updatedArgs) => channel.emit(Events.UPDATE_STORY_ARGS, { storyId, updatedArgs }),
+    [storyId]
+  );
   const resetArgs = useCallback(
-    (argNames?: string[]) => storyStore.resetStoryArgs(storyId, argNames),
+    (argNames?: string[]) => channel.emit(Events.RESET_STORY_ARGS, { storyId, argNames }),
     [storyId]
   );
   return [args, updateArgs, resetArgs];
 };
 
+const useGlobals = (storyId: string, context: DocsContextProps): [Globals] => {
+  const channel = addons.getChannel();
+  const storyContext = getContext(storyId, context);
+  const [globals, setGlobals] = useState(storyContext.globals);
+
+  useEffect(() => {
+    const cb = (changed: { globals: Globals }) => {
+      setGlobals(changed.globals);
+    };
+    channel.on(Events.GLOBALS_UPDATED, cb);
+    return () => channel.off(Events.GLOBALS_UPDATED, cb);
+  }, []);
+
+  return [globals];
+};
+
 export const extractComponentArgTypes = (
   component: Component,
-  { parameters }: DocsContextProps,
+  { id, storyById }: DocsContextProps,
   include?: PropDescriptor,
   exclude?: PropDescriptor
-): ArgTypes => {
-  const params = parameters || {};
-  const { extractArgTypes }: { extractArgTypes: ArgTypesExtractor } = params.docs || {};
+): StrictArgTypes => {
+  const { parameters } = storyById(id);
+  const { extractArgTypes }: { extractArgTypes: ArgTypesExtractor } = parameters.docs || {};
   if (!extractArgTypes) {
     throw new Error(ArgsTableError.ARGS_UNSUPPORTED);
   }
@@ -94,11 +115,13 @@ const isShortcut = (value?: string) => {
   return value && [CURRENT_SELECTION, PRIMARY_STORY].includes(value);
 };
 
-export const getComponent = (props: ArgsTableProps = {}, context: DocsContextProps): Component => {
+export const getComponent = (
+  props: ArgsTableProps = {},
+  { id, storyById }: DocsContextProps
+): Component => {
   const { of } = props as OfProps;
   const { story } = props as StoryProps;
-  const { parameters = {} } = context;
-  const { component } = parameters;
+  const { component } = storyById(id);
   if (isShortcut(of) || isShortcut(story)) {
     return component || null;
   }
@@ -127,47 +150,50 @@ export const StoryTable: FC<
   StoryProps & { component: Component; subcomponents: Record<string, Component> }
 > = (props) => {
   const context = useContext(DocsContext);
+  const { id: currentId, componentStories } = context;
   const {
-    id: currentId,
-    parameters: { argTypes },
-    storyStore,
-  } = context;
-  const { story, component, subcomponents, showComponent, include, exclude, sort } = props;
-  let storyArgTypes;
+    story: storyName,
+    component,
+    subcomponents,
+    showComponent,
+    include,
+    exclude,
+    sort,
+  } = props;
   try {
     let storyId;
-    switch (story) {
+    switch (storyName) {
       case CURRENT_SELECTION: {
         storyId = currentId;
-        storyArgTypes = argTypes;
         break;
       }
       case PRIMARY_STORY: {
-        const primaryStory = getDocsStories(context)[0];
+        const primaryStory = componentStories()[0];
         storyId = primaryStory.id;
-        storyArgTypes = primaryStory.parameters.argTypes;
         break;
       }
       default: {
-        storyId = lookupStoryId(story, context);
-        const data = storyStore.fromId(storyId);
-        storyArgTypes = data.parameters.argTypes;
+        storyId = lookupStoryId(storyName, context);
       }
     }
-    storyArgTypes = filterArgTypes(storyArgTypes, include, exclude);
+
+    const story = useStory(storyId, context);
+    // eslint-disable-next-line prefer-const
+    let [args, updateArgs, resetArgs] = useArgs(storyId, context);
+    const [globals] = useGlobals(storyId, context);
+    if (!story) return <PureArgsTable isLoading updateArgs={updateArgs} resetArgs={resetArgs} />;
+
+    const argTypes = filterArgTypes(story.argTypes, include, exclude);
 
     const mainLabel = getComponentName(component) || 'Story';
 
-    // eslint-disable-next-line prefer-const
-    let [args, updateArgs, resetArgs] = useArgs(storyId, storyStore);
-    let tabs = { [mainLabel]: { rows: storyArgTypes, args, updateArgs, resetArgs } } as Record<
+    let tabs = { [mainLabel]: { rows: argTypes, args, globals, updateArgs, resetArgs } } as Record<
       string,
       PureArgsTableProps
     >;
 
     // Use the dynamically generated component tabs if there are no controls
-    const storyHasArgsWithControls =
-      storyArgTypes && Object.values(storyArgTypes).find((v) => !!v?.control);
+    const storyHasArgsWithControls = argTypes && Object.values(argTypes).find((v) => !!v?.control);
 
     if (!storyHasArgsWithControls) {
       updateArgs = null;
@@ -203,15 +229,19 @@ export const ComponentsTable: FC<ComponentsProps> = (props) => {
 
 export const ArgsTable: FC<ArgsTableProps> = (props) => {
   const context = useContext(DocsContext);
-  const { parameters: { subcomponents, controls } = {} } = context;
+  const { id, storyById } = context;
+  const {
+    parameters: { controls },
+    subcomponents,
+  } = storyById(id);
 
   const { include, exclude, components, sort: sortProp } = props as ComponentsProps;
-  const { story } = props as StoryProps;
+  const { story: storyName } = props as StoryProps;
 
   const sort = sortProp || controls?.sort;
 
   const main = getComponent(props, context);
-  if (story) {
+  if (storyName) {
     return <StoryTable {...(props as StoryProps)} component={main} {...{ subcomponents, sort }} />;
   }
 

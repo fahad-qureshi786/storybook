@@ -1,15 +1,15 @@
 /* eslint-disable prefer-destructuring */
-import { RenderStoryFunction, start } from '@storybook/core/client';
-import { ClientStoryApi, Loadable } from '@storybook/addons';
-
+import type { ClientStoryApi, Loadable } from '@storybook/addons';
+import { start } from '@storybook/core';
 import './globals';
-import render from './render';
+import { renderToDOM, render } from './render';
 import decorateStory from './decorateStory';
-import { IStorybookSection, StoryFnAngularReturnType } from './types';
+import type { IStorybookSection } from './types';
+import type { AngularFramework } from './types-6-0';
 
 const framework = 'angular';
 
-interface ClientApi extends ClientStoryApi<StoryFnAngularReturnType> {
+interface ClientApi extends ClientStoryApi<AngularFramework['storyResult']> {
   setAddon(addon: any): void;
   configure(loader: Loadable, module: NodeModule): void;
   getStorybook(): IStorybookSection[];
@@ -19,7 +19,7 @@ interface ClientApi extends ClientStoryApi<StoryFnAngularReturnType> {
   load: (...args: any[]) => void;
 }
 
-const api = start((render as any) as RenderStoryFunction, { decorateStory });
+const api = start(renderToDOM, { decorateStory, render });
 
 export const storiesOf: ClientApi['storiesOf'] = (kind, m) => {
   return (api.clientApi.storiesOf(kind, m) as ReturnType<ClientApi['storiesOf']>).addParameters({

@@ -1,13 +1,14 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
+import { User } from './User';
 
 @Component({
   selector: 'storybook-page',
   template: `<article>
     <storybook-header
       [user]="user"
-      (onLogout)="onLogout.emit($event)"
-      (onLogin)="onLogin.emit($event)"
-      (onCreateAccount)="onCreateAccount.emit($event)"
+      (onLogout)="doLogout()"
+      (onLogin)="doLogin()"
+      (onCreateAccount)="doCreateAccount()"
     ></storybook-header>
     <section>
       <h2>Pages in Storybook</h2>
@@ -60,31 +61,17 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./page.css'],
 })
 export default class PageComponent {
-  @Input()
-  user: unknown = null;
+  user: User | null = null;
 
-  @Output()
-  onLogin = new EventEmitter<Event>();
+  doLogout() {
+    this.user = null;
+  }
 
-  @Output()
-  onLogout = new EventEmitter<Event>();
+  doLogin() {
+    this.user = { name: 'Jane Doe' };
+  }
 
-  @Output()
-  onCreateAccount = new EventEmitter<Event>();
+  doCreateAccount() {
+    this.user = { name: 'Jane Doe' };
+  }
 }
-
-// export const Page = ({ user, onLogin, onLogout, onCreateAccount }) => (
-//   <article>
-//     <Header user={user} onLogin={onLogin} onLogout={onLogout} onCreateAccount={onCreateAccount} />
-
-// );
-// Page.propTypes = {
-//   user: PropTypes.shape({}),
-//   onLogin: PropTypes.func.isRequired,
-//   onLogout: PropTypes.func.isRequired,
-//   onCreateAccount: PropTypes.func.isRequired,
-// };
-
-// Page.defaultProps = {
-//   user: null,
-// };

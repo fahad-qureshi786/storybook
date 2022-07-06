@@ -4,6 +4,7 @@ import {
   ComponentFactoryResolver,
   Directive,
   EventEmitter,
+  HostBinding,
   Injectable,
   Input,
   Output,
@@ -13,7 +14,13 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 
-import { getComponentInputsOutputs, isComponent, isDeclarable } from './NgComponentAnalyzer';
+import {
+  getComponentInputsOutputs,
+  isComponent,
+  isDeclarable,
+  getComponentDecoratorMetadata,
+  isStandaloneComponent,
+} from './NgComponentAnalyzer';
 
 describe('getComponentInputsOutputs', () => {
   it('should return empty if no I/O found', () => {
@@ -101,6 +108,76 @@ describe('getComponentInputsOutputs', () => {
     expect(sortByPropName(inputs)).toEqual(sortByPropName(fooComponentFactory.inputs));
     expect(sortByPropName(outputs)).toEqual(sortByPropName(fooComponentFactory.outputs));
   });
+
+  it('should return I/O in the presence of multiple decorators', () => {
+    @Component({
+      template: '',
+    })
+    class FooComponent {
+      @Input()
+      @HostBinding('class.preceeding-first')
+      public inputPreceedingHostBinding: string;
+
+      @HostBinding('class.following-binding')
+      @Input()
+      public inputFollowingHostBinding: string;
+    }
+
+    const fooComponentFactory = resolveComponentFactory(FooComponent);
+
+    const { inputs, outputs } = getComponentInputsOutputs(FooComponent);
+
+    expect({ inputs, outputs }).toEqual({
+      inputs: [
+        { propName: 'inputPreceedingHostBinding', templateName: 'inputPreceedingHostBinding' },
+        { propName: 'inputFollowingHostBinding', templateName: 'inputFollowingHostBinding' },
+      ],
+      outputs: [],
+    });
+
+    expect(sortByPropName(inputs)).toEqual(sortByPropName(fooComponentFactory.inputs));
+    expect(sortByPropName(outputs)).toEqual(sortByPropName(fooComponentFactory.outputs));
+  });
+
+  it('should return I/O with extending classes', () => {
+    @Component({
+      template: '',
+    })
+    class BarComponent {
+      @Input()
+      public a: string;
+
+      @Input()
+      public b: string;
+    }
+
+    @Component({
+      template: '',
+    })
+    class FooComponent extends BarComponent {
+      @Input()
+      public b: string;
+
+      @Input()
+      public c: string;
+    }
+
+    const fooComponentFactory = resolveComponentFactory(FooComponent);
+
+    const { inputs, outputs } = getComponentInputsOutputs(FooComponent);
+
+    expect({ inputs, outputs }).toEqual({
+      inputs: [
+        { propName: 'a', templateName: 'a' },
+        { propName: 'b', templateName: 'b' },
+        { propName: 'c', templateName: 'c' },
+      ],
+      outputs: [],
+    });
+
+    expect(sortByPropName(inputs)).toEqual(sortByPropName(fooComponentFactory.inputs));
+    expect(sortByPropName(outputs)).toEqual(sortByPropName(fooComponentFactory.outputs));
+  });
 });
 
 describe('isDeclarable', () => {
@@ -156,6 +233,72 @@ describe('isComponent', () => {
     class FooDirective {}
 
     expect(isComponent(FooDirective)).toEqual(false);
+  });
+});
+
+describe('isStandaloneComponent', () => {
+  it('should return true with a Component with "standalone: true"', () => {
+    // TODO: `standalone` is only available in Angular v14. Remove cast to `any` once
+    // Angular deps are updated to v14.x.x.
+    @Component({ standalone: true } as any)
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(true);
+  });
+
+  it('should return false with a Component with "standalone: false"', () => {
+    // TODO: `standalone` is only available in Angular v14. Remove cast to `any` once
+    // Angular deps are updated to v14.x.x.
+    @Component({ standalone: false } as any)
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(false);
+  });
+
+  it('should return false with a Component without the "standalone" property', () => {
+    @Component({})
+    class FooComponent {}
+
+    expect(isStandaloneComponent(FooComponent)).toEqual(false);
+  });
+
+  it('should return false with simple class', () => {
+    class FooPipe {}
+
+    expect(isStandaloneComponent(FooPipe)).toEqual(false);
+  });
+
+  it('should return false with Directive', () => {
+    @Directive()
+    class FooDirective {}
+
+    expect(isStandaloneComponent(FooDirective)).toEqual(false);
+  });
+});
+
+describe('getComponentDecoratorMetadata', () => {
+  it('should return Component with a Component', () => {
+    @Component({ selector: 'foo' })
+    class FooComponent {}
+
+    expect(getComponentDecoratorMetadata(FooComponent)).toBeInstanceOf(Component);
+    expect(getComponentDecoratorMetadata(FooComponent)).toEqual({
+      changeDetection: 1,
+      selector: 'foo',
+    });
+  });
+
+  it('should return Component with extending classes', () => {
+    @Component({ selector: 'bar' })
+    class BarComponent {}
+    @Component({ selector: 'foo' })
+    class FooComponent extends BarComponent {}
+
+    expect(getComponentDecoratorMetadata(FooComponent)).toBeInstanceOf(Component);
+    expect(getComponentDecoratorMetadata(FooComponent)).toEqual({
+      changeDetection: 1,
+      selector: 'foo',
+    });
   });
 });
 

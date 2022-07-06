@@ -23,6 +23,7 @@ const Label = styled.span<{}>(({ theme }) => ({
 }));
 
 export interface FieldProps {
+  children?: ReactNode;
   label?: ReactNode;
 }
 

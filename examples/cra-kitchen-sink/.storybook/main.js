@@ -8,6 +8,7 @@ module.exports = {
   },
   addons: [
     '@storybook/preset-create-react-app',
+    '@storybook/addon-ie11',
     {
       name: '@storybook/addon-docs/preset',
       options: {
@@ -31,5 +32,10 @@ module.exports = {
   },
   core: {
     builder: 'webpack4',
+    channelOptions: { allowFunction: false, maxDepth: 10 },
+  },
+  staticDirs: ['../public'],
+  features: {
+    buildStoriesJson: true,
   },
 };

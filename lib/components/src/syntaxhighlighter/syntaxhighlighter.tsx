@@ -1,4 +1,4 @@
-import React, { ComponentProps, FunctionComponent, MouseEvent, useState } from 'react';
+import React, { ClipboardEvent, FunctionComponent, MouseEvent, useCallback, useState } from 'react';
 import { logger } from '@storybook/client-logger';
 import { styled } from '@storybook/theming';
 import global from 'global';
@@ -33,7 +33,6 @@ import ReactSyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism-ligh
 import { ActionBar } from '../ActionBar/ActionBar';
 import { ScrollArea } from '../ScrollArea/ScrollArea';
 
-import { formatter } from './formatter';
 import type { SyntaxHighlighterProps } from './syntaxhighlighter-types';
 
 const { navigator, document, window: globalWindow } = global;
@@ -54,12 +53,13 @@ const themedSyntax = memoize(2)((theme) =>
   Object.entries(theme.code || {}).reduce((acc, [key, val]) => ({ ...acc, [`* .${key}`]: val }), {})
 );
 
-let copyToClipboard: (text: string) => Promise<void>;
+const copyToClipboard: (text: string) => Promise<void> = createCopyToClipboardFunction();
 
-if (navigator?.clipboard) {
-  copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
-} else {
-  copyToClipboard = async (text: string) => {
+export function createCopyToClipboardFunction() {
+  if (navigator?.clipboard) {
+    return (text: string) => navigator.clipboard.writeText(text);
+  }
+  return async (text: string) => {
     const tmp = document.createElement('TEXTAREA');
     const focus = document.activeElement;
 
@@ -72,6 +72,7 @@ if (navigator?.clipboard) {
     focus.focus();
   };
 }
+
 export interface WrapperProps {
   bordered?: boolean;
   padded?: boolean;
@@ -101,11 +102,6 @@ const Scroller = styled(({ children, className }) => (
   {
     position: 'relative',
   },
-  ({ theme }) => ({
-    '& code': {
-      paddingRight: theme.layoutMargin,
-    },
-  }),
   ({ theme }) => themedSyntax(theme)
 );
 
@@ -120,27 +116,31 @@ const Pre = styled.pre<PreProps>(({ theme, padded }) => ({
   padding: padded ? theme.layoutMargin : 0,
 }));
 
-const Code = styled.code({
+/*
+We can't use `code` since PrismJS races for it.
+See https://github.com/storybookjs/storybook/issues/18090
+ */
+const Code = styled.div(({ theme }) => ({
   flex: 1,
-  paddingRight: 0,
+  paddingLeft: 2, // TODO: To match theming/global.ts for now
+  paddingRight: theme.layoutMargin,
   opacity: 1,
-});
+}));
 
 export interface SyntaxHighlighterState {
   copied: boolean;
 }
 
-type ReactSyntaxHighlighterProps = ComponentProps<typeof ReactSyntaxHighlighter>;
+// copied from @types/react-syntax-highlighter/index.d.ts
 
-type Props = SyntaxHighlighterProps & ReactSyntaxHighlighterProps;
-
-export const SyntaxHighlighter: FunctionComponent<Props> = ({
+export const SyntaxHighlighter: FunctionComponent<SyntaxHighlighterProps> = ({
   children,
   language = 'jsx',
   copyable = false,
   bordered = false,
   padded = false,
   format = true,
+  formatter = null,
   className = null,
   showLineNumbers = false,
   ...rest
@@ -149,22 +149,28 @@ export const SyntaxHighlighter: FunctionComponent<Props> = ({
     return null;
   }
 
-  const highlightableCode = format ? formatter(children) : children.trim();
+  const highlightableCode = formatter ? formatter(format, children) : children.trim();
   const [copied, setCopied] = useState(false);
 
-  const onClick = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const onClick = useCallback(
+    (e: MouseEvent<HTMLButtonElement> | ClipboardEvent<HTMLDivElement>) => {
+      e.preventDefault();
 
-    copyToClipboard(highlightableCode)
-      .then(() => {
-        setCopied(true);
-        globalWindow.setTimeout(() => setCopied(false), 1500);
-      })
-      .catch(logger.error);
-  };
+      const selectedText = globalWindow.getSelection().toString();
+      const textToCopy = e.type !== 'click' && selectedText ? selectedText : highlightableCode;
+
+      copyToClipboard(textToCopy)
+        .then(() => {
+          setCopied(true);
+          globalWindow.setTimeout(() => setCopied(false), 1500);
+        })
+        .catch(logger.error);
+    },
+    []
+  );
 
   return (
-    <Wrapper bordered={bordered} padded={padded} className={className}>
+    <Wrapper bordered={bordered} padded={padded} className={className} onCopyCapture={onClick}>
       <Scroller>
         <ReactSyntaxHighlighter
           padded={padded || bordered}

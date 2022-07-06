@@ -1,3 +1,4 @@
+/* eslint-disable storybook/default-exports */
 import React from 'react';
 import { Button } from '@storybook/react/demo';
 
@@ -16,3 +17,7 @@ WithArgs.args = { children: 'with args' };
 
 export const WithTemplate = WithArgs.bind({});
 WithTemplate.args = { children: 'with template' };
+
+export const StoryObject = {
+  render: Basic,
+};

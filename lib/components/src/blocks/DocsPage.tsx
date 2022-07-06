@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { styled, Theme } from '@storybook/theming';
 import { transparentize } from 'polished';
 
-import { withReset } from '../typography/shared';
+import { withReset } from '../typography/lib/common';
 
 const breakpoint = 600;
 
@@ -56,7 +56,11 @@ export const DocsWrapper = styled.div<{}>(({ theme }) => ({
   [`@media (min-width: ${breakpoint}px)`]: {},
 }));
 
-export const DocsPageWrapper: FC = ({ children }) => (
+interface DocsPageWrapperProps {
+  children?: React.ReactNode;
+}
+
+export const DocsPageWrapper: FC<DocsPageWrapperProps> = ({ children }) => (
   <DocsWrapper>
     <DocsContent>{children}</DocsContent>
   </DocsWrapper>

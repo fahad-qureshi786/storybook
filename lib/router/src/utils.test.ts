@@ -34,6 +34,12 @@ describe('getMatch', () => {
 
     expect(output).toBe(null);
   });
+
+  it('returns null match if "startsWith" part is in the middle', () => {
+    const output = getMatch('/foo/bar', '/bar', true);
+
+    expect(output).toBe(null);
+  });
 });
 
 describe('parsePath', () => {

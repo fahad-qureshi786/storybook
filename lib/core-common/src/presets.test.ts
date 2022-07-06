@@ -17,28 +17,45 @@ jest.mock('@storybook/node-logger', () => ({
   },
 }));
 
-jest.mock('resolve-from', () => (l: any, name: string) => {
+jest.mock('./utils/safeResolve', () => {
   const KNOWN_FILES = [
+    '@storybook/react',
+    '@storybook/addon-actions/manager',
     '@storybook/addon-actions/register',
     './local/preset',
     './local/addons',
     '/absolute/preset',
     '/absolute/addons',
+    '@storybook/addon-docs',
+    '@storybook/addon-cool',
     '@storybook/addon-docs/preset',
+    '@storybook/addon-interactions/preset',
     '@storybook/addon-essentials',
+    '@storybook/addon-knobs/manager',
     '@storybook/addon-knobs/register',
     '@storybook/addon-notes/register-panel',
     '@storybook/preset-create-react-app',
     '@storybook/preset-typescript',
     'addon-bar/preset.js',
+    'addon-bar',
     'addon-baz/register.js',
     'addon-foo/register.js',
   ];
 
-  if (KNOWN_FILES.includes(name)) {
-    return name;
-  }
-  throw new Error(`cannot resolve ${name}`);
+  return {
+    safeResolveFrom: jest.fn((l: any, name: string) => {
+      if (KNOWN_FILES.includes(name)) {
+        return name;
+      }
+      return undefined;
+    }),
+    safeResolve: jest.fn((name: string) => {
+      if (KNOWN_FILES.includes(name)) {
+        return name;
+      }
+      return undefined;
+    }),
+  };
 });
 
 describe('presets', () => {
@@ -388,12 +405,21 @@ describe('resolveAddonName', () => {
   it('should resolve managerEntries', () => {
     expect(resolveAddonName({}, '@storybook/addon-actions/register')).toEqual({
       name: '@storybook/addon-actions/register',
-      type: 'managerEntries',
+      managerEntries: ['@storybook/addon-actions/register'],
+      type: 'virtual',
+    });
+  });
+
+  it('should resolve managerEntries from new /manager path', () => {
+    expect(resolveAddonName({}, '@storybook/addon-actions/manager')).toEqual({
+      name: '@storybook/addon-actions/manager',
+      managerEntries: ['@storybook/addon-actions/manager'],
+      type: 'virtual',
     });
   });
 
   it('should resolve presets', () => {
-    expect(resolveAddonName({}, '@storybook/addon-docs')).toEqual({
+    expect(resolveAddonName({}, '@storybook/addon-docs/preset')).toEqual({
       name: '@storybook/addon-docs/preset',
       type: 'presets',
     });
@@ -412,28 +438,87 @@ describe('resolveAddonName', () => {
 });
 
 describe('loadPreset', () => {
+  mockPreset('@storybook/react', {});
   mockPreset('@storybook/preset-typescript', {});
   mockPreset('@storybook/addon-docs/preset', {});
   mockPreset('@storybook/addon-actions/register', {});
   mockPreset('addon-foo/register.js', {});
-  mockPreset('addon-bar/preset', {});
+  mockPreset('@storybook/addon-cool', {});
+  mockPreset('@storybook/addon-interactions/preset', {});
+  mockPreset('addon-bar', {
+    addons: ['@storybook/addon-cool'],
+    presets: ['@storybook/addon-interactions/preset'],
+  });
   mockPreset('addon-baz/register.js', {});
   mockPreset('@storybook/addon-notes/register-panel', {});
 
   const { loadPreset } = jest.requireActual('./presets');
 
+  it('should prepend framework field to list of presets', () => {
+    const loaded = loadPreset(
+      {
+        name: '',
+        type: 'virtual',
+        framework: '@storybook/react',
+        presets: ['@storybook/preset-typescript'],
+        addons: ['@storybook/addon-docs/preset'],
+      },
+      0,
+      {}
+    );
+    expect(loaded).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "name": "@storybook/react",
+          "options": Object {},
+          "preset": Object {},
+        },
+        Object {
+          "name": "@storybook/preset-typescript",
+          "options": Object {},
+          "preset": Object {},
+        },
+        Object {
+          "name": "@storybook/react",
+          "options": Object {},
+          "preset": Object {},
+        },
+        Object {
+          "name": "@storybook/addon-docs/preset",
+          "options": Object {},
+          "preset": Object {},
+        },
+        Object {
+          "name": Object {
+            "addons": Array [
+              "@storybook/addon-docs/preset",
+            ],
+            "framework": "@storybook/react",
+            "name": "",
+            "presets": Array [
+              "@storybook/preset-typescript",
+            ],
+            "type": "virtual",
+          },
+          "options": Object {},
+          "preset": Object {},
+        },
+      ]
+    `);
+  });
+
   it('should resolve all addons & presets in correct order', () => {
     const loaded = loadPreset(
       {
         name: '',
-        type: 'managerEntries',
+        type: 'virtual',
         presets: ['@storybook/preset-typescript'],
         addons: [
-          '@storybook/addon-docs',
+          '@storybook/addon-docs/preset',
           '@storybook/addon-actions/register',
           'addon-foo/register.js',
           'addon-bar',
-          'addon-baz/register.tsx',
+          'addon-baz/register.js',
           '@storybook/addon-notes/register-panel',
         ],
       },
@@ -452,34 +537,43 @@ describe('loadPreset', () => {
         preset: {},
       },
       {
-        name: '@storybook/addon-actions/register_additionalManagerEntries',
+        name: '@storybook/addon-actions/register',
         options: {},
         preset: {
           managerEntries: ['@storybook/addon-actions/register'],
         },
       },
       {
-        name: 'addon-foo/register.js_additionalManagerEntries',
+        name: 'addon-foo/register.js',
         options: {},
         preset: {
           managerEntries: ['addon-foo/register.js'],
         },
       },
-      // should be there, but some file mocking problem is causing it to not resolve
-      // {
-      //   name: 'addon-bar',
-      //   options: {},
-      //   preset: {},
-      // },
       {
-        name: 'addon-baz/register.tsx_additionalManagerEntries',
+        name: '@storybook/addon-interactions/preset',
+        options: {},
+        preset: {},
+      },
+      {
+        name: '@storybook/addon-cool',
+        options: {},
+        preset: {},
+      },
+      {
+        name: 'addon-bar',
+        options: {},
+        preset: {},
+      },
+      {
+        name: 'addon-baz/register.js',
         options: {},
         preset: {
-          managerEntries: ['addon-baz/register.tsx'],
+          managerEntries: ['addon-baz/register.js'],
         },
       },
       {
-        name: '@storybook/addon-notes/register-panel_additionalManagerEntries',
+        name: '@storybook/addon-notes/register-panel',
         options: {},
         preset: {
           managerEntries: ['@storybook/addon-notes/register-panel'],
@@ -489,15 +583,15 @@ describe('loadPreset', () => {
         name: {
           presets: ['@storybook/preset-typescript'],
           addons: [
-            '@storybook/addon-docs',
+            '@storybook/addon-docs/preset',
             '@storybook/addon-actions/register',
             'addon-foo/register.js',
             'addon-bar',
-            'addon-baz/register.tsx',
+            'addon-baz/register.js',
             '@storybook/addon-notes/register-panel',
           ],
           name: '',
-          type: 'managerEntries',
+          type: 'virtual',
         },
         options: {},
         preset: {},

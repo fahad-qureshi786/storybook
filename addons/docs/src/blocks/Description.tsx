@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useContext } from 'react';
 import { Description, DescriptionProps as PureDescriptionProps } from '@storybook/components';
+import { str } from '@storybook/docs-tools';
+
 import { DocsContext, DocsContextProps } from './DocsContext';
 import { Component, CURRENT_SELECTION } from './types';
-import { str } from '../lib/docgen';
 
 export enum DescriptionType {
   INFO = 'info',
@@ -31,12 +32,13 @@ const noDescription = (component?: Component): string | null => null;
 
 export const getDescriptionProps = (
   { of, type, markdown, children }: DescriptionProps,
-  { parameters }: DocsContextProps
+  { id, storyById }: DocsContextProps<any>
 ): PureDescriptionProps => {
+  const { component, parameters } = storyById(id);
   if (children || markdown) {
     return { markdown: children || markdown };
   }
-  const { component, notes, info, docs } = parameters;
+  const { notes, info, docs } = parameters;
   const { extractComponentDescription = noDescription, description } = docs || {};
   const target = of === CURRENT_SELECTION ? component : of;
 
@@ -63,7 +65,7 @@ ${extractComponentDescription(target) || ''}
     case DescriptionType.DOCGEN:
     case DescriptionType.AUTO:
     default:
-      return { markdown: extractComponentDescription(target, parameters) };
+      return { markdown: extractComponentDescription(target, { component, ...parameters }) };
   }
 };
 

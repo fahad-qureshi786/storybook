@@ -1,0 +1,27 @@
+
+```js
+// List.stories.js
+
+import { createList } from  './List';
+import { createListItem } from './ListItem';
+
+export default {
+  title: 'List',
+};
+
+export const Empty = (args) => createList(args);
+
+export const OneItem = (args) => {
+  const list = createList(args);
+  list.appendChild(createListItem());
+  return list;
+};
+
+export const ManyItems = (args) => {
+  const list = createList(args);
+  list.appendChild(createListItem());
+  list.appendChild(createListItem());
+  list.appendChild(createListItem());
+  return list;
+};
+```

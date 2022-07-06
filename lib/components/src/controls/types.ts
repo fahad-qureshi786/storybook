@@ -11,11 +11,6 @@ export interface ControlProps<T> {
   onBlur?: (evt: any) => void;
 }
 
-export type ArrayValue = string[] | readonly string[];
-export interface ArrayConfig {
-  separator?: string;
-}
-
 export type BooleanValue = boolean;
 export interface BooleanConfig {}
 
@@ -66,7 +61,9 @@ export interface NormalizedOptionsConfig {
 }
 
 export type TextValue = string;
-export interface TextConfig {}
+export interface TextConfig {
+  maxLength?: number;
+}
 
 export type ControlType =
   | 'array'
@@ -80,7 +77,6 @@ export type ControlType =
   | 'text';
 
 export type Control =
-  | ArrayConfig
   | BooleanConfig
   | ColorConfig
   | DateConfig

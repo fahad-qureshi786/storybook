@@ -6,7 +6,7 @@ export default {
   component: Button,
   argTypes: {
     children: { control: 'text', name: 'Children', mapping: { basic: 'BASIC' } },
-    type: { control: 'text', name: 'Type' },
+    type: { name: 'Type', control: { type: 'text', maxLength: 32 } },
     json: { control: 'object', name: 'JSON' },
     imageUrls: { control: { type: 'file', accept: '.png' }, name: 'Image Urls' },
     label: {
@@ -28,6 +28,40 @@ export default {
         ],
       },
     },
+    mutuallyExclusiveA: { control: 'text', if: { arg: 'mutuallyExclusiveB', truthy: false } },
+    mutuallyExclusiveB: { control: 'text', if: { arg: 'mutuallyExclusiveA', truthy: false } },
+    colorMode: {
+      control: 'boolean',
+    },
+    dynamicText: {
+      if: { arg: 'colorMode', truthy: false },
+      control: 'text',
+    },
+    dynamicColor: {
+      if: { arg: 'colorMode' },
+      control: 'color',
+    },
+    advanced: {
+      control: 'boolean',
+    },
+    margin: {
+      control: 'number',
+      if: { arg: 'advanced' },
+    },
+    padding: {
+      control: 'number',
+      if: { arg: 'advanced' },
+    },
+    cornerRadius: {
+      control: 'number',
+      if: { arg: 'advanced' },
+    },
+    someText: { control: 'text' },
+    subText: { control: 'text', if: { arg: 'someText' } },
+    ifThemeExists: { control: 'text', if: { global: 'theme' } },
+    ifThemeNotExists: { control: 'text', if: { global: 'theme', exists: false } },
+    ifLightTheme: { control: 'text', if: { global: 'theme', eq: 'light' } },
+    ifNotLightTheme: { control: 'text', if: { global: 'theme', neq: 'light' } },
   },
   parameters: {
     chromatic: { disable: true },
@@ -37,8 +71,10 @@ export default {
 const DEFAULT_NESTED_OBJECT = { a: 4, b: { c: 'hello', d: [1, 2, 3] } };
 
 const Template = (args) => (
-  <div>
-    <Button type={args.type}>{args.label || args.children}</Button>
+  <div style={args.background ? { background: args.background } : undefined}>
+    <Button type={args.type}>
+      {args.label?.type === 'b' ? <b>{args.children}</b> : args.children}
+    </Button>
     {args.json && <pre>{JSON.stringify(args.json, null, 2)}</pre>}
   </div>
 );

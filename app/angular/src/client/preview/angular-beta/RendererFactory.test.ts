@@ -22,6 +22,7 @@ describe('RendererFactory', () => {
     rootTargetDOMNode = global.document.getElementById('root');
     rootDocstargetDOMNode = global.document.getElementById('root-docs');
     (platformBrowserDynamic as any).mockImplementation(platformBrowserDynamicTesting);
+    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -46,7 +47,7 @@ describe('RendererFactory', () => {
           props: {},
         },
         forced: false,
-        parameters: {} as any,
+        parameters: {},
         targetDOMNode: rootTargetDOMNode,
       });
 
@@ -63,15 +64,39 @@ describe('RendererFactory', () => {
           props: {},
         },
         forced: false,
-        parameters: {
-          component: FooComponent,
-        },
+        parameters: {},
+        component: FooComponent,
         targetDOMNode: rootTargetDOMNode,
       });
 
       expect(document.body.getElementsByTagName('my-story')[0].innerHTML).toBe(
         '<foo>🦊</foo><!--container-->'
       );
+    });
+
+    it('should handle circular reference in moduleMetadata', async () => {
+      class Thing {
+        token: Thing;
+
+        constructor() {
+          this.token = this;
+        }
+      }
+      const token = new Thing();
+
+      const render = await rendererFactory.getRendererInstance('my-story', rootTargetDOMNode);
+      await render.render({
+        storyFnAngular: {
+          template: '🦊',
+          props: {},
+          moduleMetadata: { providers: [{ provide: 'foo', useValue: token }] },
+        },
+        forced: false,
+        parameters: {},
+        targetDOMNode: rootTargetDOMNode,
+      });
+
+      expect(document.body.getElementsByTagName('my-story')[0].innerHTML).toBe('🦊');
     });
 
     describe('when forced=true', () => {
@@ -87,7 +112,7 @@ describe('RendererFactory', () => {
             },
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
       });
@@ -111,7 +136,7 @@ describe('RendererFactory', () => {
             },
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
         expect(countDestroy).toEqual(0);
@@ -129,7 +154,7 @@ describe('RendererFactory', () => {
             },
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
 
@@ -157,7 +182,7 @@ describe('RendererFactory', () => {
             },
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
         expect(countDestroy).toEqual(0);
@@ -177,7 +202,7 @@ describe('RendererFactory', () => {
             moduleMetadata: { providers: [{ provide: 'foo', useValue: 42 }] },
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
         expect(countDestroy).toEqual(1);
@@ -194,7 +219,7 @@ describe('RendererFactory', () => {
           props: {},
         },
         forced: false,
-        parameters: {} as any,
+        parameters: {},
         targetDOMNode: rootTargetDOMNode,
       });
 
@@ -209,11 +234,54 @@ describe('RendererFactory', () => {
           props: {},
         },
         forced: false,
-        parameters: {} as any,
+        parameters: {},
         targetDOMNode: rootTargetDOMNode,
       });
 
       expect(countDestroy).toEqual(1);
+    });
+
+    describe('when story id contains non-Ascii characters', () => {
+      it('should render my-story for story template', async () => {
+        const render = await rendererFactory.getRendererInstance(
+          'my-ストーリー',
+          rootTargetDOMNode
+        );
+        await render.render({
+          storyFnAngular: {
+            template: '🦊',
+            props: {},
+          },
+          forced: false,
+          parameters: {},
+          targetDOMNode: rootTargetDOMNode,
+        });
+
+        expect(document.body.getElementsByTagName('sb-my--component')[0].innerHTML).toBe('🦊');
+      });
+
+      it('should render my-story for story component', async () => {
+        @Component({ selector: 'foo', template: '🦊' })
+        class FooComponent {}
+
+        const render = await rendererFactory.getRendererInstance(
+          'my-ストーリー',
+          rootTargetDOMNode
+        );
+        await render.render({
+          storyFnAngular: {
+            props: {},
+          },
+          forced: false,
+          parameters: {},
+          component: FooComponent,
+          targetDOMNode: rootTargetDOMNode,
+        });
+
+        expect(document.body.getElementsByTagName('sb-my--component')[0].innerHTML).toBe(
+          '<foo>🦊</foo><!--container-->'
+        );
+      });
     });
   });
 
@@ -227,7 +295,7 @@ describe('RendererFactory', () => {
             template: 'Canvas 🖼',
           },
           forced: true,
-          parameters: {} as any,
+          parameters: {},
           targetDOMNode: rootTargetDOMNode,
         });
       });

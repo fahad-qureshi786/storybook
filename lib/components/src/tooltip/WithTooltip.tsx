@@ -125,7 +125,7 @@ const WithToolTipState: FunctionComponent<
   }
 > = ({ startOpen, onVisibilityChange: onChange, ...rest }) => {
   const [tooltipShown, setTooltipShown] = useState(startOpen || false);
-  const onVisibilityChange = useCallback(
+  const onVisibilityChange: (visibility: boolean) => void = useCallback(
     (visibility) => {
       if (onChange && onChange(visibility) === false) return;
       setTooltipShown(visibility);

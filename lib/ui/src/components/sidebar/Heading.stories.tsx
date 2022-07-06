@@ -1,8 +1,15 @@
+/* eslint-disable storybook/use-storybook-testing-library */
+// @TODO: use addon-interactions and remove the rule disable above
 import React from 'react';
-import { ThemeProvider, useTheme, Theme } from '@storybook/theming';
+import type { ComponentStory, ComponentMeta, ComponentStoryObj } from '@storybook/react';
+import { ThemeProvider, useTheme } from '@storybook/theming';
+import type { Theme } from '@storybook/theming';
 import { action } from '@storybook/addon-actions';
+import { screen } from '@testing-library/dom';
 
 import { Heading } from './Heading';
+
+type Story = ComponentStory<typeof Heading>;
 
 export default {
   component: Heading,
@@ -10,9 +17,9 @@ export default {
   excludeStories: /.*Data$/,
   parameters: { layout: 'fullscreen' },
   decorators: [
-    (storyFn: any) => <div style={{ padding: '0 20px', maxWidth: '230px' }}>{storyFn()}</div>,
+    (storyFn) => <div style={{ padding: '0 20px', maxWidth: '230px' }}>{storyFn()}</div>,
   ],
-};
+} as ComponentMeta<typeof Heading>;
 
 const menuItems = [
   { title: 'Menu Item 1', onClick: action('onActivateMenuItem'), id: '1' },
@@ -20,11 +27,11 @@ const menuItems = [
   { title: 'Menu Item 3', onClick: action('onActivateMenuItem'), id: '3' },
 ];
 
-export const menuHighlighted = () => <Heading menuHighlighted menu={menuItems} />;
+export const MenuHighlighted: Story = () => <Heading menuHighlighted menu={menuItems} />;
 
 export const standardData = { menu: menuItems };
 
-export const standard = () => {
+export const Standard: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -34,6 +41,7 @@ export const standard = () => {
           title: undefined,
           url: undefined,
           image: undefined,
+          target: undefined,
         },
       }}
     >
@@ -42,7 +50,7 @@ export const standard = () => {
   );
 };
 
-export const standardNoLink = () => {
+export const StandardNoLink: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -52,6 +60,7 @@ export const standardNoLink = () => {
           title: undefined,
           url: null,
           image: undefined,
+          target: undefined,
         },
       }}
     >
@@ -60,7 +69,7 @@ export const standardNoLink = () => {
   );
 };
 
-export const linkAndText = () => {
+export const LinkAndText: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -78,7 +87,7 @@ export const linkAndText = () => {
   );
 };
 
-export const onlyText = () => {
+export const OnlyText: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -96,7 +105,7 @@ export const onlyText = () => {
   );
 };
 
-export const longText = () => {
+export const LongText: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -114,7 +123,25 @@ export const longText = () => {
   );
 };
 
-export const customBrandImage = () => {
+export const CustomTitle: Story = () => {
+  const theme = useTheme() as Theme;
+  return (
+    <ThemeProvider
+      theme={{
+        ...theme,
+        brand: {
+          title: '<span style="color:red">My custom title</span>',
+          url: null,
+          image: null,
+        },
+      }}
+    >
+      <Heading menu={menuItems} />
+    </ThemeProvider>
+  );
+};
+
+export const CustomBrandImage: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -132,7 +159,7 @@ export const customBrandImage = () => {
   );
 };
 
-export const customBrandImageTall = () => {
+export const CustomBrandImageTall: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -150,7 +177,7 @@ export const customBrandImageTall = () => {
   );
 };
 
-export const customBrandImageUnsizedSVG = () => {
+export const CustomBrandImageUnsizedSVG: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -168,7 +195,7 @@ export const customBrandImageUnsizedSVG = () => {
   );
 };
 
-export const noBrand = () => {
+export const NoBrand: Story = () => {
   const theme = useTheme() as Theme;
   return (
     <ThemeProvider
@@ -184,4 +211,13 @@ export const noBrand = () => {
       <Heading menu={menuItems} />
     </ThemeProvider>
   );
+};
+
+export const SkipToCanvasLinkFocused: ComponentStoryObj<typeof Heading> = {
+  args: { menu: menuItems, skipLinkHref: '#storybook-preview-wrapper' },
+  parameters: { layout: 'padded', chromatic: { delay: 300 } },
+  play: () => {
+    // focus each instance for chromatic/storybook's stacked theme
+    screen.getAllByText('Skip to canvas').forEach((x) => x.focus());
+  },
 };

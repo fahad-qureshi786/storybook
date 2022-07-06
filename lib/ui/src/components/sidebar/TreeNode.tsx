@@ -1,4 +1,5 @@
-import { styled, Color, Theme } from '@storybook/theming';
+import { styled } from '@storybook/theming';
+import type { Color, Theme } from '@storybook/theming';
 import { Icons } from '@storybook/components';
 import global from 'global';
 import { transparentize } from 'polished';
@@ -57,6 +58,7 @@ const BranchNode = styled.button<{
   isExpandable?: boolean;
   isExpanded?: boolean;
   isComponent?: boolean;
+  isSelected?: boolean;
 }>(({ theme, depth = 0, isExpandable = false }) => ({
   width: '100%',
   border: 'none',
@@ -151,7 +153,7 @@ export const GroupNode: FunctionComponent<
 ));
 
 export const ComponentNode: FunctionComponent<ComponentProps<typeof BranchNode>> = React.memo(
-  ({ theme, children, isExpanded, isExpandable, ...props }) => (
+  ({ theme, children, isExpanded, isExpandable, isSelected, ...props }) => (
     <BranchNode isExpandable={isExpandable} tabIndex={-1} {...props}>
       {isExpandable && <CollapseIcon isExpanded={isExpanded} />}
       <TypeIcon symbol="component" color="secondary" />

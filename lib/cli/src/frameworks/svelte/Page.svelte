@@ -2,25 +2,11 @@
   import './page.css';
   import Header from './Header.svelte';
 
-  import { createEventDispatcher } from 'svelte';
-
-  export let user = null;
-
-  const dispatch = createEventDispatcher();
-
-  function onLogin(event) {
-    dispatch('login', event);
-  }
-  function onLogout(event) {
-    dispatch('logout', event);
-  }
-  function onCreateAccount(event) {
-    dispatch('createAccount', event);
-  }
+  let user = null;
 </script>
 
 <article>
-  <Header {user} on:login={onLogin} on:logout={onLogout} on:createAccount={onCreateAccount} />
+  <Header {user} on:login={() => user = { name: 'Jane Doe' }} on:logout={() => user = null} on:createAccount={() => user = { name: 'Jane Doe' }} />
 
   <section>
     <h2>Pages in Storybook</h2>
@@ -62,7 +48,7 @@
       <span class="tip">Tip</span>
       Adjust the width of the canvas with the
       <svg width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" fillRule="evenodd">
+        <g fill="none" fill-rule="evenodd">
           <path
             d="M1.5 5.2h4.8c.3 0 .5.2.5.4v5.1c-.1.2-.3.3-.4.3H1.4a.5.5 0
             01-.5-.4V5.7c0-.3.2-.5.5-.5zm0-2.1h6.9c.3 0 .5.2.5.4v7a.5.5 0 01-1 0V4H1.5a.5.5 0

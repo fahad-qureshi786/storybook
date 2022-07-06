@@ -45,16 +45,16 @@ const hasJsxRuntime = () => {
   }
 };
 
-export async function babelDefault(config: TransformOptions) {
+export async function babelDefault(config: TransformOptions): Promise<TransformOptions> {
   const presetReactOptions = hasJsxRuntime() ? { runtime: 'automatic' } : {};
   return {
     ...config,
     presets: [
-      ...config.presets,
+      ...(config?.presets || []),
       [require.resolve('@babel/preset-react'), presetReactOptions],
       require.resolve('@babel/preset-flow'),
     ],
-    plugins: [...(config.plugins || []), require.resolve('babel-plugin-add-react-displayname')],
+    plugins: [...(config?.plugins || []), require.resolve('babel-plugin-add-react-displayname')],
   };
 }
 
@@ -87,6 +87,7 @@ export async function webpackFinal(config: Configuration, options: Options) {
     ...config,
     plugins: [
       ...config.plugins,
+
       // Storybook uses webpack-hot-middleware https://github.com/storybookjs/storybook/issues/14114
       new ReactRefreshWebpackPlugin({
         overlay: {

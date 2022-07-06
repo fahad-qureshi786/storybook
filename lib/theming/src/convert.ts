@@ -95,6 +95,7 @@ export const convert = (inherit: ThemeVars = themes[getPreferredColorScheme()]):
     brandTitle,
     brandUrl,
     brandImage,
+    brandTarget,
     gridCellSize,
     ...rest
   } = inherit;
@@ -109,9 +110,7 @@ export const convert = (inherit: ThemeVars = themes[getPreferredColorScheme()]):
       bar: barBg,
       content: appContentBg,
       gridCellSize: gridCellSize || background.gridCellSize,
-      hoverable:
-        base === 'light' ? 'rgba(0,0,0,.05)' : 'rgba(250,250,252,.1)' || background.hoverable,
-
+      hoverable: background.hoverable,
       positive: background.positive,
       negative: background.negative,
       warning: background.warning,
@@ -150,6 +149,7 @@ export const convert = (inherit: ThemeVars = themes[getPreferredColorScheme()]):
       title: brandTitle,
       url: brandUrl,
       image: brandImage || (brandTitle ? null : undefined),
+      target: brandTarget,
     },
 
     code: createSyntax({

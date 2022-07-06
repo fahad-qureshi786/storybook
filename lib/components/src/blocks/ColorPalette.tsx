@@ -3,7 +3,7 @@ import { styled } from '@storybook/theming';
 import { transparentize } from 'polished';
 
 import { getBlockBackgroundStyle } from './BlockBackgroundStyles';
-import { ResetWrapper } from '../typography/DocumentFormatting';
+import { ResetWrapper } from '../typography/ResetWrapper';
 
 const ItemTitle = styled.div(({ theme }) => ({
   fontWeight: theme.typography.weight.bold,
@@ -53,9 +53,24 @@ const SwatchLabels = styled.div({
   flexDirection: 'row',
 });
 
-const Swatch = styled.div({
+interface SwatchProps {
+  background: string;
+}
+
+const Swatch = styled.div<SwatchProps>(({ background }) => ({
+  position: 'relative',
   flex: 1,
-});
+
+  '&::before': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background,
+    content: '""',
+  },
+}));
 
 const SwatchColors = styled.div(({ theme }) => ({
   ...getBlockBackgroundStyle(theme),
@@ -64,6 +79,9 @@ const SwatchColors = styled.div(({ theme }) => ({
   height: 50,
   marginBottom: 5,
   overflow: 'hidden',
+  backgroundColor: 'white',
+  backgroundImage: `repeating-linear-gradient(-45deg, #ccc, #ccc 1px, #fff 1px, #fff 16px)`,
+  backgroundClip: 'padding-box',
 }));
 
 const SwatchSpecimen = styled.div({
@@ -115,22 +133,14 @@ const List = styled.div(({ theme }) => ({
 
 type Colors = string[] | { [key: string]: string };
 
-interface ColorProps {
+interface ColorItemProps {
   title: string;
   subtitle: string;
   colors: Colors;
 }
 
 function renderSwatch(color: string, index: number) {
-  return (
-    <Swatch
-      key={`${color}-${index}`}
-      title={color}
-      style={{
-        background: color,
-      }}
-    />
-  );
+  return <Swatch key={`${color}-${index}`} title={color} background={color} />;
 }
 
 function renderSwatchLabel(color: string, index: number, colorDescription?: string) {
@@ -169,7 +179,7 @@ function renderSwatchSpecimen(colors: Colors) {
  * A single color row your styleguide showing title, subtitle and one or more colors, used
  * as a child of `ColorPalette`.
  */
-export const ColorItem: FunctionComponent<ColorProps> = ({ title, subtitle, colors }) => {
+export const ColorItem: FunctionComponent<ColorItemProps> = ({ title, subtitle, colors }) => {
   return (
     <Item>
       <ItemDescription>
@@ -181,11 +191,15 @@ export const ColorItem: FunctionComponent<ColorProps> = ({ title, subtitle, colo
   );
 };
 
+interface ColorPaletteProps {
+  children?: React.ReactNode;
+}
+
 /**
  * Styleguide documentation for colors, including names, captions, and color swatches,
  * all specified as `ColorItem` children of this wrapper component.
  */
-export const ColorPalette: FunctionComponent = ({ children, ...props }) => (
+export const ColorPalette: FunctionComponent<ColorPaletteProps> = ({ children, ...props }) => (
   <ResetWrapper>
     <List {...props} className="docblock-colorpalette">
       <ListHeading>

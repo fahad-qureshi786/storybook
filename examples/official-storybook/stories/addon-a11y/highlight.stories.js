@@ -15,9 +15,9 @@ export default {
   decorators: [(storyFn) => <div style={{ padding: 10 }}>{storyFn()}</div>],
 };
 
-const PassesHighlight = styled.div(highlightObject(convert(themes.normal).color.positive));
-const IncompleteHighlight = styled.div(highlightObject(convert(themes.normal).color.warning));
-const ViolationsHighlight = styled.div(highlightObject(convert(themes.normal).color.negative));
+const PassesHighlight = styled.div(highlightObject(convert(themes.light).color.positive));
+const IncompleteHighlight = styled.div(highlightObject(convert(themes.light).color.warning));
+const ViolationsHighlight = styled.div(highlightObject(convert(themes.light).color.negative));
 
 export const Passes = () => <PassesHighlight>{text}</PassesHighlight>;
 export const Incomplete = () => <IncompleteHighlight>{text}</IncompleteHighlight>;

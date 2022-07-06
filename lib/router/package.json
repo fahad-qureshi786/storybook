@@ -1,6 +1,6 @@
 {
   "name": "@storybook/router",
-  "version": "6.4.0-alpha.14",
+  "version": "6.5.0-rc.1",
   "description": "Core Storybook Router",
   "keywords": [
     "storybook"
@@ -25,7 +25,7 @@
   "types": "dist/ts3.9/index.d.ts",
   "typesVersions": {
     "<3.8": {
-      "*": [
+      "dist/ts3.9/*": [
         "dist/ts3.4/*"
       ]
     }
@@ -37,27 +37,33 @@
     "*.d.ts"
   ],
   "scripts": {
-    "prepare": "node ../../scripts/prepare.js"
+    "prepare": "ts-node ../../scripts/prebundle.ts"
   },
   "dependencies": {
-    "@reach/router": "^1.3.4",
-    "@storybook/client-logger": "6.4.0-alpha.14",
-    "@types/reach__router": "^1.3.7",
+    "@storybook/client-logger": "6.5.0-rc.1",
     "core-js": "^3.8.2",
-    "fast-deep-equal": "^3.1.3",
-    "global": "^4.4.0",
-    "lodash": "^4.17.20",
     "memoizerific": "^1.11.3",
     "qs": "^6.10.0",
-    "ts-dedent": "^2.0.0"
+    "regenerator-runtime": "^0.13.7"
+  },
+  "devDependencies": {
+    "fast-deep-equal": "^3.1.3",
+    "global": "^4.4.0",
+    "history": "5.0.0",
+    "lodash": "^4.17.21",
+    "react-router": "6.0.2",
+    "react-router-dom": "6.0.2",
+    "ts-dedent": "^2.0.0",
+    "ts-node": "^10.4.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "d3f8b5119b70ecf23ef2006b58034292eab3726e",
+  "bundlerEntrypoint": "./src/index.ts",
+  "gitHead": "3f09d4e6b0c655a092dc812488ef2c7ed3808401",
   "sbmodern": "dist/modern/index.js"
 }

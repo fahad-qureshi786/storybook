@@ -32,7 +32,7 @@ If you want to intersperse longform documentation in your Storybook, for example
 
 ## Mixed CSF / MDX Stories
 
-Can't decide between CSF and MDX? In transition? Or have did you find that each format has its own use? There's nothing stopping you from keeping some of your stories in CSF and some in MDX. And if you want to migrate one way or another, the [csf-to-mdx and mdx-to-csf codemod migrations](https://github.com/storybookjs/storybook/blob/next/lib/codemod/README.md) can help.
+Can't decide between CSF and MDX? In transition? Or have you found that each format has its own use? There's nothing stopping you from keeping some of your stories in CSF and some in MDX. And if you want to migrate one way or another, the [csf-to-mdx and mdx-to-csf codemod migrations](https://github.com/storybookjs/storybook/blob/next/lib/codemod/README.md) can help.
 
 The only limitation is that your exported titles (CSF: `default.title`, MDX `Meta.title`) should be unique across files. Loading will fail if there are duplicate titles.
 
@@ -63,7 +63,8 @@ basic.parameters = {
 
 ```md
 import { Meta, Story } from '@storybook/addon-docs';
-import \* as stories from './Button.stories.js';
+import * as stories from './Button.stories.js';
+import { Button } from './Button';
 import { SomeComponent } from 'path/to/SomeComponent';
 
 <Meta title="Demo/Button" component={Button} />
@@ -347,7 +348,7 @@ const Example = () => <Button />;
 Example.parameters = {
   docs: {
     description: {
-      story: "Individiual story description, may conatin `markdown` markup"
+      story: "Individual story description, may contain `markdown` markup"
     },
   },
 };

@@ -1,10 +1,11 @@
 import type ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import type { Options as TelejsonOptions } from 'telejson';
 import type { PluginOptions } from '@storybook/react-docgen-typescript-plugin';
-import { Configuration, Stats } from 'webpack';
-import { TransformOptions } from '@babel/core';
+import type { Configuration, Stats } from 'webpack';
+import type { TransformOptions } from '@babel/core';
 import { Router } from 'express';
-import { FileSystemCache } from 'file-system-cache';
 import { Server } from 'http';
+import type { FileSystemCache } from './utils/file-cache';
 
 /**
  * ⚠️ This file contains internal WIP types they MUST NOT be exported outside this package for now!
@@ -20,9 +21,62 @@ export interface TypescriptConfig {
   };
 }
 
+export type BuilderName = 'webpack4' | 'webpack5' | string;
+
+export type BuilderConfigObject = {
+  name: BuilderName;
+  options?: Record<string, any>;
+};
+
+export interface Webpack5BuilderConfig extends BuilderConfigObject {
+  name: 'webpack5';
+  options?: {
+    fsCache?: boolean;
+    lazyCompilation?: boolean;
+  };
+}
+
+export interface Webpack4BuilderConfig extends BuilderConfigObject {
+  name: 'webpack4';
+}
+
+export type BuilderConfig =
+  | BuilderName
+  | BuilderConfigObject
+  | Webpack4BuilderConfig
+  | Webpack5BuilderConfig;
+
 export interface CoreConfig {
-  builder: 'webpack4' | 'webpack5';
+  builder: BuilderConfig;
   disableWebpackDefaults?: boolean;
+  channelOptions?: Partial<TelejsonOptions>;
+  /**
+   * Disables the generation of project.json, a file containing Storybook metadata
+   */
+  disableProjectJson?: boolean;
+  /**
+   * Disables Storybook telemetry
+   * @see https://storybook.js.org/telemetry
+   */
+  disableTelemetry?: boolean;
+  /**
+   * Enable crash reports to be sent to Storybook telemetry
+   * @see https://storybook.js.org/telemetry
+   */
+  enableCrashReports?: boolean;
+  /**
+   * enable CORS headings to run document in a "secure context"
+   * see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+   * This enables these headers in development-mode:
+   *   Cross-Origin-Opener-Policy: same-origin
+   *   Cross-Origin-Embedder-Policy: require-corp
+   */
+  crossOriginIsolated?: boolean;
+}
+
+interface DirectoryMapping {
+  from: string;
+  to: string;
 }
 
 export interface Presets {
@@ -101,6 +155,11 @@ export interface PackageJson {
   version: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
+  eslintConfig?: Record<string, any>;
+  type?: 'module';
+  [key: string]: any;
 }
 
 // TODO: This could be exported to the outside world and used in `options.ts` file of each `@storybook/APP`
@@ -125,7 +184,12 @@ export interface CLIOptions {
   ignorePreview?: boolean;
   previewUrl?: string;
   forceBuildPreview?: boolean;
+  disableTelemetry?: boolean;
+  enableCrashReports?: boolean;
   host?: string;
+  /**
+   * @deprecated Use 'staticDirs' Storybook Configuration option instead
+   */
   staticDir?: string[];
   configDir?: string;
   https?: boolean;
@@ -134,6 +198,7 @@ export interface CLIOptions {
   sslKey?: string;
   smokeTest?: boolean;
   managerCache?: boolean;
+  open?: boolean;
   ci?: boolean;
   loglevel?: string;
   quiet?: boolean;
@@ -159,6 +224,7 @@ export interface BuilderOptions {
   versionCheck?: VersionCheck;
   releaseNotesData?: ReleaseNotesData;
   disableWebpackDefaults?: boolean;
+  serverChannelUrl?: string;
 }
 
 export interface StorybookConfigOptions {
@@ -219,17 +285,46 @@ export interface TypescriptOptions {
 }
 
 interface StoriesSpecifier {
-  directory: string;
-  files?: string;
+  /**
+   * When auto-titling, what to prefix all generated titles with (default: '')
+   */
   titlePrefix?: string;
+  /**
+   * Where to start looking for story files
+   */
+  directory: string;
+  /**
+   * What does the filename of a story file look like?
+   * (a glob, relative to directory, no leading `./`)
+   * If unset, we use `** / *.stories.@(mdx|tsx|ts|jsx|js)` (no spaces)
+   */
+  files?: string;
 }
 
 export type StoriesEntry = string | StoriesSpecifier;
 
-export interface NormalizedStoriesEntry {
-  glob: string;
-  specifier?: StoriesSpecifier;
-}
+export type NormalizedStoriesSpecifier = Required<StoriesSpecifier> & {
+  /*
+   * Match the "importPath" of a file (e.g. `./src/button/Button.stories.js')
+   * relative to the current working directory.
+   */
+  importPathMatcher: RegExp;
+};
+
+export type Preset =
+  | string
+  | {
+      name: string;
+      options?: any;
+    };
+
+/**
+ * An additional script that gets injected into the
+ * preview or the manager,
+ */
+export type Entry = string;
+
+type StorybookRefs = Record<string, { title: string; url: string } | { disable: boolean }>;
 
 /**
  * The interface for Storybook configuration in `main.ts` files.
@@ -240,20 +335,25 @@ export interface StorybookConfig {
    *
    * @example `['@storybook/addon-essentials']` or `[{ name: '@storybook/addon-essentials', options: { backgrounds: false } }]`
    */
-  addons?: Array<
-    | string
-    | {
-        name: string;
-        options?: any;
-      }
-  >;
+  addons?: Preset[];
   core?: CoreConfig;
+  /**
+   * Sets a list of directories of static files to be loaded by Storybook server
+   *
+   * @example `['./public']` or `[{from: './public', 'to': '/assets'}]`
+   */
+  staticDirs?: (DirectoryMapping | string)[];
   logLevel?: string;
   features?: {
     /**
-     * Allows to disable deprecated implicit PostCSS loader.
+     * Allows to disable deprecated implicit PostCSS loader. (will be removed in 7.0)
      */
     postcss?: boolean;
+
+    /**
+     * Allows to disable emotion webpack alias for emotion packages. (will be removed in 7.0)
+     */
+    emotionAlias?: boolean;
 
     /**
      * Build stories.json automatically on start/build
@@ -262,19 +362,75 @@ export interface StorybookConfig {
 
     /**
      * Activate preview of CSF v3.0
+     *
+     * @deprecated This is always on now from 6.4 regardless of the setting
      */
     previewCsfV3?: boolean;
+
+    /**
+     * Activate modern inline rendering
+     */
+    modernInlineRender?: boolean;
+
+    /**
+     * Activate on demand story store
+     */
+    storyStoreV7?: boolean;
+
+    /**
+     * Enable a set of planned breaking changes for SB7.0
+     */
+    breakingChangesV7?: boolean;
+
+    /**
+     * Enable the step debugger functionality in Addon-interactions.
+     */
+    interactionsDebugger?: boolean;
+
+    /**
+     * Use Storybook 7.0 babel config scheme
+     */
+    babelModeV7?: boolean;
+
+    /**
+     * Filter args with a "target" on the type from the render function (EXPERIMENTAL)
+     */
+    argTypeTargetsV7?: boolean;
+
+    /**
+     * Warn when there is a pre-6.0 hierarchy separator ('.' / '|') in the story title.
+     * Will be removed in 7.0.
+     */
+    warnOnLegacyHierarchySeparator?: boolean;
+
+    /**
+     * Preview MDX2 support, will become default in 7.0
+     */
+    previewMdx2?: boolean;
   };
+
   /**
    * Tells Storybook where to find stories.
    *
    * @example `['./src/*.stories.@(j|t)sx?']`
    */
   stories: StoriesEntry[];
+
+  /**
+   * Framework, e.g. '@storybook/react', required in v7
+   */
+  framework?: Preset;
+
   /**
    * Controls how Storybook handles TypeScript files.
    */
   typescript?: Partial<TypescriptOptions>;
+
+  /**
+   * References external Storybooks
+   */
+  refs?: StorybookRefs | ((config: Configuration, options: Options) => StorybookRefs);
+
   /**
    * Modify or return a custom Webpack config.
    */
@@ -282,4 +438,16 @@ export interface StorybookConfig {
     config: Configuration,
     options: Options
   ) => Configuration | Promise<Configuration>;
+
+  /**
+   * Add additional scripts to run in the preview a la `.storybook/preview.js`
+   *
+   * @deprecated use `previewAnnotations` or `/preview.js` file instead
+   */
+  config?: (entries: Entry[], options: Options) => Entry[];
+
+  /**
+   * Add additional scripts to run in the preview a la `.storybook/preview.js`
+   */
+  previewAnnotations?: (entries: Entry[], options: Options) => Entry[];
 }

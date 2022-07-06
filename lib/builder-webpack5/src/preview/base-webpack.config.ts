@@ -1,5 +1,5 @@
 import { logger } from '@storybook/node-logger';
-import type { Options } from '@storybook/core-common';
+import type { Options, CoreConfig, Webpack5BuilderConfig } from '@storybook/core-common';
 import type { Configuration } from 'webpack';
 
 export async function createDefaultWebpackConfig(
@@ -44,6 +44,13 @@ export async function createDefaultWebpackConfig(
 
   const isProd = storybookBaseConfig.mode !== 'development';
 
+  const coreOptions = await options.presets.apply<CoreConfig>('core');
+  const builderOptions = (coreOptions.builder as Webpack5BuilderConfig).options;
+  const cacheConfig = builderOptions?.fsCache
+    ? { cache: { type: 'filesystem' as 'filesystem' } }
+    : {};
+  const lazyCompilationConfig =
+    builderOptions?.lazyCompilation && !isProd ? { lazyCompilation: { entries: false } } : {};
   return {
     ...storybookBaseConfig,
     module: {
@@ -56,8 +63,8 @@ export async function createDefaultWebpackConfig(
           type: 'asset/resource',
           generator: {
             filename: isProd
-              ? 'static/media/[name].[contenthash:8].[ext]'
-              : 'static/media/[path][name].[ext]',
+              ? 'static/media/[name].[contenthash:8][ext]'
+              : 'static/media/[path][name][ext]',
           },
         },
         {
@@ -70,8 +77,8 @@ export async function createDefaultWebpackConfig(
           },
           generator: {
             filename: isProd
-              ? 'static/media/[name].[contenthash:8].[ext]'
-              : 'static/media/[path][name].[ext]',
+              ? 'static/media/[name].[contenthash:8][ext]'
+              : 'static/media/[path][name][ext]',
           },
         },
       ],
@@ -84,5 +91,7 @@ export async function createDefaultWebpackConfig(
         assert: false,
       },
     },
+    ...cacheConfig,
+    experiments: { ...storybookBaseConfig.experiments, ...lazyCompilationConfig },
   };
 }

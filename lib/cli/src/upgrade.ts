@@ -1,8 +1,14 @@
 import { sync as spawnSync } from 'cross-spawn';
+import { telemetry } from '@storybook/telemetry';
 import semver from '@storybook/semver';
 import { logger } from '@storybook/node-logger';
-import { JsPackageManagerFactory } from './js-package-manager';
+import {
+  getPackageDetails,
+  JsPackageManagerFactory,
+  PackageJsonWithDepsAndDevDeps,
+} from './js-package-manager';
 import { commandLog } from './helpers';
+import { automigrate } from './automigrate';
 
 type Package = {
   package: string;
@@ -31,6 +37,16 @@ const excludeList = [
   '@storybook/addon-console',
   '@storybook/csf',
   '@storybook/storybook-deployer',
+  '@storybook/addon-postcss',
+  '@storybook/react-docgen-typescript-plugin',
+  '@storybook/babel-plugin-require-context-hook',
+  '@storybook/builder-vite',
+  '@storybook/mdx1-csf',
+  '@storybook/mdx2-csf',
+  '@storybook/expect',
+  '@storybook/jest',
+  '@storybook/test-runner',
+  '@storybook/testing-library',
 ];
 export const isCorePackage = (pkg: string) =>
   pkg.startsWith('@storybook/') &&
@@ -65,6 +81,7 @@ export const checkVersionConsistency = () => {
   if (!storybookPackages.length) {
     logger.warn('No storybook core packages found.');
     logger.warn(`'npm ls | grep storybook' can show if multiple versions are installed.`);
+    return;
   }
   storybookPackages.sort((a, b) => semver.rcompare(a.version, b.version));
   const latestVersion = storybookPackages[0].version;
@@ -91,17 +108,62 @@ export const checkVersionConsistency = () => {
   });
 };
 
-type Options = { prerelease: boolean; skipCheck: boolean; useNpm: boolean; dryRun: boolean };
-export const upgrade = async ({ prerelease, skipCheck, useNpm, dryRun }: Options) => {
+type ExtraFlags = Record<string, string[]>;
+const EXTRA_FLAGS: ExtraFlags = {
+  'react-scripts@<5': ['--reject', '/preset-create-react-app/'],
+};
+
+export const addExtraFlags = (
+  extraFlags: ExtraFlags,
+  flags: string[],
+  { dependencies, devDependencies }: PackageJsonWithDepsAndDevDeps
+) => {
+  return Object.entries(extraFlags).reduce(
+    (acc, entry) => {
+      const [pattern, extra] = entry;
+      const [pkg, specifier] = getPackageDetails(pattern);
+      const pkgVersion = dependencies[pkg] || devDependencies[pkg];
+
+      if (pkgVersion && semver.satisfies(semver.coerce(pkgVersion), specifier)) {
+        return [...acc, ...extra];
+      }
+
+      return acc;
+    },
+    [...flags]
+  );
+};
+
+interface UpgradeOptions {
+  prerelease: boolean;
+  skipCheck: boolean;
+  useNpm: boolean;
+  dryRun: boolean;
+  yes: boolean;
+  disableTelemetry: boolean;
+}
+
+export const upgrade = async ({
+  prerelease,
+  skipCheck,
+  useNpm,
+  dryRun,
+  yes,
+  ...options
+}: UpgradeOptions) => {
   const packageManager = JsPackageManagerFactory.getPackageManager(useNpm);
 
   commandLog(`Checking for latest versions of '@storybook/*' packages`);
+  if (!options.disableTelemetry) {
+    telemetry('upgrade', { prerelease });
+  }
 
-  const flags = [];
+  let flags = [];
   if (!dryRun) flags.push('--upgrade');
   flags.push('--target');
   flags.push(prerelease ? 'greatest' : 'latest');
-  const check = spawnSync('npx', ['npm-check-updates', '/storybook/', ...flags], {
+  flags = addExtraFlags(EXTRA_FLAGS, flags, packageManager.retrievePackageJson());
+  const check = spawnSync('npx', ['npm-check-updates@latest', '/storybook/', ...flags], {
     stdio: 'pipe',
   }).output.toString();
   logger.info(check);
@@ -111,5 +173,8 @@ export const upgrade = async ({ prerelease, skipCheck, useNpm, dryRun }: Options
     packageManager.installDependencies();
   }
 
-  if (!skipCheck) checkVersionConsistency();
+  if (!skipCheck) {
+    checkVersionConsistency();
+    await automigrate({ dryRun, yes });
+  }
 };

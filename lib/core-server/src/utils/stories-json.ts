@@ -1,86 +1,54 @@
-import path from 'path';
+import { Router, Request, Response } from 'express';
 import fs from 'fs-extra';
-import glob from 'globby';
-import { logger } from '@storybook/node-logger';
-import { resolvePathInStorybookCache, Options, normalizeStories } from '@storybook/core-common';
-import { readCsf } from '@storybook/csf-tools';
+import type { NormalizedStoriesSpecifier } from '@storybook/core-common';
+import { debounce } from 'lodash';
+import { STORY_INDEX_INVALIDATED } from '@storybook/core-events';
+import { StoryIndexGenerator } from './StoryIndexGenerator';
+import { watchStorySpecifiers } from './watch-story-specifiers';
+import { ServerChannel } from './get-server-channel';
 
-interface ExtractedStory {
-  id: string;
-  kind: string;
-  name: string;
-  parameters: Record<string, any>;
-}
-
-type ExtractedStories = Record<string, ExtractedStory>;
+export const DEBOUNCE = 100;
 
 export async function extractStoriesJson(
-  ouputFile: string,
-  storiesGlobs: string[],
-  configDir: string
+  outputFile: string,
+  initializedStoryIndexGenerator: Promise<StoryIndexGenerator>
 ) {
-  if (!storiesGlobs) {
-    throw new Error('No stories glob');
-  }
-  const storyFiles: string[] = [];
-  await Promise.all(
-    storiesGlobs.map(async (storiesGlob) => {
-      const files = await glob(path.join(configDir, storiesGlob));
-      storyFiles.push(...files);
-    })
-  );
-  logger.info(`⚙️ Processing ${storyFiles.length} story files from ${storiesGlobs}`);
-
-  const stories: ExtractedStories = {};
-  await Promise.all(
-    storyFiles.map(async (absolutePath) => {
-      const ext = path.extname(absolutePath);
-      const relativePath = path.relative(configDir, absolutePath);
-      if (!['.js', '.jsx', '.ts', '.tsx'].includes(ext)) {
-        logger.info(`Skipping ${ext} file ${relativePath}`);
-        return;
-      }
-      try {
-        const csf = (await readCsf(absolutePath)).parse();
-        csf.stories.forEach((story) => {
-          stories[story.id] = {
-            ...story,
-            kind: csf.meta.title,
-            parameters: { ...story.parameters, fileName: relativePath },
-          };
-        });
-      } catch (err) {
-        logger.error(`🚨 Extraction error on ${relativePath}`);
-        throw err;
-      }
-    })
-  );
-  await fs.writeJson(ouputFile, { v: 3, stories });
+  const generator = await initializedStoryIndexGenerator;
+  const storyIndex = await generator.getIndex();
+  await fs.writeJson(outputFile, storyIndex);
 }
 
-const timeout = 30000; // 30s
-const step = 100; // .1s
-
-export async function useStoriesJson(router: any, options: Options) {
-  const storiesJson = resolvePathInStorybookCache('stories.json');
-  await fs.remove(storiesJson);
-  const stories = normalizeStories(await options.presets.apply('stories'), {
-    configDir: options.configDir,
-    workingDir: process.cwd(),
+export function useStoriesJson({
+  router,
+  initializedStoryIndexGenerator,
+  workingDir = process.cwd(),
+  serverChannel,
+  normalizedStories,
+}: {
+  router: Router;
+  initializedStoryIndexGenerator: Promise<StoryIndexGenerator>;
+  serverChannel: ServerChannel;
+  workingDir?: string;
+  normalizedStories: NormalizedStoriesSpecifier[];
+}) {
+  const maybeInvalidate = debounce(() => serverChannel.emit(STORY_INDEX_INVALIDATED), DEBOUNCE, {
+    leading: true,
   });
-  const globs = stories.map((s) => s.glob);
-  extractStoriesJson(storiesJson, globs, options.configDir);
-  router.use('/stories.json', async (_req: any, res: any) => {
-    for (let i = 0; i < timeout / step; i += 1) {
-      if (fs.existsSync(storiesJson)) {
-        // eslint-disable-next-line no-await-in-loop
-        const json = await fs.readFile(storiesJson, 'utf-8');
-        res.header('Content-Type', 'application/json');
-        return res.send(json);
-      }
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r: any) => setTimeout(r, step));
+  watchStorySpecifiers(normalizedStories, { workingDir }, async (specifier, path, removed) => {
+    const generator = await initializedStoryIndexGenerator;
+    generator.invalidate(specifier, path, removed);
+    maybeInvalidate();
+  });
+
+  router.use('/stories.json', async (req: Request, res: Response) => {
+    try {
+      const generator = await initializedStoryIndexGenerator;
+      const index = await generator.getIndex();
+      res.header('Content-Type', 'application/json');
+      res.send(JSON.stringify(index));
+    } catch (err) {
+      res.status(500);
+      res.send(err.message);
     }
-    return res.status(408).send('stories.json timeout');
   });
 }

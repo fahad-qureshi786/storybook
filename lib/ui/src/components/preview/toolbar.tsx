@@ -16,6 +16,8 @@ import { PreviewProps } from './utils/types';
 import { copyTool } from './tools/copy';
 import { ejectTool } from './tools/eject';
 import { menuTool } from './tools/menu';
+import { addonsTool } from './tools/addons';
+import { remountTool } from './tools/remount';
 
 export const getTools = (getFn: API['getElements']) => Object.values(getFn<Addon>(types.TOOL));
 
@@ -43,6 +45,8 @@ const fullScreenMapper = ({ api, state }: Combo) => ({
   toggle: api.toggleFullscreen,
   value: state.layout.isFullscreen,
   shortcut: shortcutToHumanString(api.getShortcutKeys().fullScreen),
+  hasPanel: Object.keys(api.getPanels()).length > 0,
+  singleStory: state.singleStory,
 });
 
 export const fullScreenTool: Addon = {
@@ -51,8 +55,8 @@ export const fullScreenTool: Addon = {
   match: (p) => ['story', 'docs'].includes(p.viewMode),
   render: () => (
     <Consumer filter={fullScreenMapper}>
-      {({ toggle, value, shortcut }) => (
-        <S.DesktopOnly>
+      {({ toggle, value, shortcut, hasPanel, singleStory }) =>
+        (!singleStory || (singleStory && hasPanel)) && (
           <IconButton
             key="full"
             onClick={toggle as any}
@@ -60,8 +64,8 @@ export const fullScreenTool: Addon = {
           >
             <Icons icon={value ? 'close' : 'expand'} />
           </IconButton>
-        </S.DesktopOnly>
-      )}
+        )
+      }
     </Consumer>
   ),
 };
@@ -103,8 +107,8 @@ export const createTabsTool = (tabs: Addon[]): Addon => ({
   ),
 });
 
-export const defaultTools: Addon[] = [zoomTool];
-export const defaultToolsExtra: Addon[] = [fullScreenTool, ejectTool, copyTool];
+export const defaultTools: Addon[] = [remountTool, zoomTool];
+export const defaultToolsExtra: Addon[] = [addonsTool, fullScreenTool, ejectTool, copyTool];
 
 const useTools = (
   getElements: API['getElements'],
@@ -117,14 +121,14 @@ const useTools = (
   const toolsFromConfig = useMemo(() => getTools(getElements), [getElements]);
   const toolsExtraFromConfig = useMemo(() => getToolsExtra(getElements), [getElements]);
 
-  const tools = useMemo(() => [...defaultTools, ...toolsFromConfig], [
-    defaultTools,
-    toolsFromConfig,
-  ]);
-  const toolsExtra = useMemo(() => [...defaultToolsExtra, ...toolsExtraFromConfig], [
-    defaultToolsExtra,
-    toolsExtraFromConfig,
-  ]);
+  const tools = useMemo(
+    () => [...defaultTools, ...toolsFromConfig],
+    [defaultTools, toolsFromConfig]
+  );
+  const toolsExtra = useMemo(
+    () => [...defaultToolsExtra, ...toolsExtraFromConfig],
+    [defaultToolsExtra, toolsExtraFromConfig]
+  );
 
   return useMemo(() => {
     return story && story.parameters
