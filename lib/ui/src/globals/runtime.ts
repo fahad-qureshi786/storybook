@@ -12,6 +12,7 @@ import * as STORYBOOKCLIENTLOGGER from '@storybook/client-logger';
 
 import { Keys } from './types';
 
+// Here we map the name of a module to their VALUE in the global scope.
 export const values: Required<Record<keyof typeof Keys, any>> = {
   react: REACT,
   'react-dom': REACTDOM,
