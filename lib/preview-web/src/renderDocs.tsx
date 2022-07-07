@@ -2,9 +2,13 @@ import React, { ComponentType } from 'react';
 import ReactDOM from 'react-dom';
 import { AnyFramework } from '@storybook/csf';
 import { Story } from '@storybook/store';
+import { CacheProvider, createCache } from '@storybook/theming';
 
 import { DocsContextProps } from './types';
 import { NoDocs } from './NoDocs';
+
+const emotionCache = createCache({ key: 'pr' });
+emotionCache.compat = true;
 
 export function renderDocs<TFramework extends AnyFramework>(
   story: Story<TFramework>,
@@ -35,9 +39,11 @@ async function renderDocsAsync<TFramework extends AnyFramework>(
   // Use `componentId` as a key so that we force a re-render every time
   // we switch components
   const docsElement = (
-    <DocsContainer key={story.componentId} context={docsContext}>
-      <Page />
-    </DocsContainer>
+    <CacheProvider value={emotionCache}>
+      <DocsContainer key={story.componentId} context={docsContext}>
+        <Page />
+      </DocsContainer>
+    </CacheProvider>
   );
 
   await new Promise<void>((resolve) => {
