@@ -54,7 +54,8 @@ export function multiSnapshotWithOptions(
   options: SnapshotsWithOptionsArgType = {}
 ): StoryshotsTestMethod {
   return ({ story, context, renderTree, stories2snapsConverter }) => {
-    const snapshotFileName = stories2snapsConverter.getSnapshotFileName(context);
+    const snapshotFileName =
+      stories2snapsConverter.getSnapshotFileName(context) || 'default-snapshot-name';
     return snapshotWithOptions(options)({ story, context, renderTree, snapshotFileName });
   };
 }
