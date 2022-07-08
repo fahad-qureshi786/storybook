@@ -51,7 +51,7 @@ function createController(): AbortController {
 
 function createStepFunction(context: PlayContext) {
   const { step } = instrument(
-    { step: (label: string, play: (context: PlayContext) => MaybePromise<void>) => play(context) },
+    { step: (name: string, play: (context: PlayContext) => MaybePromise<void>) => play(context) },
     { intercept: true }
   );
   return step;
