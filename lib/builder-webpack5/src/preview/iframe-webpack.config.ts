@@ -74,8 +74,8 @@ export default async (
       https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#framework-field-mandatory
     `);
   }
-  const { name: frameworkName, options: frameworkOptions } =
-    typeof framework === 'string' ? { name: framework, options: {} } : framework;
+  const frameworkName = typeof framework === 'string' ? framework : framework.name;
+  const frameworkOptions = await presets.apply('frameworkOptions');
 
   const isProd = configType === 'PRODUCTION';
   const envs = await presets.apply<Record<string, string>>('env');
