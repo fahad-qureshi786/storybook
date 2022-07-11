@@ -3,16 +3,18 @@ import { composeStepRunners } from './stepRunners';
 
 describe('stepRunners', () => {
   it('composes each step runner', async () => {
-    const firstLabels: string[] = [];
+    const order: string[] = [];
+
     const firstStepRunner: StepRunner = async (label, play, ctx) => {
-      firstLabels.push(label);
-      return play(ctx);
+      order.push(`first-${label}-start`);
+      await play(ctx);
+      order.push(`first-${label}-end`);
     };
 
-    const secondLabels: string[] = [];
     const secondStepRunner: StepRunner = async (label, play, ctx) => {
-      secondLabels.push(label);
-      return play(ctx);
+      order.push(`second-${label}-start`);
+      await play(ctx);
+      order.push(`second-${label}-end`);
     };
 
     const composed = composeStepRunners([firstStepRunner, secondStepRunner]);
@@ -28,8 +30,16 @@ describe('stepRunners', () => {
     expect(playFnA).toHaveBeenCalledWith(playContextA);
     expect(playFnB).toHaveBeenCalledTimes(1);
     expect(playFnB).toHaveBeenCalledWith(playContextB);
-    expect(firstLabels).toEqual(['a', 'b']);
-    expect(secondLabels).toEqual(['a', 'b']);
+    expect(order).toEqual([
+      'first-a-start',
+      'second-a-start',
+      'second-a-end',
+      'first-a-end',
+      'first-b-start',
+      'second-b-start',
+      'second-b-end',
+      'first-b-end',
+    ]);
   });
 
   it('creates a sensible default if no step runner is provided', async () => {

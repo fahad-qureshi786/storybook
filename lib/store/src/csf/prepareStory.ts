@@ -13,6 +13,8 @@ import type {
   StrictArgTypes,
   StoryContextForLoaders,
   PlayFunctionContext,
+  StepLabel,
+  PlayFunction,
 } from '@storybook/csf';
 import { includeConditionalArg } from '@storybook/csf';
 
@@ -205,8 +207,9 @@ export function prepareStory<TFramework extends AnyFramework>(
     (async (storyContext: StoryContext<TFramework>) => {
       const playFunctionContext: PlayFunctionContext<TFramework> = {
         ...storyContext,
-        // TODO: We know runStep is defined, we need a proper normalized annotations type
-        step: (label, play) => runStep!(label, play, playFunctionContext),
+        step: (label: StepLabel, play: PlayFunction<TFramework>) =>
+          // TODO: We know runStep is defined, we need a proper normalized annotations type
+          runStep!(label, play, playFunctionContext),
       };
       return play(playFunctionContext);
     });

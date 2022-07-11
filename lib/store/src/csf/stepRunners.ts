@@ -22,10 +22,10 @@ export function composeStepRunners<TFramework extends AnyFramework>(
   stepRunners: StepRunner<TFramework>[]
 ): StepRunner<TFramework> {
   return async (label, play, playContext) => {
-    const composedPlay = await stepRunners.reduce(
-      async (innerPlay, stepRunner) => async () => stepRunner(label, await innerPlay, playContext),
-      Promise.resolve(play)
+    const composedPlay = stepRunners.reduceRight<() => Promise<void>>(
+      (innerPlay, stepRunner) => async () => stepRunner(label, innerPlay, playContext),
+      async () => play(playContext)
     );
-    await composedPlay(playContext);
+    await composedPlay();
   };
 }
