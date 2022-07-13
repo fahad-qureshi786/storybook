@@ -34,6 +34,7 @@ interface InteractionsPanelProps {
   calls: Map<string, any>;
   endRef?: React.Ref<HTMLDivElement>;
   onScrollToEnd?: () => void;
+  onElementSelect?: (selector: string) => void;
   isRerunAnimating: boolean;
   setIsRerunAnimating: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -88,6 +89,7 @@ export const InteractionsPanel: React.FC<InteractionsPanelProps> = React.memo(
     isPlaying,
     pausedAt,
     onScrollToEnd,
+    onElementSelect,
     endRef,
     isRerunAnimating,
     setIsRerunAnimating,
@@ -121,6 +123,7 @@ export const InteractionsPanel: React.FC<InteractionsPanelProps> = React.memo(
               isCollapsed={call.isCollapsed}
               toggleCollapsed={call.toggleCollapsed}
               pausedAt={pausedAt}
+              onElementSelect={onElementSelect}
             />
           ))}
         </div>

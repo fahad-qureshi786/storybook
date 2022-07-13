@@ -12,6 +12,7 @@ import { EVENTS, Call, CallStates, ControlStates, LogItem } from '@storybook/ins
 
 import { InteractionsPanel } from './components/InteractionsPanel';
 import { TabIcon, TabStatus } from './components/TabStatus';
+import { HIGHLIGHT_ELEMENT } from './constants';
 
 interface Interaction extends Call {
   status: Call['status'];
@@ -152,6 +153,13 @@ export const Panel: React.FC<{ active: boolean }> = (props) => {
     [storyId]
   );
 
+  const onElementSelect = React.useCallback(
+    (selector: string) => {
+      emit(HIGHLIGHT_ELEMENT, { storyId, selector });
+    },
+    [storyId]
+  );
+
   const storyFilePath = useParameter('fileName', '');
   const [fileName] = storyFilePath.toString().split('/').slice(-1);
   const scrollToTarget = () => scrollTarget?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -181,6 +189,7 @@ export const Panel: React.FC<{ active: boolean }> = (props) => {
         pausedAt={pausedAt}
         endRef={endRef}
         onScrollToEnd={scrollTarget && scrollToTarget}
+        onElementSelect={onElementSelect}
         isRerunAnimating={isRerunAnimating}
         setIsRerunAnimating={setIsRerunAnimating}
         {...props}

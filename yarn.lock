@@ -8704,10 +8704,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/instrumenter@workspace:lib/instrumenter"
   dependencies:
+    "@storybook/addon-highlight": 7.0.0-alpha.13
     "@storybook/addons": 7.0.0-alpha.13
     "@storybook/client-logger": 7.0.0-alpha.13
     "@storybook/core-events": 7.0.0-alpha.13
     core-js: ^3.8.2
+    css-selector-generator: ^3.5.4
     global: ^4.4.0
     typescript: ~4.6.3
   languageName: unknown
@@ -16371,6 +16373,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cartesian@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "cartesian@npm:1.0.1"
+  dependencies:
+    xtend: ^4.0.1
+  checksum: fc32cd88418a3dda32c93c644aee21dc393642376587c3469eefe4eb6ae237d7b222f62c56b21ead091389f049ae09ef57a046e69a91262b508a524eab0c71ba
+  languageName: node
+  linkType: hard
+
 "case-sensitive-paths-webpack-plugin@npm:^2.3.0, case-sensitive-paths-webpack-plugin@npm:^2.4.0":
   version: 2.4.0
   resolution: "case-sensitive-paths-webpack-plugin@npm:2.4.0"
@@ -18289,6 +18300,16 @@ __metadata:
     domutils: ^3.0.1
     nth-check: ^2.0.1
   checksum: 551c60dba5b54054741032c1793b5734f6ba45e23ae9e82761a3c0ed1acbb8cfedfa443aaba3a3c1a54cac12b456d2012a09d2cd5f0e82e430454c1b9d84d500
+  languageName: node
+  linkType: hard
+
+"css-selector-generator@npm:^3.5.4":
+  version: 3.6.1
+  resolution: "css-selector-generator@npm:3.6.1"
+  dependencies:
+    cartesian: ^1.0.1
+    iselement: ^1.1.4
+  checksum: 2212db0a9dbb8a135f5249b485d8417668239616a5dd486d0a1e86f363267893f865fdc782030df747019e2632426d4ab164f7bf1b73a32bd86a32a0ae4dbca1
   languageName: node
   linkType: hard
 
@@ -27228,6 +27249,13 @@ __metadata:
   version: 4.0.10
   resolution: "isbinaryfile@npm:4.0.10"
   checksum: 0703d8cfeb69ed79e6d173120f327450011a066755150a6bbf97ffecec1069a5f2092777868315b21359098c84b54984871cad1abce877ad9141fb2caf3dcabf
+  languageName: node
+  linkType: hard
+
+"iselement@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "iselement@npm:1.1.4"
+  checksum: ba19ca3c10434ee0dce0c737a143b99900ae28249febdc86c2e88385db93ab3590f7fbaa1bb4418ab67a1186dd4dc78b124b1a2b4078a771f9d4ecec70d0a427
   languageName: node
   linkType: hard
 

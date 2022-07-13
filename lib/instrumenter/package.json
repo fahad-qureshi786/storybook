@@ -41,10 +41,12 @@
     "prepare": "node ../../scripts/prepare.js"
   },
   "dependencies": {
+    "@storybook/addon-highlight": "7.0.0-alpha.13",
     "@storybook/addons": "7.0.0-alpha.13",
     "@storybook/client-logger": "7.0.0-alpha.13",
     "@storybook/core-events": "7.0.0-alpha.13",
     "core-js": "^3.8.2",
+    "css-selector-generator": "^3.5.4",
     "global": "^4.4.0"
   },
   "devDependencies": {

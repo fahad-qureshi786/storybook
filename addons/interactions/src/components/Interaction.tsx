@@ -8,6 +8,7 @@ import { MatcherResult } from './MatcherResult';
 import { MethodCall } from './MethodCall';
 import { StatusIcon } from './StatusIcon';
 import { Controls } from './InteractionsPanel';
+import { findElementSelector } from '../findElementSelectorFromCall';
 
 const MethodCallWrapper = styled.div(() => ({
   fontFamily: typography.fonts.mono,
@@ -133,6 +134,7 @@ export const Interaction = ({
   isCollapsed,
   toggleCollapsed,
   pausedAt,
+  onElementSelect,
 }: {
   call: Call;
   callsById: Map<Call['id'], Call>;
@@ -142,8 +144,13 @@ export const Interaction = ({
   isCollapsed: boolean;
   toggleCollapsed: () => void;
   pausedAt?: Call['id'];
+  onElementSelect?: (selector: string) => void;
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const interactionElementSelector = React.useMemo(() => {
+    return findElementSelector(call, callsById);
+  }, [call, callsById]);
+
   return (
     <RowContainer call={call} pausedAt={pausedAt}>
       <RowHeader disabled={!controlStates.goto || !call.interceptable || !!call.parentId}>
@@ -160,6 +167,18 @@ export const Interaction = ({
           </MethodCallWrapper>
         </RowLabel>
         <RowActions>
+          {!childCallIds && interactionElementSelector && call.status !== CallStates.ERROR && (
+            <WithTooltip hasChrome={false} tooltip={<Note note="highlight element" />}>
+              <StyledIconButton
+                containsIcon
+                onClick={() => {
+                  onElementSelect(interactionElementSelector);
+                }}
+              >
+                <Icons icon="location" />
+              </StyledIconButton>
+            </WithTooltip>
+          )}
           {childCallIds?.length > 0 && (
             <WithTooltip
               hasChrome={false}

@@ -8,7 +8,9 @@ import {
   SET_CURRENT_STORY,
   STORY_RENDER_PHASE_CHANGED,
 } from '@storybook/core-events';
+import getCssSelector from 'css-selector-generator';
 import global from 'global';
+import { HIGHLIGHT } from '@storybook/addon-highlight';
 
 import {
   Call,
@@ -167,6 +169,24 @@ export class Instrumenter {
     this.channel.on(SET_CURRENT_STORY, () => {
       if (this.initialized) this.cleanup();
       else this.initialized = true;
+    });
+
+    /**
+     * TODO Question: Should this logic be done somewhere else, so the instrumenter is not tied to the highglighting of elements?
+     * for instance:
+     * - instrumenter has an event that returns an HTML element based on the call
+     * - the addon gets `storyState` by accessing __STORYBOOK_ADDON_INTERACTIONS_INSTRUMENTER_STATE__ instead, and then there's no need for any code in the instrumenter.
+     */
+    this.channel.on('storybook/interactions/highlight_element', (e) => {
+      const storyState = this.getState(e.storyId);
+      const [element] = Array.from(storyState.callRefsByResult.entries()).find(([_key, value]) => {
+        return value.__callId__ === e.selector;
+      });
+
+      Promise.resolve(element).then((el) => {
+        const selector = getCssSelector(el);
+        this.channel.emit(HIGHLIGHT, { elements: [selector], color: '#6c1d5c' });
+      });
     });
 
     const start = ({ storyId, playUntil }: { storyId: string; playUntil?: Call['id'] }) => {
