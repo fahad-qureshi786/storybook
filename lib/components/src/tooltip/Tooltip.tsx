@@ -116,6 +116,7 @@ const Wrapper = styled.div<WrapperProps>(
 );
 
 export interface TooltipProps {
+  children?: React.ReactNode;
   arrowRef?: any;
   tooltipRef?: any;
   hasChrome?: boolean;

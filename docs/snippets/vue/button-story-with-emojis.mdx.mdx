@@ -7,32 +7,27 @@ import Button from './Button.vue';
 
 <Meta title="Button" component={Button}/>
 
-<Story name="Primary">
-  {() => {
-    return {
-      components: { Button },
-      template: `<Button background="#ff0" label="Button"  />`,
-    };
-  }}
-</Story>
-
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/vue/api/csf
+  to learn how to use render functions.
+-->
+<Story 
+  name="Primary"
+  render={() => ({
+    components: { Button },
+    template: `<Button background="#ff0" label="Button"  />`,
+  })} />
 <Story
-  name="Secondary">
-  {() => {
-    return {
-      components: { Button },
-      template: `<Button background="#ff0" label="😄👍😍💯" />`,
-    };
-  }}
-</Story>
-
+  name="Secondary"
+  render={() => ({
+    components: { Button },
+    template: `<Button background="#ff0" label="😄👍😍💯" />`,
+  })} />
 <Story
-  name="Tertiary">
-  {() => {
-    return {
-      components: { Button },
-      template: `<Button background="#ff0" label="📚📕📈🤓" />`,
-    };
-  }}
-</Story>
+  name="Tertiary"
+  render={() => ({
+    components: { Button },
+    template: `<Button background="#ff0" label="📚📕📈🤓" />`,
+  })} />
 ```

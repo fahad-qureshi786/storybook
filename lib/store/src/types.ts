@@ -1,5 +1,5 @@
 import { SynchronousPromise } from 'synchronous-promise';
-import {
+import type {
   DecoratorFunction,
   Args,
   StoryContextForEnhancers,
@@ -26,8 +26,21 @@ import {
 export type { StoryId, Parameters };
 export type Path = string;
 export type ModuleExports = Record<string, any>;
-type PromiseLike<T> = Promise<T> | SynchronousPromise<T>;
+export type PromiseLike<T> = Promise<T> | SynchronousPromise<T>;
 export type ModuleImportFn = (path: Path) => PromiseLike<ModuleExports>;
+
+type MaybePromise<T> = Promise<T> | T;
+
+export type TeardownRenderToDOM = () => MaybePromise<void>;
+export type RenderToDOM<TFramework extends AnyFramework> = (
+  context: RenderContext<TFramework>,
+  element: Element
+) => MaybePromise<void | TeardownRenderToDOM>;
+
+export type WebProjectAnnotations<TFramework extends AnyFramework> =
+  ProjectAnnotations<TFramework> & {
+    renderToDOM?: RenderToDOM<TFramework>;
+  };
 
 export type NormalizedProjectAnnotations<TFramework extends AnyFramework = AnyFramework> =
   ProjectAnnotations<TFramework> & {

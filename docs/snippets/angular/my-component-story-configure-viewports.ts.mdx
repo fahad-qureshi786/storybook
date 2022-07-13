@@ -1,7 +1,7 @@
 ```ts
 // MyComponent.stories.ts
 
-import { Meta, Story } from '@storybook/angular';
+import type { Meta, Story } from '@storybook/angular';
 
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 
@@ -9,9 +9,9 @@ import { MyComponent } from './MyComponent.component';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'MyComponent',
   component: MyComponent,
   parameters: {
@@ -26,7 +26,14 @@ export default {
   },
 } as Meta;
 
-export const MyStory: Story = () => ({
-  template: '<MyComponent></MyComponent>',
-});
+ /*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/angular/api/csf
+ * to learn how to use render functions.
+ */
+export const MyStory: Story = {
+  render: () => ({
+    template: '<MyComponent></MyComponent>',
+  }),
+};
 ```

@@ -16,28 +16,27 @@ import { Button } from './Button.component';
     }
   }} />
 
-export const Template = (args) => ({ props: args });
-
 ## This is an accessible story
 
-<Story
-  name="Accessible"
+<Story 
+  name="Accessible" 
   args={{ 
     primary: false,
     label: 'Button'
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 
 ## This is not
-
-<Story
-  name="Inaccessible"
+<Story 
+  name="Inaccessible" 
   args={{ 
     primary: false, 
     label: 'Button', 
     backgroundColor: 'red'
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 ```

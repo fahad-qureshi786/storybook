@@ -1,12 +1,10 @@
 ```ts
 // YourPage.stories.ts
 
-import { Meta, Story } from '@storybook/angular'; 
+import { Meta, moduleMetadata, Story } from '@storybook/angular';
 
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
 
 import { rest } from 'msw';
 
@@ -17,9 +15,9 @@ import { PageLayout } from './PageLayout.component';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
   decorators: [
@@ -79,25 +77,23 @@ const TestData = {
   ],
 };
 
-const PageTemplate: Story = () => ({
-  props: {},
-});
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
-      return res(ctx.json(TestData));
-    }),
-  ],
+export const MockedSuccess: Story = {
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
+        return res(ctx.json(TestData));
+      }),
+    ],
+  },
 };
 
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
-      return res(ctx.delay(800), ctx.status(403));
-    }),
-  ],
+export const MockedError: Story = {
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
+        return res(ctx.delay(800), ctx.status(403));
+      }),
+    ],
+  },
 };
 ```

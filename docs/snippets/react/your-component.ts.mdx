@@ -3,26 +3,23 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { YourComponent } from './YourComponent';
 
 //👇 This default export determines where your story goes in the story list
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'YourComponent',
   component: YourComponent,
 } as ComponentMeta<typeof YourComponent>;
 
-//👇 We create a “template” of how args map to rendering
-const Template: ComponentStory<typeof YourComponent> = (args) => <YourComponent {...args} />;
-
-export const FirstStory = Template.bind({});
-
-FirstStory.args = {
-  /*👇 The args you need here will depend on your component */
+export const FirstStory: ComponentStoryObj<typeof YourComponent> = {
+  args: {
+    //👇 The args you need here will depend on your component
+  },
 };
 ```

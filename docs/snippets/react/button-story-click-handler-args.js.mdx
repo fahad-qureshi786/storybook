@@ -9,17 +9,18 @@ import { Button } from './Button';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Button',
   component: Button,
 };
 
-export const Text = ({ label, onClick }) => <Button label={label} onClick={onClick} />;
-
-Text.args = {
-  label: 'Hello',
-  onClick: action('clicked'),
+export const Text = {
+  args: {
+    label: 'Hello',
+    onClick: action('clicked'),
+  },
+  render: ({ label, onClick }) => <Button label={label} onClick={onClick} />,
 };
 ```

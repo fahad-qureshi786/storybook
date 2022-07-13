@@ -17,7 +17,7 @@ import { ActionBar, ActionItem } from '../ActionBar/ActionBar';
 import { Toolbar } from './Toolbar';
 import { ZoomContext } from './ZoomContext';
 import { Zoom } from '../Zoom/Zoom';
-import { StorySkeleton } from '.';
+import { StorySkeleton } from './Story';
 
 export interface PreviewProps {
   isLoading?: true;
@@ -28,6 +28,7 @@ export interface PreviewProps {
   withToolbar?: boolean;
   className?: string;
   additionalActions?: ActionItem[];
+  children?: ReactNode;
 }
 
 type layout = 'padded' | 'fullscreen' | 'centered';

@@ -1,8 +1,9 @@
 import global from 'global';
-import { ArgsStoryFn } from '@storybook/csf';
-import { RenderContext } from '@storybook/store';
+import type { ArgsStoryFn } from '@storybook/csf';
+import type { RenderContext } from '@storybook/store';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import PreviewRender from '@storybook/svelte/templates/PreviewRender.svelte';
 import { SvelteFramework } from './types';
-import PreviewRender from './PreviewRender.svelte';
 
 const { document } = global;
 
@@ -17,7 +18,7 @@ function cleanUpPreviousStory() {
 }
 
 export function renderToDOM(
-  { storyFn, kind, name, showMain, showError }: RenderContext<SvelteFramework>,
+  { storyFn, kind, name, storyContext, showMain, showError }: RenderContext<SvelteFramework>,
   domElement: HTMLElement
 ) {
   cleanUpPreviousStory();
@@ -30,6 +31,7 @@ export function renderToDOM(
     target,
     props: {
       storyFn,
+      storyContext,
       name,
       kind,
       showError,

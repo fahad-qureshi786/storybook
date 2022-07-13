@@ -9,18 +9,24 @@ import imageFile from './static/image.png';
 
 <Meta title="img" component={MyComponent}/>
 
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
+
 export const image = {
   src: imageFile,
   alt: 'my image',
 };
 
-<Story name="WithAnImage">
-  {{
+<Story 
+  name="WithAnImage"
+  render={() => ({
     props: {
       src: image.src,
       alt: image.alt,
     },
     template: `<img src="{{src}}" alt="{{alt}}" />`,
-  }}
-</Story>
+  })} />
 ```

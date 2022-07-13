@@ -15,8 +15,12 @@ import { Button } from './Button';
       }
     }
   }} />
-
-export const Template = (args) => <Button {...args} />;
+  
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/react/api/csf
+  to learn how to use render functions.
+-->
 
 ## This is an accessible story
 
@@ -25,9 +29,9 @@ export const Template = (args) => <Button {...args} />;
   args={{ 
     primary: false,
     label: 'Button'
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args)=> <Button {...args} />} />
+
 
 ## This is not
 
@@ -37,7 +41,6 @@ export const Template = (args) => <Button {...args} />;
     primary: false, 
     label: 'Button',
     backgroundColor: 'red'
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args)=> <Button {...args} />} />
 ```

@@ -44,7 +44,6 @@ With CSF, every named export in the file represents a story object by default.
     'react/my-component-story-basic-and-props.ts.mdx',
     'vue/my-component-story-basic-and-props.js.mdx',
     'svelte/my-component-story-basic-and-props.js.mdx',
-    'svelte/my-component-story-basic-and-props.native-format.mdx',
     'angular/my-component-story-basic-and-props.ts.mdx',
   ]}
 />
@@ -92,7 +91,6 @@ Consider Storybook’s ["Button" example](../writing-stories/introduction.md#def
     'vue/button-story-click-handler.2.js.mdx',
     'vue/button-story-click-handler.3.js.mdx',
     'svelte/button-story-click-handler.js.mdx',
-    'svelte/button-story-click-handler.native-format.mdx',
     'angular/button-story-click-handler.ts.mdx',
   ]}
 />
@@ -125,7 +123,6 @@ Or even more simply:
     'react/button-story-click-handler-simplificated.js.mdx',
     'angular/button-story-click-handler-simplificated.ts.mdx',
     'vue/button-story-click-handler-simplificated.js.mdx',
-    'svelte/button-story-click-handler-simplificated.native-format.mdx',
   ]}
 />
 
@@ -157,6 +154,28 @@ A good use case for the `play` function is a form component. With previous Story
 <!-- prettier-ignore-end -->
 
 When the story renders in the UI, Storybook executes each step defined in the `play` function and runs the assertions without the need for user interaction.
+
+## Custom render functions
+
+Starting in Storybook 6.4, you can write your stories as JavaScript objects, reducing the boilerplate code you need to generate to test your components, thus improving functionality and usability. `Render` functions are helpful methods to give you additional control over how the story renders. For example, if you were writing a story as an object and you wanted to specify how your component should render, you could write the following:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+   'react/component-story-with-custom-render-function.js.mdx',
+   'react/component-story-with-custom-render-function.ts.mdx',
+   'angular/component-story-with-custom-render-function.ts.mdx',
+   'vue/component-story-with-custom-render-function.js.mdx',
+   'vue/component-story-with-custom-render-function.ts.mdx',
+   'preact/component-story-with-custom-render-function.js.mdx',
+   'web-components/component-story-with-custom-render-function.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+When Storybook loads this story, it will detect the existence of a `render` function and adjust the component rendering accordingly based on what's defined.
 
 ## Storybook export vs. name handling
 

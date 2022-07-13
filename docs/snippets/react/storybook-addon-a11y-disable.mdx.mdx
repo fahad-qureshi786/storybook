@@ -9,8 +9,6 @@ import { MyComponent } from './MyComponent';
   title="Disable a11y addon" 
   component={MyComponent} />
 
-export const Template = () => <MyComponent />;
-
 <Story
   name="NonA11yStory"
   parameters={{
@@ -19,6 +17,6 @@ export const Template = () => <MyComponent />;
       disable: true,
     },
   }}>
-  {Template.bind({})}
+  <MyComponent />
 </Story>
 ```

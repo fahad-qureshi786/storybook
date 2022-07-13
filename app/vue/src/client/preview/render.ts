@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import dedent from 'ts-dedent';
 import Vue from 'vue';
-import { RenderContext } from '@storybook/store';
-import { ArgsStoryFn } from '@storybook/csf';
-import { VueFramework } from './types-6-0';
+import type { RenderContext } from '@storybook/store';
+import type { ArgsStoryFn } from '@storybook/csf';
+import type { VueFramework } from './types-6-0';
 
 export const COMPONENT = 'STORYBOOK_COMPONENT';
 export const VALUES = 'STORYBOOK_VALUES';
@@ -22,7 +22,7 @@ const root = new Vue({
 });
 
 export const render: ArgsStoryFn<VueFramework> = (props, context) => {
-  const { id, component: Component } = context;
+  const { id, component: Component, argTypes } = context;
   const component = Component as VueFramework['component'] & {
     __docgenInfo?: { displayName: string };
     props: Record<string, any>;
@@ -49,7 +49,7 @@ export const render: ArgsStoryFn<VueFramework> = (props, context) => {
   }
 
   return {
-    props: component.props,
+    props: Object.keys(argTypes),
     components: { [componentName]: component },
     template: `<${componentName} v-bind="$props" />`,
   };

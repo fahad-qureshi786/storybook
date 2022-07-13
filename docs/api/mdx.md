@@ -44,7 +44,6 @@ For example, here's the story from the `Checkbox` example above, rewritten in CS
     'react/checkbox-story-csf.ts.mdx',
     'vue/checkbox-story-csf.js.mdx',
     'angular/checkbox-story-csf.ts.mdx',
-    'svelte/checkbox-story-csf.native-format.mdx',
   ]}
 />
 

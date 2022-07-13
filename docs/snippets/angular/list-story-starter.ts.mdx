@@ -9,9 +9,9 @@ import { List } from './list.component';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   component: List,
   decorators: [
     moduleMetadata({
@@ -22,8 +22,10 @@ export default {
 } as Meta;
 
 // Always an empty list, not super interesting
-const Template: Story = (args) => ({
-  props: args,
-  template: `<app-list></app-list>`,
-});
+export const Empty: Story = {
+  render: (args) => ({
+    props: args,
+    template: `<app-list></app-list>`,
+  }),
+};
 ```

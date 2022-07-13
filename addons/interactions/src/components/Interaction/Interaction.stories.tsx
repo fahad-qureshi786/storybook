@@ -2,7 +2,7 @@ import { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 import { expect } from '@storybook/jest';
 import { CallStates } from '@storybook/instrumenter';
 import { userEvent, within } from '@storybook/testing-library';
-import { getCall } from '../../mocks';
+import { getCalls } from '../../mocks';
 
 import { Interaction } from './Interaction';
 import SubnavStories from '../Subnav/Subnav.stories';
@@ -13,7 +13,7 @@ export default {
   title: 'Addons/Interactions/Interaction',
   component: Interaction,
   args: {
-    callsById: new Map(),
+    callsById: new Map(getCalls(CallStates.DONE).map((call) => [call.id, call])),
     controls: SubnavStories.args.controls,
     controlStates: SubnavStories.args.controlStates,
   },
@@ -21,25 +21,31 @@ export default {
 
 export const Active: Story = {
   args: {
-    call: getCall(CallStates.ACTIVE),
+    call: getCalls(CallStates.ACTIVE).slice(-1)[0],
   },
 };
 
 export const Waiting: Story = {
   args: {
-    call: getCall(CallStates.WAITING),
+    call: getCalls(CallStates.WAITING).slice(-1)[0],
   },
 };
 
 export const Failed: Story = {
   args: {
-    call: getCall(CallStates.ERROR),
+    call: getCalls(CallStates.ERROR).slice(-1)[0],
   },
 };
 
 export const Done: Story = {
   args: {
-    call: getCall(CallStates.DONE),
+    call: getCalls(CallStates.DONE).slice(-1)[0],
+  },
+};
+
+export const WithParent: Story = {
+  args: {
+    call: { ...getCalls(CallStates.DONE).slice(-1)[0], parentId: 'parent-id' },
   },
 };
 

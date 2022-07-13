@@ -3,11 +3,17 @@ title: 'Environment variables'
 ---
 
 You can use environment variables in Storybook to change its behavior in different “modes”.
-If you supply an environment variable prefixed with `STORYBOOK_`, it will be available in `process.env`:
+If you supply an environment variable prefixed with `STORYBOOK_`, it will be available in `process.env` when using webpack, or `import.meta.env` when using the vite builder:
 
 ```shell
 STORYBOOK_THEME=red STORYBOOK_DATA_KEY=12345 npm run storybook
 ```
+
+<div class="aside">
+
+ 💡 Do not store any secrets (e.g., private API keys) or other types of sensitive information in your Storybook. Environment variables are embedded into the build, meaning anyone can view them by inspecting your files. 
+
+</div>
 
 Then we can access these environment variables anywhere inside our preview JavaScript code like below:
 
@@ -54,7 +60,6 @@ Then you can access this environment variable anywhere, even within your stories
     'angular/my-component-with-env-variables.mdx.mdx',
     'web-components/my-component-with-env-variables.js.mdx',
     'svelte/my-component-with-env-variables.js.mdx',
-    'svelte/my-component-with-env-variables.native-format.mdx',
     'svelte/my-component-with-env-variables.mdx.mdx',
   ]}
 />
@@ -68,6 +73,34 @@ You can also use specific files for specific modes. Add a <code>.env.development
 You can also pass these environment variables when you are [building your Storybook](../sharing/publish-storybook.md) with `build-storybook`.
 
 Then they'll be hardcoded to the static version of your Storybook.
+
+
+### Using Storybook configuration
+
+Additionally, you can extend your Storybook configuration file (i.e., [`.storybook/main.js`](../configure/overview.md#configure-story-rendering)) and provide a configuration field that you can use to define specific variables (e.g., API URLs). For example:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/storybook-main-env-field-config.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+When Storybook loads, it will enable you to access them in your stories similar as you would do if you were working with an `env` file:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/my-component-env-var-config.js.mdx',
+    'common/my-component-env-var-config.mdx.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 ### Using environment variables to choose the browser
 

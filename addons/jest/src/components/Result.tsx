@@ -67,7 +67,7 @@ export function Result(props: ResultProps) {
             <Icon
               icon="chevrondown"
               size={10}
-              color={convert(themes.normal).color.mediumdark}
+              color={convert(themes.light).color.mediumdark}
               style={{
                 transform: `rotate(${isOpen ? 0 : -90}deg)`,
               }}

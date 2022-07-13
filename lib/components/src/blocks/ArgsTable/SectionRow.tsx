@@ -6,6 +6,7 @@ import { Icons } from '../../icon/icon';
 type Level = 'section' | 'subsection';
 
 export interface SectionRowProps {
+  children?: React.ReactNode;
   label: string;
   level: Level;
   initialExpanded?: boolean;
@@ -100,7 +101,7 @@ export const SectionRow: FC<SectionRowProps> = ({
   const caption = level === 'subsection' ? `${itemCount} item${itemCount !== 1 ? 's' : ''}` : '';
   const icon = expanded ? 'arrowdown' : 'arrowright';
 
-  const helperText = `${expanded ? 'Hide' : 'Side'} ${
+  const helperText = `${expanded ? 'Hide' : 'Show'} ${
     level === 'subsection' ? itemCount : label
   } item${itemCount !== 1 ? 's' : ''}`;
 

@@ -8,9 +8,9 @@ import MockApolloWrapperClient from './MockApolloWrapperClient.svelte';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/svelte/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/svelte/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
   decorators: [() => MockGraphqlProvider],
@@ -65,31 +65,36 @@ const TestData = {
   ],
 };
 
-const PageTemplate = () => ({
-  Component: DocumentScreen,
-});
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    graphql.query('AllInfoQuery', (req, res, ctx) => {
-      return res(ctx.data(TestData));
-    }),
-  ],
+export const MockedSuccess = {
+  render: () => ({
+    Component: DocumentScreen,
+  }),
+  parameters: {
+    msw: [
+      graphql.query('AllInfoQuery', (req, res, ctx) => {
+        return res(ctx.data(TestData));
+      }),
+    ],
+  },
 };
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    graphql.query('AllInfoQuery', (req, res, ctx) => {
-      return res(
-        ctx.delay(800),
-        ctx.errors([
-          {
-            message: 'Access denied',
-          },
-        ])
-      );
-    }),
-  ],
+
+export const MockedError = {
+  render: () => ({
+    Component: DocumentScreen,
+  }),
+  parameters: {
+    msw: [
+      graphql.query('AllInfoQuery', (req, res, ctx) => {
+        return res(
+          ctx.delay(800),
+          ctx.errors([
+            {
+              message: 'Access denied',
+            },
+          ])
+        );
+      }),
+    ],
+  },
 };
 ```

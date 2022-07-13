@@ -26,7 +26,6 @@ Some components require a “harness” to render in a useful way. For instance,
     'angular/your-component-with-decorator.ts.mdx',
     'angular/your-component-with-decorator.mdx.mdx',
     'svelte/your-component-with-decorator.js.mdx',
-    'svelte/your-component-with-decorator.native-format.mdx',
     'svelte/your-component-with-decorator.mdx.mdx',
     'web-components/your-component-with-decorator.js.mdx',
   ]}
@@ -38,9 +37,9 @@ Some components require a “harness” to render in a useful way. For instance,
 
 ## “Context” for mocking
 
-Framework-specific libraries (e.g., [Styled Components](https://styled-components.com/), [Fortawesome](https://github.com/FortAwesome/vue-fontawesome) for Vue) may require additional configuration to render correctly in Storybook.
+Framework-specific libraries (e.g., [Styled Components](https://styled-components.com/), [Fortawesome](https://github.com/FortAwesome/vue-fontawesome) for Vue, Angular's [localize](https://angular.io/api/localize)) may require additional configuration to render correctly in Storybook.
 
-For example, if you're working with Styled Components and your components use a theme, add a single global decorator to [`.storybook/preview.js`](../configure/overview.md#configure-story-rendering) to provide it. Or with Vue, extend Storybook's application and register your library:
+For example, if you're working with React's Styled Components and your components use themes, add a single global decorator to [`.storybook/preview.js`](../configure/overview.md#configure-story-rendering) to enable them. With Vue, extend Storybook's application and register your library. Or with Angular, add the package into your `polyfills.ts` and import it:
 
 <!-- prettier-ignore-start -->
 
@@ -54,12 +53,14 @@ For example, if you're working with Styled Components and your components use a 
     'vue/storybook-preview-with-hoc-component-decorator.3-component.js.mdx',
     'vue/storybook-preview-with-mixin-decorator.2-mixin.js.mdx',
     'vue/storybook-preview-with-mixin-decorator.3-mixin.js.mdx',
+    'angular/add-localize-package-to-polyfills.ts.mdx',
+    'angular/storybook-preview-with-angular-polyfills.js.mdx',
   ]}
 />
 
 <!-- prettier-ignore-end -->
 
-In the example above, the values provided are hardcoded. Still, you may want to vary them, either on a per-story basis (i.e., if the values you're providing are relevant to a specific story) or in a user-controlled way (e.g., provide a theme switcher or a different set of icons).
+In the example above, the values provided are hardcoded. Still, you may want to vary them, either per-story basis (i.e., if the values you're adding are relevant to a specific story) or in a user-controlled way (e.g., provide a theme switcher or a different set of icons).
 
 The second argument to a decorator function is the **story context** which in particular contains the keys:
 
@@ -87,9 +88,7 @@ To define a decorator for a single story, use the `decorators` key on a named ex
 <CodeSnippets
   paths={[
     'react/button-story-decorator.js.mdx',
-    'react/button-story-decorator.ts.mdx',
     'react/button-story-decorator.story-function.js.mdx',
-    'react/button-story-decorator.story-function-ts.ts.mdx',
     'react/button-story-decorator.mdx.mdx',
     'vue/button-story-decorator.js.mdx',
     'vue/button-story-decorator.mdx.mdx',
@@ -103,7 +102,7 @@ To define a decorator for a single story, use the `decorators` key on a named ex
 
 <!-- prettier-ignore-end -->
 
-It is useful to ensure that the story remains a “pure” rendering of the component under test, and any extra HTML or components don't pollute that. In particular the [Source](../writing-docs/doc-blocks.md#source) docblock works best when you do this.
+It is useful to ensure that the story remains a “pure” rendering of the component under test, and any extra HTML or components don't pollute that. In particular the [Source](../writing-docs/doc-block-source.md) Doc Block works best when you do this.
 
 ## Component decorators
 
@@ -121,7 +120,6 @@ To define a decorator for all stories of a component, use the `decorators` key o
     'angular/button-story-component-decorator.ts.mdx',
     'angular/button-story-component-decorator.mdx.mdx',
     'svelte/button-story-component-decorator.js.mdx',
-    'svelte/button-story-component-decorator.native-format.mdx',
     'svelte/button-story-component-decorator.mdx.mdx',
     'web-components/button-story-component-decorator.js.mdx',
   ]}
@@ -156,4 +154,4 @@ All decorators relevant to a story will run in the following order once the stor
 
 - Global decorators, in the order they are defined
 - Component decorators, in the order they are defined
-- Story decorators, in the order they are defined.
+- Story decorators, in the order they are defined

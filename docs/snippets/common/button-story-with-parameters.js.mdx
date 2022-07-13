@@ -5,24 +5,25 @@ import { Button } from './Button';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Button',
   component: Button,
-}
+};
 
-export const Primary = Template.bind({});
-Primary.args ={
-  primary: true,
-  label: 'Button',
-}
-Primary.parameters = { 
-  backgrounds:{
-    values: [
-      { name: 'red', value: '#f00', },
-      { name: 'green', value: '#0f0', },
-    ],
-  }
+export const Primary = {
+  args: {
+     primary: true,
+     label: 'Button',
+  },
+  parameters: {
+    backgrounds: {
+      values: [
+        { name: 'red', value: '#f00' },
+        { name: 'green', value: '#0f0' },
+      ],
+    },
+  },
 };
 ```

@@ -1,12 +1,10 @@
 ```ts
 // YourPage.stories.ts
 
-import { Meta, Story } from '@storybook/angular'; 
+import { Meta, moduleMetadata, Story } from '@storybook/angular';
 
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-
-import { Meta, moduleMetadata, Story } from '@storybook/angular';
 
 import { graphql } from 'msw';
 
@@ -19,9 +17,9 @@ import { MockGraphQLModule } from './mock-graphql.module';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
   decorators: [
@@ -81,32 +79,30 @@ const TestData = {
   ],
 };
 
-const PageTemplate: Story = () => ({
-  props: {},
-});
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    graphql.query('AllInfoQuery', (req, res, ctx) => {
-      return res(ctx.data(TestData));
-    }),
-  ],
+export const MockedSuccess: Story = {
+  parameters: {
+    msw: [
+      graphql.query('AllInfoQuery', (req, res, ctx) => {
+        return res(ctx.data(TestData));
+      }),
+    ],
+  },
 };
 
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    graphql.query('AllInfoQuery', (req, res, ctx) => {
-      return res(
-        ctx.delay(800),
-        ctx.errors([
-          {
-            message: 'Access denied',
-          },
-        ])
-      );
-    }),
-  ],
+export const MockedError: Story = {
+  parameters: {
+    msw: [
+      graphql.query('AllInfoQuery', (req, res, ctx) => {
+        return res(
+          ctx.delay(800),
+          ctx.errors([
+            {
+              message: 'Access denied',
+            },
+          ])
+        );
+      }),
+    ],
+  },
 };
 ```

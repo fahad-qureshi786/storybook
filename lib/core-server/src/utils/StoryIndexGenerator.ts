@@ -3,18 +3,13 @@ import fs from 'fs-extra';
 import glob from 'globby';
 import slash from 'slash';
 
-import {
-  autoTitleFromSpecifier,
-  sortStoriesV7,
-  Path,
-  StoryIndex,
-  V2CompatIndexEntry,
-  StoryId,
-} from '@storybook/store';
-import { NormalizedStoriesSpecifier, normalizeStoryPath } from '@storybook/core-common';
+import type { Path, StoryIndex, V2CompatIndexEntry, StoryId } from '@storybook/store';
+import { userOrAutoTitleFromSpecifier, sortStoriesV7 } from '@storybook/store';
+import type { NormalizedStoriesSpecifier } from '@storybook/core-common';
+import { normalizeStoryPath } from '@storybook/core-common';
 import { logger } from '@storybook/node-logger';
 import { readCsfOrMdx, getStorySortParameter } from '@storybook/csf-tools';
-import { ComponentTitle } from '@storybook/csf';
+import type { ComponentTitle } from '@storybook/csf';
 
 type SpecifierStoriesCache = Record<Path, StoryIndex['stories'] | false>;
 
@@ -91,8 +86,10 @@ export class StoryIndexGenerator {
     const entry = this.storyIndexEntries.get(specifier);
     try {
       const importPath = slash(normalizeStoryPath(relativePath));
-      const defaultTitle = autoTitleFromSpecifier(importPath, specifier);
-      const csf = (await readCsfOrMdx(absolutePath, { defaultTitle })).parse();
+      const makeTitle = (userTitle?: string) => {
+        return userOrAutoTitleFromSpecifier(importPath, specifier, userTitle);
+      };
+      const csf = (await readCsfOrMdx(absolutePath, { makeTitle })).parse();
       csf.stories.forEach(({ id, name }) => {
         fileStories[id] = {
           id,

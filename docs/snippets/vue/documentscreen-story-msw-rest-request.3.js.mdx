@@ -7,9 +7,9 @@ import DocumentScreen from './YourPage.vue';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
 };
@@ -63,26 +63,36 @@ const TestData = {
   ],
 };
 
-const PageTemplate = () => ({
-  components: { DocumentScreen },
-  template: '<DocumentScreen />',
-});
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
-      return res(ctx.json(TestData));
-    }),
-  ],
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const MockedSuccess = {
+  render: () => ({
+    components: { DocumentScreen },
+    template: '<DocumentScreen />',
+  }),
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
+        return res(ctx.json(TestData));
+      }),
+    ],
+  },
 };
 
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
-      return res(ctx.delay(800), ctx.status(403));
-    }),
-  ],
+export const MockedError = {
+  render: () => ({
+    components: { DocumentScreen },
+    template: '<DocumentScreen />',
+  }),
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
+        return res(ctx.delay(800), ctx.status(403));
+      }),
+    ],
+  },
 };
 ```

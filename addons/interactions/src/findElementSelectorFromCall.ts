@@ -4,7 +4,11 @@ export const findElementSelector = (
   call: Call,
   callsById: Map<Call['id'], Call>
 ): string | undefined => {
-  if (call.method.startsWith('getBy') || call.method.startsWith('findBy')) {
+  if (
+    call.method.startsWith('getBy') ||
+    call.method.startsWith('findBy') ||
+    call.method.startsWith('queryBy')
+  ) {
     return call.id;
   }
 

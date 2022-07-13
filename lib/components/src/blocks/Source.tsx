@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from 'react';
+import React, { ComponentProps, FunctionComponent } from 'react';
 import { styled, ThemeProvider, convert, themes } from '@storybook/theming';
 import { EmptyBlock } from './EmptyBlock';
 
 import { SyntaxHighlighter } from '../syntaxhighlighter/lazy-syntaxhighlighter';
 
-const StyledSyntaxHighlighter = styled(SyntaxHighlighter)<{}>(({ theme }) => ({
+const StyledSyntaxHighlighter = styled(SyntaxHighlighter)(({ theme }) => ({
   // DocBlocks-specific styling and overrides
   fontSize: `${theme.typography.size.s2 - 1}px`,
   lineHeight: '19px',
@@ -31,7 +31,7 @@ interface SourceErrorProps {
 interface SourceCodeProps {
   language?: string;
   code?: string;
-  format?: boolean;
+  format?: ComponentProps<typeof SyntaxHighlighter>['format'];
   dark?: boolean;
 }
 
@@ -52,7 +52,7 @@ const SourceSkeletonPlaceholder = styled.div<{}>(({ theme }) => ({
   marginTop: 1,
   width: '60%',
 
-  '&:first-child': {
+  [`&:first-child`]: {
     margin: 0,
   },
 }));

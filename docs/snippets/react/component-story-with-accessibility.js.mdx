@@ -7,8 +7,8 @@ import { Button } from './Button';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading to learn how to generate automatic titles
+   */
   title: 'Accessibility testing',
   component: Button,
   argTypes: {
@@ -16,19 +16,19 @@ export default {
   },
 };
 
-const Template = (args) => <Button {...args} />;
-
 // This is an accessible story
-export const Accessible = Template.bind({});
-Accessible.args = {
-  primary: false,
-  label: 'Button',
+export const Accessible = {
+  args: {
+    primary: false,
+    label: 'Button',
+  },
 };
 
 // This is not
-export const Inaccessible = Template.bind({});
-Inaccessible.args = {
-  ...Accessible.args,
-  backgroundColor: 'red',
+export const Inaccessible = {
+  args: {
+    ...Accessible.args,
+    backgroundColor: 'red',
+  },
 };
 ```

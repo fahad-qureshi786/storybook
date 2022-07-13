@@ -35,7 +35,9 @@ export class PostmsgTransport {
   constructor(private readonly config: Config) {
     this.buffer = [];
     this.handler = null;
-    globalWindow.addEventListener('message', this.handleEvent.bind(this), false);
+    if (globalWindow) {
+      globalWindow.addEventListener('message', this.handleEvent.bind(this), false);
+    }
 
     // Check whether the config.page parameter has a valid value
     if (config.page !== 'manager' && config.page !== 'preview') {
@@ -195,7 +197,8 @@ export class PostmsgTransport {
   private handleEvent(rawEvent: MessageEvent): void {
     try {
       const { data } = rawEvent;
-      const { key, event, refId } = typeof data === 'string' && isJSON(data) ? parse(data) : data;
+      const { key, event, refId } =
+        typeof data === 'string' && isJSON(data) ? parse(data, global.CHANNEL_OPTIONS || {}) : data;
 
       if (key === KEY) {
         const pageString =

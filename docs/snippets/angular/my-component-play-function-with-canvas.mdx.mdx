@@ -9,18 +9,23 @@ import { MyComponent } from './MyComponent.component';
 
 <Meta title="WithCanvasElement" component={MyComponent} />
 
-export const Template = (args) => ({ props: args });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="ExampleStory"
   play={async ({ canvasElement }) => {
-    // Assigns canvas to the component root element
+    // Starts querying the component from its root element
     const canvas = within(canvasElement);
 
     // Starts querying from the component's root element
     await userEvent.type(canvas.getByTestId('example-element'), 'something');
     await userEvent.click(canvas.getByRole('another-element'));
-  }} >
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 ```

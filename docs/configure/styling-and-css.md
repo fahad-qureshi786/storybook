@@ -10,26 +10,12 @@ CSS-in-JS libraries are designed to use basic JavaScript, and they often work in
 
 ### Importing CSS files
 
-If your component files import their CSS, Storybook’s webpack config will work unmodified with some exceptions:
+If your component files import their CSS, Storybook's webpack configuration will work out of the box. The noticeable exception to this is if you're using a CSS precompiler. In this case, you can either install and configure a Storybook preset (e.g., [SCSS preset](https://github.com/storybookjs/presets/tree/master/packages/preset-scss)), or customize [Storybook's webpack configuration](../builders/webpack.md#extending-storybooks-webpack-config) and include the appropriate loader.
 
-- If you are using a CSS precompiler, you may need to add a preset (such as the [SCSS preset](https://github.com/storybookjs/presets/tree/master/packages/preset-scss), or add a loader to Storybook’s webpack config).
-- In Angular, you'll need to take special care of how you handle CSS:
-
-  - Either [customize your webpack config](./webpack#extending-storybooks-webpack-config)
-  - Or use syntax to use a inline loader:
-
-<!-- prettier-ignore-start -->
-
-<CodeSnippets
-  paths={[
-    'angular/storybook-angular-inline-css-loader.js.mdx',
-  ]}
-/>
-
-<!-- prettier-ignore-end -->
+<FeatureSnippets paths={['configure/css-troubleshooting/angular.mdx']} />
 
 To use your CSS in all stories, you import it in [`.storybook/preview.js`](./overview.md#configure-story-rendering)
 
 ### Adding webfonts
 
-If you need webfonts to be available, you may need to add some code to the [`.storybook/preview-head.html`](./story-rendering.md#adding-to-head) file. We recommend including any assets with your Storybook if possible, in which case you likely want to configure the [static file location](./images-and-assets#serving-static-files-via-storybook).
+If you need webfonts to be available, you may need to add some code to the [`.storybook/preview-head.html`](./story-rendering.md#adding-to-head) file. We recommend including any assets with your Storybook if possible, in which case you likely want to configure the [static file location](./images-and-assets.md#serving-static-files-via-storybook-configuration).

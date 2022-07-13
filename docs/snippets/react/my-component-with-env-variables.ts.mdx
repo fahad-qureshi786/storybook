@@ -3,23 +3,22 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { MyComponent } from './MyComponent';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'MyComponent',
   component: MyComponent,
 } as ComponentMeta<typeof MyComponent>;
 
-const Template: ComponentStory<typeof MyComponent> = (args) => <MyComponent {...args} />;
-
-export const ExampleStory = Template.bind({});
-ExampleStory.args = {
-  propertyA: process.env.STORYBOOK_DATA_KEY,
+export const ExampleStory: ComponentStoryObj<typeof MyComponent> = {
+  args: {
+    propertyA: process.env.STORYBOOK_DATA_KEY,
+  },
 };
 ```

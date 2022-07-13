@@ -5,24 +5,27 @@ import Button from './Button.vue';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Button',
   component: Button,
 };
 
-// 👇 We create a “template” of how args map to rendering
-const Template = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
-  components: { Button },
-});
-
-//👇 Each story then reuses that template
-export const Primary = Template.bind({});
-
-Primary.args = {
-  primary: true,
-  label: 'Button',
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const Primary = {
+  render: (args, { argTypes }) => ({
+    components: { Button },
+    props: Object.keys(argTypes),
+    template: '<Button v-bind="$props" v-on="$props" />',
+  }),
+  args: {
+    primary: true,
+    label: 'Button',
+  },
 };
 ```

@@ -3,15 +3,15 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { Button } from './Button';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Button',
   component: Button,
   //👇 Creates specific parameters for the story
@@ -22,5 +22,12 @@ export default {
   },
 } as ComponentMeta<typeof Button>;
 
-const Basic: ComponentStory<typeof Button> = () => <Button>hello</Button>;
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/react/api/csf
+ * to learn how to use render functions.
+ */
+export const Basic: ComponentStoryObj<typeof Button> = {
+  render: () => <Button>Hello</Button>,
+};
 ```

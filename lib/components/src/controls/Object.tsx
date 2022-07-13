@@ -8,10 +8,10 @@ import React, {
   useState,
   useEffect,
   useRef,
+  FC,
 } from 'react';
 import { styled, useTheme, Theme } from '@storybook/theming';
 
-// @ts-ignore
 import { JsonTree, getObjectType } from './react-editable-json-tree';
 import { getControlId, getControlSetterButtonId } from './helpers';
 import type { ControlProps, ObjectValue, ObjectConfig } from './types';
@@ -243,14 +243,14 @@ const getCustomStyleFunction: (theme: Theme) => JsonTreeProps['getStyle'] = (the
   },
 });
 
-export const ObjectControl: React.FC<ObjectProps> = ({ name, value, onChange }) => {
-  const theme = useTheme<Theme>();
+export const ObjectControl: FC<ObjectProps> = ({ name, value, onChange }) => {
+  const theme = useTheme();
   const data = useMemo(() => value && cloneDeep(value), [value]);
   const hasData = data !== null && data !== undefined;
 
   const [showRaw, setShowRaw] = useState(!hasData);
   const [parseError, setParseError] = useState<Error>(null);
-  const updateRaw = useCallback(
+  const updateRaw: (raw: string) => void = useCallback(
     (raw) => {
       try {
         if (raw) onChange(JSON.parse(raw));

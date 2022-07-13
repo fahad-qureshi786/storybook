@@ -13,9 +13,9 @@ import { Unchecked } from './ListItem.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
   component: List,
   decorators: [
@@ -26,17 +26,22 @@ export default {
   ],
 } as Meta;
 
-
-export const OneItem: Story = (args) => ({
-  props: args,
-  template: `
-    <app-list>
-      <app-list-item [item]="item"></app-list-item>
-    </app-list>
-  `,
-});
-
-OneItem.args = {
-   ...Unchecked.args,
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/angular/api/csf
+ * to learn how to use render functions.
+ */
+export const OneItem: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <app-list>
+        <app-list-item [item]="item"></app-list-item>
+      </app-list>
+   `,
+  }),
+  args: {
+    ...Unchecked.args,
+  },
 };
 ```

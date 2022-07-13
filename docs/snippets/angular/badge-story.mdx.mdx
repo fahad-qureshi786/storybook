@@ -7,7 +7,11 @@ import { Badge } from './badge.component';
 
 <Meta title="MDX/Badge" component={Badge} />
 
-export const Template = (args) => ({ props: args });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 # Badge
 
@@ -17,10 +21,11 @@ Let's define a story for our `Badge` component:
   name="positive"
   args={{
     status: 'positive',
-    label: 'Positive'
-  }}>
-  {Template.bind({})}
-</Story>
+   label: 'Positive',
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 
 We can drop it in a `Canvas` to get a code snippet:
 
@@ -28,11 +33,12 @@ We can drop it in a `Canvas` to get a code snippet:
   <Story 
     name="negative"
     args={{
-      status: 'negative', 
-      label: 'Negative'
-    }}>
-    {Template.bind({})}
-  </Story>
+      status: 'negative',
+      label: 'Negative',
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
 </Canvas>
 
 We can even preview multiple Stories in a block. This
@@ -41,36 +47,31 @@ with unique URLs, which is great for review and testing.
 
 <Canvas>
   <Story 
-    name="warning"
+    name="warning" 
     args={{
       status: 'warning',
-      label: 'Warning' 
-    }}>
-    {Template.bind({})}
-  </Story>
+     label: 'Warning',
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
   <Story 
-    name="neutral" 
+    name="neutral"
     args={{
       status: 'neutral', 
-      label: 'Neutral' 
-    }}>
-    {Template.bind({})}
-  </Story>
+      label: 'Neutral', 
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
   <Story 
     name="error"
     args={{
       status: 'error', 
-      label: 'Error' 
-    }}>
-    {Template.bind({})}
-  </Story>
-  <Story 
-    name="with icon" 
-    args={{
-      status: 'warning', 
-      label: (<Icon icon="check" inline /> with icon)
-    )}}>
-    {Template.bind({})}
-  </Story>
+      label: 'Error', 
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
 </Canvas>
 ```

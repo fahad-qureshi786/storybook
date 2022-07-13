@@ -5,13 +5,13 @@ import React from 'react';
 
 import imageFile from './static/image.png';
 
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'img',
 } as Meta;
 
@@ -20,5 +20,13 @@ const image = {
   alt: 'my image',
 };
 
-export const WithAnImage = () => <img src={image.src} alt={image.alt} />;
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/react/api/csf
+ * to learn how to use render functions.
+ */
+
+export const WithAnImage = {
+  render: () => <img src={image.src} alt={image.alt} />,
+};
 ```

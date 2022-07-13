@@ -14,13 +14,16 @@ Storybook is a helpful tool for snapshot testing because every story is essentia
 
 Run the following command to install Storyshots:
 
-```shell
-# With npm
-npm install @storybook/addon-storyshots --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-storyshots
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-storyshots-install.yarn.js.mdx',
+    'common/storybook-addon-storyshots-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Add a test file to your environment with the following contents to configure Storyshots:
 
@@ -64,7 +67,7 @@ npm i -D @storybook/addon-storyshots-puppeteer puppeteer
 yarn add @storybook/addon-storyshots-puppeteer puppeteer
 ```
 
-Next, update your test file (e.g., `storybook.test.js`) to the following:
+Next, update your test file (for example, `storybook.test.js`) to the following:
 
 <!-- prettier-ignore-start -->
 
@@ -96,7 +99,7 @@ By default, Storyshots detects your project's framework. If you run into a situa
 
 <!-- prettier-ignore-end -->
 
-These are the frameworks currently supported by Storyshots: `angular`, `html`, `preact`, `rax`, `react`, `react-native`, `riot`, `svelte`, `vue`, `vue3`, and `web-components`.
+These are the frameworks currently supported by Storyshots: `angular`, `html`, `preact`, `react`, `react-native`, `svelte`, `vue`, `vue3`, and `web-components`.
 
 ### Additional customization
 
@@ -110,6 +113,7 @@ Visual tests capture images of stories and compare them against image baselines.
 
 #### Learn about other UI tests
 
+- [Test runner](./test-runner.md) to automate test execution
 - [Visual tests](./visual-testing.md) for appearance
 - [Accessibility tests](./accessibility-testing.md) for accessibility
 - [Interaction tests](./interaction-testing.md) for user behavior simulation

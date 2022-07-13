@@ -1,6 +1,6 @@
 module.exports = {
   coreFrameworks: ['react', 'vue', 'angular', 'web-components'],
-  communityFrameworks: ['ember', 'html', 'mithril', 'marko', 'svelte', 'riot', 'preact', 'rax'],
+  communityFrameworks: ['ember', 'html', 'svelte', 'preact'],
   featureGroups: [
     {
       name: 'Essentials',
@@ -79,7 +79,7 @@ module.exports = {
         },
         {
           name: 'links',
-          unsupported: ['marko'],
+          unsupported: [],
         },
         {
           name: 'queryparams',
@@ -87,7 +87,7 @@ module.exports = {
         },
         {
           name: 'Storyshots',
-          unsupported: ['ember', 'mithril', 'marko'],
+          unsupported: ['ember'],
           path: 'workflows/unit-testing',
         },
         {
@@ -117,27 +117,27 @@ module.exports = {
         {
           name: 'Source',
           unsupported: [],
-          path: 'writing-docs/doc-blocks#source',
+          path: 'writing-docs/doc-block-source',
         },
         {
           name: 'Dynamic source',
           supported: ['react', 'vue', 'angular', 'svelte', 'web-components', 'html'],
-          path: 'writing-docs/doc-blocks#source',
+          path: 'writing-docs/doc-block-source',
         },
         {
           name: 'Args Table',
           supported: ['react', 'vue', 'angular', 'html', 'ember', 'web-components', 'svelte'],
-          path: 'writing-docs/doc-blocks#argstable',
+          path: 'writing-docs/doc-block-argstable',
         },
         {
           name: 'Description',
           supported: ['react', 'vue', 'angular', 'ember', 'web-components'],
-          path: 'writing-docs/doc-blocks#description',
+          path: 'writing-docs/doc-block-description',
         },
         {
           name: 'Inline stories',
           supported: ['react', 'vue', 'web-components', 'html', 'svelte', 'angular'],
-          path: 'writing-docs/doc-blocks#inline-rendering',
+          path: 'writing-docs/docs-page#inline-stories-vs-iframe-stories',
         },
       ],
     },

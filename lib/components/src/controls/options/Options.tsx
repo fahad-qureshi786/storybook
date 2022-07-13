@@ -28,14 +28,14 @@ const normalizeOptions = (options: Options, labels?: Record<any, string>) => {
   return options;
 };
 
-const Controls: Record<string, FC> = {
+const Controls = {
   check: CheckboxControl,
   'inline-check': CheckboxControl,
   radio: RadioControl,
   'inline-radio': RadioControl,
   select: SelectControl,
   'multi-select': SelectControl,
-};
+} as const;
 
 export type OptionsProps = ControlProps<OptionsSelection> & OptionsConfig;
 export const OptionsControl: FC<OptionsProps> = (props) => {

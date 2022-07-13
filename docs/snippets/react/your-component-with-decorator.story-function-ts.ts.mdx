@@ -1,6 +1,8 @@
 ```ts
 // YourComponent.stories.ts|tsx
 
+import React from 'react';
+
 import { ComponentMeta } from '@storybook/react';
 
 import { YourComponent } from './YourComponent';
@@ -9,17 +11,11 @@ import { YourComponent } from './YourComponent';
 // Useful to prevent the full remount of the component's story.
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'YourComponent',
   component: YourComponent,
-  decorators: [
-    (Story) => (
-      <div style={{ margin: '3em' }}>
-        {Story()}
-      </div>
-    ),
-  ],
+  decorators: [(Story) => <div style={{ margin: '3em' }}>{Story()}</div>],
 } as ComponentMeta<typeof YourComponent>;
 ```

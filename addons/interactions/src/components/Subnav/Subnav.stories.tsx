@@ -12,6 +12,7 @@ export default {
       goto: action('goto'),
       next: action('next'),
       end: action('end'),
+      rerun: action('rerun'),
     },
     controlStates: {
       debugger: true,

@@ -8,12 +8,18 @@ import MarginDecorator from './MarginDecorator.svelte';
 
 <Meta title="Button" component={Button}/>
 
-export const Template = () => ({ Component:Button });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/svelte/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="Primary"
   args={{}}
-  decorators={[() => MarginDecorator]}>
-  {Template.bind({})}
-</Story>
+  decorators={[() => MarginDecorator]}
+  render={(args) => ({
+    Component: Badge,
+    props: args,
+  })} />
 ```

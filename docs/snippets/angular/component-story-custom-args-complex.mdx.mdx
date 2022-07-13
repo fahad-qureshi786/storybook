@@ -15,22 +15,9 @@ export const someFunction = (valuePropertyA, valuePropertyB) => {
 
 };
 
-export const Template = (args) => {
-  const { propertyA, propertyB } = args;
-
-  // 👇 Assigns the function result to a variable 
-  const someFunctionResult = someFunction(propertyA, propertyB);
-  return {
-    props: {
-      ...args,
-      someProperty: someFunctionResult,
-    },
-  };
-};
-
 <Canvas>
   <Story
-    name="ExampleStory"
+    name="A complex case with a function"
     argTypes={{
       propertyA: {
         options: [
@@ -50,8 +37,16 @@ export const Template = (args) => {
     args={{
       propertyA: 'Item One',
       propertyB: 'Another Item One',
-    }}>
-    {Template.bind({})}
-  </Story>
-</Canvas
+    }} 
+    render={(args) => {
+      const { propertyA, propertyB } = args;
+      const someFunctionResult = someFunction(propertyA, propertyB);
+      return {
+        props: {
+          ...args,
+          someProperty: someFunctionResult,
+        },
+      };
+    }} />
+</Canvas>
 ```

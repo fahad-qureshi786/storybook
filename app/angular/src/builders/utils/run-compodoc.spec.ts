@@ -20,10 +20,7 @@ const builderContextLoggerMock: LoggerApi = {
 };
 
 describe('runCompodoc', () => {
-  const originalEnv = process.env;
-
   beforeEach(() => {
-    process.env = { FOO: 'bar' };
     cpSpawnMock.spawn.mockImplementation(() => ({
       stdout: { on: () => {} },
       stderr: { on: () => {} },
@@ -32,7 +29,6 @@ describe('runCompodoc', () => {
   });
 
   afterEach(() => {
-    process.env = originalEnv;
     jest.clearAllMocks();
   });
 
@@ -55,8 +51,6 @@ describe('runCompodoc', () => {
       ['compodoc', '-p', 'path/to/tsconfig.json', '-d', 'path/to/project'],
       {
         cwd: 'path/to/project',
-        env: { FOO: 'bar' },
-        shell: true,
       }
     );
   });
@@ -80,8 +74,6 @@ describe('runCompodoc', () => {
       ['compodoc', '-d', 'path/to/project', '-p', 'path/to/tsconfig.stories.json'],
       {
         cwd: 'path/to/project',
-        env: { FOO: 'bar' },
-        shell: true,
       }
     );
   });

@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { userEvent, screen } from '@storybook/testing-library';
 
@@ -11,9 +11,9 @@ import { MyComponent } from './MyComponent';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'WithSelectEvent',
   component: MyComponent,
 } as ComponentMeta<typeof MyComponent>;
@@ -23,18 +23,19 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const Template: ComponentStory<typeof MyComponent> = (args) => <MyComponent {...args} />;
+// Queries the element by it's role and fires the event
 
-export const ExampleChangeEvent = Template.bind({});
-ExampleChangeEvent.play = async () => {
-  const select = screen.getByRole('listbox');
+export const ExampleChangeEvent: ComponentStoryObj<typeof MyComponent> = {
+  play: async () => {
+    const select = screen.getByRole('listbox');
 
-  await userEvent.selectOptions(select, ['One Item']);
-  await sleep(2000);
+    await userEvent.selectOptions(select, ['One Item']);
+    await sleep(2000);
 
-  await userEvent.selectOptions(select, ['Another Item']);
-  await sleep(2000);
+    await userEvent.selectOptions(select, ['Another Item']);
+    await sleep(2000);
 
-  await userEvent.selectOptions(select, ['Yet another item']);
+    await userEvent.selectOptions(select, ['Yet another item']);
+  },
 };
 ```

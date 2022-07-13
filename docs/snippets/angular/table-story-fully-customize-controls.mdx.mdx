@@ -7,20 +7,11 @@ import { Table } from './Table.component';
 
 <Meta title="Custom Table" component={Table} />
 
-export const TableStory = (args) => ({
-  props: args,
-  template: `
-    <table>
-      <tbody>
-        <tr *ngFor="let row of data; let i=index">
-          <td *ngFor="let col of row; let j=index">
-            {{data[i][j]}}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    `,
-});
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="Numeric"
@@ -30,7 +21,19 @@ export const TableStory = (args) => ({
       [4, 5, 6],
     ],
     size: 'large',
-  }}>
-  {TableStory.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+    template: `
+      <table>
+        <tbody>
+          <tr *ngFor="let row of data; let i=index">
+            <td *ngFor="let col of row; let j=index">
+              {{data[i][j]}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+  })} />
 ```

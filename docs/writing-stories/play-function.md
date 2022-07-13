@@ -6,17 +6,20 @@ title: 'Play function'
 
 ## Setup the interactions addon
 
-We recommend installing Storybook's [`addon-interactions`](/addons/@storybook/addon-interactions/) before you start writing stories with the `play` function. It's the perfect complement for it, including a handy set of UI controls to allow you command over the execution flow. At any time, you can pause, resume, rewind, and step through each interaction. Also providing you with an easy-to-use debugger for potential issues.
+We recommend installing Storybook's [`addon-interactions`](https://storybook.js.org/addons/@storybook/addon-interactions) before you start writing stories with the `play` function. It's the perfect complement for it, including a handy set of UI controls to allow you command over the execution flow. At any time, you can pause, resume, rewind, and step through each interaction. Also providing you with an easy-to-use debugger for potential issues.
 
 Run the following command to install the addon and the required dependencies.
 
-```shell
-# With npm
-npm install @storybook/addon-interactions @storybook/testing-library --save-dev
+<!-- prettier-ignore-start -->
 
-# With yarn
-yarn add --dev @storybook/addon-interactions @storybook/testing-library
-```
+<CodeSnippets
+  paths={[
+    'common/storybook-addon-interactions-addon-full-install.yarn.js.mdx',
+    'common/storybook-addon-interactions-addon-full-install.npm.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
 
 Update your Storybook configuration (in `.storybook/main.js`) to include the interactions addon.
 
@@ -29,8 +32,6 @@ Update your Storybook configuration (in `.storybook/main.js`) to include the int
 />
 
 <!-- prettier-ignore-end -->
-
-![Storybook's addon-interaction controls](./storybook-addon-interaction-controls.gif)
 
 ## Writing stories with the play function
 
@@ -53,6 +54,12 @@ Storybook's `play` functions are small code snippets that run once the story fin
 />
 
 <!-- prettier-ignore-end -->
+
+<div class="aside">
+
+💡 See the [Interaction testing documentation](../writing-tests/interaction-testing.md#api-for-user-events) for an overview of the available API events.
+
+</div>
 
 When Storybook finishes rendering the story, it executes the steps defined within the `play` function, interacting with the component and filling the form's information. All of this without the need for user intervention. If you check your `Interactions` panel, you'll see the step-by-step flow.
 
@@ -212,4 +219,4 @@ By default, each interaction you write inside your `play` function will be execu
 
 <!-- prettier-ignore-end -->
 
-Applying these changes to your stories can provide a performance boost and improved error handling with [`addon-interactions`](/addons/@storybook/addon-interactions/).
+Applying these changes to your stories can provide a performance boost and improved error handling with [`addon-interactions`](https://storybook.js.org/addons/@storybook/addon-interactions).

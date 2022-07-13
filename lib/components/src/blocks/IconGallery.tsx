@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { styled } from '@storybook/theming';
-import { ResetWrapper } from '../typography/DocumentFormatting';
+import { ResetWrapper } from '../typography/ResetWrapper';
 
 import { getBlockBackgroundStyle } from './BlockBackgroundStyles';
 
@@ -45,6 +45,7 @@ const List = styled.div({
 
 interface IconItemProps {
   name: string;
+  children?: React.ReactNode;
 }
 
 /**
@@ -57,10 +58,14 @@ export const IconItem: FunctionComponent<IconItemProps> = ({ name, children }) =
   </Item>
 );
 
+interface IconGalleryProps {
+  children?: React.ReactNode;
+}
+
 /**
  * Show a grid of icons, as specified by `IconItem`.
  */
-export const IconGallery: FunctionComponent = ({ children, ...props }) => (
+export const IconGallery: FunctionComponent<IconGalleryProps> = ({ children, ...props }) => (
   <ResetWrapper>
     <List {...props} className="docblock-icongallery">
       {children}

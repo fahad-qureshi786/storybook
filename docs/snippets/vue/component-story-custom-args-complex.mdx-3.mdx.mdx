@@ -15,25 +15,11 @@ export const someFunction = (valuePropertyA, valuePropertyB) => {
 
 };
 
-export const Template = (args) => {
-  //👇 Assigns the function result to a variable
-  const functionResult = someFunction(args.propertyA, args.propertyB);
-  return {
-    components: { YourComponent },
-    setup() {
-      //👇 The args will now be passed down to the template
-      return {
-        args: {
-          ...args,
-          //👇 Replaces arg variable with the override (without the need of mutation)
-          someProperty: functionResult,
-        },
-      };
-    },
-    template:  '<YourComponent :propertyA="propertyA" :propertyB="propertyB" :someProperty="someProperty"/>',
-  };
-};
-
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/vue/api/csf
+  to learn how to use render functions.
+-->
 <Canvas>
   <Story
     name="ExampleStory"
@@ -56,8 +42,22 @@ export const Template = (args) => {
     args={{
       propertyA: 'Item One',
       propertyB: 'Another Item One',
-    }}>
-    {Template.bind({})}
-  </Story>
+    }}
+    render={(args) => {
+      const { propertyA, propertyB } = args;
+      const functionResult = someFunction(propertyA, propertyB);
+      return {
+        components: { YourComponent },
+        setup() {
+          return {
+            args: {
+              ...args,
+              someProperty: functionResult,
+            },
+          };
+        },
+        template: '<YourComponent v-bind="args" />',
+      };
+    }} />
 </Canvas>
 ```

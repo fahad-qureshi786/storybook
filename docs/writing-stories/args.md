@@ -10,7 +10,7 @@ Learn how and why to write stories in [the introduction](./introduction.md#using
 
 ## Args object
 
-The `args` object can be defined at the [story](#story-args) and [component level](#component-args). It is a JSON serializable object composed of string keys with matching valid value types that can be passed into a component for your framework.
+The `args` object can be defined at the [story](#story-args), [component](#component-args) and [global level](#global-args). It is a JSON serializable object composed of string keys with matching valid value types that can be passed into a component for your framework.
 
 ## Story args
 
@@ -30,9 +30,10 @@ To define the args of a single story, use the `args` CSF story key:
     'angular/button-story-with-args.ts.mdx',
     'angular/button-story-with-args.mdx.mdx',
     'svelte/button-story-with-args.js.mdx',
-    'svelte/button-story-with-args.native-format.mdx',
     'svelte/button-story-with-args.mdx.mdx',
     'web-components/button-story-with-args.js.mdx',
+    'html/button-story-with-args.ts.mdx',
+    'html/button-story-with-args.js.mdx',
   ]}
 />
 
@@ -68,9 +69,22 @@ You can also define args at the component level; they will apply to all the comp
     'angular/button-story-component-args-primary.ts.mdx',
     'angular/button-story-component-args-primary.mdx.mdx',
     'svelte/button-story-component-args-primary.js.mdx',
-    'svelte/button-story-component-args-primary.native-format.mdx',
     'svelte/button-story-component-args-primary.mdx.mdx',
     'web-components/button-story-component-args-primary.js.mdx',
+  ]}
+/>
+
+<!-- prettier-ignore-end -->
+
+## Global args
+
+You can also define args at the global level; they will apply to every component's stories unless you overwrite them. To do so, export the `args` key in your `preview.js`:
+
+<!-- prettier-ignore-start -->
+
+<CodeSnippets
+  paths={[
+    'common/button-story-project-args-theme.js.mdx',
   ]}
 />
 
@@ -130,7 +144,6 @@ You can use args in your stories to configure the component's appearance, simila
     'vue/page-story-slots.mdx-3.mdx.mdx',
     'angular/page-story-slots.ts.mdx',
     'angular/page-story-slots.mdx.mdx',
-    'svelte/page-story-slots.native-format.mdx',
   ]}
 />
 

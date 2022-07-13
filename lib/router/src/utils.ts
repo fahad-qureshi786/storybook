@@ -2,7 +2,7 @@ import { once } from '@storybook/client-logger';
 import deepEqual from 'fast-deep-equal';
 import isPlainObject from 'lodash/isPlainObject';
 import memoize from 'memoizerific';
-import qs from 'qs';
+import qs, { IStringifyOptions } from 'qs';
 import dedent from 'ts-dedent';
 
 export interface StoryData {
@@ -104,7 +104,7 @@ const encodeSpecialValues = (value: unknown): any => {
   return value;
 };
 
-const QS_OPTIONS = {
+const QS_OPTIONS: IStringifyOptions = {
   encode: false, // we handle URL encoding ourselves
   delimiter: ';', // we don't actually create multiple query params
   allowDots: true, // encode objects using dot notation: obj.key=val
@@ -148,11 +148,19 @@ type Match = { path: string };
 
 export const getMatch = memoize(1000)(
   (current: string, target: string, startsWith = true): Match | null => {
-    const startsWithTarget = current && startsWith && current.startsWith(target);
+    if (startsWith) {
+      const startsWithTarget = current && current.startsWith(target);
+      if (startsWithTarget) {
+        return { path: current };
+      }
+
+      return null;
+    }
+
     const currentIsTarget = typeof target === 'string' && current === target;
     const matchTarget = current && target && current.match(target);
 
-    if (startsWithTarget || currentIsTarget || matchTarget) {
+    if (currentIsTarget || matchTarget) {
       return { path: current };
     }
 

@@ -7,10 +7,23 @@ import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { Button } from './button';
 
+const icons = {
+  foo: () => <>Foo</>,
+  bar: () => <>Bar</>,
+};
+
 export default {
   component: Button,
   title: 'Examples / Button',
-  argTypes: { onClick: { action: 'click ' } },
+  argTypes: {
+    onClick: { action: 'click ' },
+    icon: {
+      description: 'An icon, displayed to the left of the title.',
+      control: { type: 'select' },
+      options: Object.keys(icons),
+      mapping: icons,
+    },
+  },
   // render: () => <>hohoho</>,
 } as Meta;
 
@@ -47,13 +60,3 @@ CSF2StoryWithPlay.play = () => {
   console.log('play!!');
   userEvent.click(screen.getByRole('button'));
 };
-
-// eslint-disable-next-line no-underscore-dangle
-export const __namedExportsOrder = [
-  'Basic',
-  'WithArgs',
-  'StoryObject',
-  'StoryNoRender',
-  'StoryWithPlay',
-  'CSF2StoryWithPlay',
-];

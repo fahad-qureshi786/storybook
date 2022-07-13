@@ -7,9 +7,9 @@ import { rest } from 'msw';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/svelte/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/svelte/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
 };
@@ -63,25 +63,29 @@ const TestData = {
   ],
 };
 
-const PageTemplate = () => ({
-  Component: DocumentScreen,
-});
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
-      return res(ctx.json(TestData));
-    }),
-  ],
+export const MockedSuccess = {
+  render: (args) => ({
+    Component: DocumentScreen,
+  }),
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
+        return res(ctx.json(TestData));
+      }),
+    ],
+  },
 };
 
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
-      return res(ctx.delay(800), ctx.status(403));
-    }),
-  ],
+export const MockedError = {
+  render: (args) => ({
+    Component: DocumentScreen,
+  }),
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
+        return res(ctx.delay(800), ctx.status(403));
+      }),
+    ],
+  },
 };
 ```

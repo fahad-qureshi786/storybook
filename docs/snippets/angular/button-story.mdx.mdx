@@ -9,12 +9,12 @@ import { Button } from './button.component.ts';
 
 # Button
 
-<Story name="Primary">
-  {{
+<Story 
+  name="Primary"
+  render={() => ({
     props: {
       primary: true,
       label: 'Button',
     },
-  }}
-</Story>
+  })} />
 ```

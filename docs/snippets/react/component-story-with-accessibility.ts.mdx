@@ -3,14 +3,14 @@
 
 import React from 'react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { Button } from './Button';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading to learn how to generate automatic titles
+   */
   title: 'Accessibility testing',
   component: Button,
   argTypes: {
@@ -18,20 +18,19 @@ export default {
   },
 } as ComponentMeta<typeof Button>;
 
-
-const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
-
 // This is an accessible story
-export const Accessible = Template.bind({});
-Accessible.args = {
-  primary: false,
-  label: 'Button',
+export const Accessible: ComponentStoryObj<typeof Button> = {
+  args: {
+    primary: false,
+    label: 'Button',
+  },
 };
 
 // This is not
-export const Inaccessible = Template.bind({});
-Inaccessible.args = {
-  ...Accessible.args,
-  backgroundColor: 'red',
+export const Inaccessible: ComponentStoryObj<typeof Button> = {
+  args: {
+    ...Accessible.args,
+    backgroundColor: 'red',
+  },
 };
 ```

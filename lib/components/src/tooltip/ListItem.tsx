@@ -4,6 +4,7 @@ import memoize from 'memoizerific';
 import { transparentize } from 'polished';
 
 export interface TitleProps {
+  children?: ReactNode;
   active?: boolean;
   loading?: boolean;
   disabled?: boolean;
@@ -182,7 +183,7 @@ const getItemProps = memoize(100)((onClick, href, LinkWrapper) => {
   return result;
 });
 
-export type LinkWrapperType = FunctionComponent;
+export type LinkWrapperType = FunctionComponent<any>;
 
 export interface ListItemProps extends Omit<ComponentProps<typeof Item>, 'href' | 'title'> {
   loading?: boolean;
