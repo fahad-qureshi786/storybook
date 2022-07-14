@@ -212,7 +212,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
   async onUpdateGlobals({ globals }: { globals: Globals }) {
     super.onUpdateGlobals({ globals });
 
-    if (this.currentRender instanceof DocsRender) await this.currentRender.rerender();
+    if (this.currentRender instanceof DocsRender) await this.currentRender.rerender(true);
   }
 
   async onUpdateArgs({ storyId, updatedArgs }: { storyId: StoryId; updatedArgs: Args }) {
@@ -223,7 +223,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
     // of which ones were rendered by the docs page.
     // However, in `modernInlineRender`, the individual stories track their own events as they
     // each call `renderStoryToElement` below.
-    if (this.currentRender instanceof DocsRender) await this.currentRender.rerender();
+    if (this.currentRender instanceof DocsRender) await this.currentRender.rerender(false);
   }
 
   async onPreloadStories(ids: string[]) {

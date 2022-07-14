@@ -72,12 +72,12 @@ export class DocsRender<TFramework extends AnyFramework> implements Render<TFram
     );
   }
 
-  async rerender() {
+  async rerender(isGlobals: boolean) {
     // NOTE: in modern inline render mode, each story is rendered via
     // `preview.renderStoryToElement` which means the story will track
     // its own re-renders. Thus there will be no need to re-render the whole
     // docs page when a single story changes.
-    if (!global.FEATURES?.modernInlineRender) await this.render();
+    if (!global.FEATURES?.modernInlineRender || isGlobals) await this.render();
   }
 
   async teardown({ viewModeChanged }: { viewModeChanged?: boolean } = {}) {

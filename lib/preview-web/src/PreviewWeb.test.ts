@@ -686,7 +686,27 @@ describe('PreviewWeb', () => {
       expect(mockChannel.emit).toHaveBeenCalledWith(STORY_RENDERED, 'component-one--a');
     });
 
-    describe('in docs mode', () => {
+    describe('in docs mode, legacy inline render', () => {
+      it('re-renders the docs container', async () => {
+        document.location.search = '?id=component-one--a&viewMode=docs';
+
+        await createAndRenderPreview();
+
+        mockChannel.emit.mockClear();
+        emitter.emit(UPDATE_GLOBALS, { globals: { foo: 'bar' } });
+        await waitForRender();
+
+        expect(ReactDOM.render).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    describe('in docs mode, modern inline render', () => {
+      beforeEach(() => {
+        global.FEATURES.modernInlineRender = true;
+      });
+      afterEach(() => {
+        global.FEATURES.modernInlineRender = false;
+      });
       it('re-renders the docs container', async () => {
         document.location.search = '?id=component-one--a&viewMode=docs';
 
@@ -982,7 +1002,7 @@ describe('PreviewWeb', () => {
         global.FEATURES.modernInlineRender = true;
       });
       afterEach(() => {
-        global.FEATURES.modernInlineRender = true;
+        global.FEATURES.modernInlineRender = false;
       });
       it('does not re-render the docs container', async () => {
         document.location.search = '?id=component-one--a&viewMode=docs';
