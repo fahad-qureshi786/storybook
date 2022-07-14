@@ -13,6 +13,7 @@
   "dependencies": {
     "@storybook/addon-docs": "7.0.0-alpha.13",
     "@storybook/addon-essentials": "7.0.0-alpha.13",
+    "@storybook/blocks": "7.0.0-alpha.13",
     "@storybook/components": "7.0.0-alpha.13",
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
     "@storybook/preview-web": "7.0.0-alpha.13",
