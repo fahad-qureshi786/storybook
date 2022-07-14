@@ -584,10 +584,13 @@ export function instrument<TObj extends Record<string, any>>(
   options: Options = {}
 ): TObj {
   try {
-    const params = new URLSearchParams(global.window.location.search);
-
     // Don't do any instrumentation if not loaded in an iframe and it's not running in a capture.
-    if (global.window.parent === global.window && !params.get('interactions')) return obj;
+    if (global.window.parent === global.window) {
+      const params = new URLSearchParams(global.window.location.search);
+      if (!params.get('interactions')) {
+        return obj;
+      }
+    }
 
     // Only create an instance if we don't have one (singleton) yet.
     if (!global.window.__STORYBOOK_ADDON_INTERACTIONS_INSTRUMENTER__) {
