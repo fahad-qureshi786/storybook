@@ -7080,7 +7080,7 @@ __metadata:
     "@storybook/csf": 0.0.2--canary.4566f4d.1
     "@storybook/csf-tools": 7.0.0-alpha.13
     "@storybook/docs-tools": 7.0.0-alpha.13
-    "@storybook/mdx1-csf": 0.0.5-canary.13.39e8457.0
+    "@storybook/mdx1-csf": 0.0.5-canary.13.9ce928a.0
     "@storybook/mdx2-csf": 0.0.4-canary.14.04ffbe8.0
     "@storybook/node-logger": 7.0.0-alpha.13
     "@storybook/postinstall": 7.0.0-alpha.13
@@ -8790,9 +8790,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/mdx1-csf@npm:0.0.5-canary.13.39e8457.0":
-  version: 0.0.5-canary.13.39e8457.0
-  resolution: "@storybook/mdx1-csf@npm:0.0.5-canary.13.39e8457.0"
+"@storybook/mdx1-csf@npm:0.0.5-canary.13.9ce928a.0":
+  version: 0.0.5-canary.13.9ce928a.0
+  resolution: "@storybook/mdx1-csf@npm:0.0.5-canary.13.9ce928a.0"
   dependencies:
     "@babel/generator": ^7.12.11
     "@babel/parser": ^7.12.11
@@ -8806,7 +8806,7 @@ __metadata:
     lodash: ^4.17.21
     prettier: ">=2.2.1 <=2.3.0"
     ts-dedent: ^2.0.0
-  checksum: 60daf45db49668d841a7180064ee1744b06e48e7cf15fdd17b7aa15085fddb7a09e35e5c930f9da8ad313233a1ea92df31741b2e31bd34dd47bf6d0cd8940fb9
+  checksum: 904c00fd2965ceff65e8a6a77b6192f17b4b5df5f8fbfad7c4c067ec0d269b428ad1733922233ac4ad2a1bd110ec0442ae122ede2be0703e07f0eb3f8b13730f
   languageName: node
   linkType: hard
 

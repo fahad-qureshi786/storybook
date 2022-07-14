@@ -62,7 +62,7 @@
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
     "@storybook/csf-tools": "7.0.0-alpha.13",
     "@storybook/docs-tools": "7.0.0-alpha.13",
-    "@storybook/mdx1-csf": "0.0.5-canary.13.39e8457.0",
+    "@storybook/mdx1-csf": "0.0.5-canary.13.9ce928a.0",
     "@storybook/node-logger": "7.0.0-alpha.13",
     "@storybook/postinstall": "7.0.0-alpha.13",
     "@storybook/preview-web": "7.0.0-alpha.13",
