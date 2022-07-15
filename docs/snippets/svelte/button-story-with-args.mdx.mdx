@@ -7,20 +7,20 @@ import Button from './Button.svelte';
 
 <Meta title="Button" component={Button} />
 
-<!-- 👇 We create a “template” of how args map to rendering -->
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/svelte/api/csf
+  to learn how to use render functions.
+-->
 
-export const Template = (args) => ({
-  Component: Button,
-  props: args,
-});
-
-<!-- 👇 Each story then reuses that template -->
 <Story
   name="Primary"
   args={{
     primary: true,
     label: 'Button',
-  }}>
-  {Template.bind({})}
-</Story>
+  }} 
+  render={(args) => ({
+    Component: Button,
+    props: args,
+  })} />
 ```

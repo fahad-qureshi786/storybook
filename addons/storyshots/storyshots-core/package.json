@@ -54,7 +54,7 @@
     "jest-specific-snapshot": "^4.0.0",
     "preact-render-to-string": "^5.1.19",
     "pretty-format": "^26.6.2",
-    "react-test-renderer": "^16.8.0 || ^17.0.0",
+    "react-test-renderer": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "read-pkg-up": "^7.0.1",
     "ts-dedent": "^2.0.0"
   },
@@ -72,6 +72,7 @@
     "enzyme-to-json": "^3.6.1",
     "jest-preset-angular": "^8.3.2",
     "jest-vue-preprocessor": "^1.7.1",
+    "react-test-renderer": "^16",
     "rxjs": "^6.6.3",
     "vue-jest": "^5.0.0-alpha.8"
   },

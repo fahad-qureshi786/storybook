@@ -11,16 +11,14 @@ import { LoginForm } from './LoginForm';
 
 <Meta title="Form" component={LoginForm} />
 
-export const Template = (args) => <LoginForm {...args} />;
 
 <Canvas>
   <Story name="Empty Form">
-    {Template.bind({})}
+    <LoginForm />
   </Story>
-
   <Story
     name="Filled Form"
-    play={async ({ canvasElement }) => {
+    play={ async ({ canvasElement }) => {
       // Starts querying the component from its root element
       const canvas = within(canvasElement);
 
@@ -29,7 +27,7 @@ export const Template = (args) => <LoginForm {...args} />;
 
       await userEvent.type(canvas.getByTestId('password'), 'a-random-password');
 
-      // See https://storybook.js.org/docs/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+      // See https://storybook.js.org/docs/7.0/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
       await userEvent.click(canvas.getByRole('button'));
 
       // 👇 Assert DOM structure
@@ -39,7 +37,7 @@ export const Template = (args) => <LoginForm {...args} />;
         )
       ).toBeInTheDocument();
     }}>
-    {Template.bind({})}
+    <LoginForm />
   </Story>
 </Canvas>
 ```

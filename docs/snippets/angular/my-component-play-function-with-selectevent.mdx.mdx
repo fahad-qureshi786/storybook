@@ -15,11 +15,9 @@ export const sleep= (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const Template = (args) => ({ props: args });
-
 <Story 
   name="ExampleChangeEvent"
-  play={async () => {
+  play={ async () => {
     const select = screen.getByRole('listbox');
 
     await userEvent.selectOptions(select, ['One Item']);
@@ -30,7 +28,8 @@ export const Template = (args) => ({ props: args });
 
     await userEvent.selectOptions(select, ['Yet another item']);
 
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 ```

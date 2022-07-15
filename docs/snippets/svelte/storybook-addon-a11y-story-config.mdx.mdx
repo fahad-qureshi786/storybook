@@ -9,7 +9,11 @@ import MyComponent from './MyComponent.svelte';
   title="Configure a11y addon" 
   component={MyComponent} />
 
-export const Template = () => ({ Component: MyComponent });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/svelte/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="ExampleStory"
@@ -33,7 +37,9 @@ export const Template = () => ({ Component: MyComponent });
       options: {},
       manual: true,
     },
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={() => ({
+    Component: MyComponent,
+    props: {},
+  })} />
 ```

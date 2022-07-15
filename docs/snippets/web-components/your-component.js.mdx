@@ -1,22 +1,26 @@
 ```js
 // your-component.stories.js
 
-import { html } from 'lit-html';
-
-import './your-component';
+import { MyComponent } from './your-component';
 
 // This default export determines where your story goes in the story list
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/7.0/web-components/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'YourComponent',
 };
 
-// 👇 We create a “template” of how args map to rendering
-const Template = ({ aProperty }) => html`<your-component .yourProperty=${aProperty}></your-component>`;
-
-export const FirstStory = Template.bind({});
-
-FirstStory.args = {
-  /* 👇 The args you need here will depend on your component */
-  aProperty: 'aProperty'
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/web-components/api/csf
+ * to learn how to use render functions.
+ */
+export const FirstStory = {
+  render: (args) => MyComponent(args),
+  args: {
+    //👇 The args you need here will depend on your component
+  },
 };
 ```

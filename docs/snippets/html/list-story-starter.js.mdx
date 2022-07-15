@@ -4,9 +4,15 @@
 import { createList } from  './List';
 
 export default {
+  /* 👇 The title prop is optional.
+  * See https://storybook.js.org/docs/html/configure/overview#configure-story-loading
+  * to learn how to generate automatic titles
+  */
   title: 'List',
 };
 
 // Always an empty list, not super interesting
-const Template = (args) => createList(args);
+export const Empty = {
+  render: (args) => createList(args),
+};
 ```

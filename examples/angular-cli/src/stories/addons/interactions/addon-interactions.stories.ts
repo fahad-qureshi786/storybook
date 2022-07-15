@@ -71,7 +71,7 @@ Submitted.play = async (context) => {
       canvas.getByRole('heading', {
         name: /you submitted the following:/i,
       })
-    ).not.toBeNull();
+    ).toBeInTheDocument();
     await expect(canvas.getByTestId('hero-name').textContent).toEqual('Storm');
     await expect(canvas.getByTestId('hero-alterego').textContent).toEqual('Ororo Munroe');
     await expect(canvas.getByTestId('hero-power').textContent).toEqual('Weather Changer');
@@ -98,7 +98,7 @@ SubmittedAndEditedAfter.play = async (context) => {
       canvas.getByRole('heading', {
         name: /you submitted the following:/i,
       })
-    ).not.toBeNull();
+    ).toBeInTheDocument();
     // new value
     await expect(canvas.getByTestId('hero-name').textContent).toEqual('Wakanda Queen');
 

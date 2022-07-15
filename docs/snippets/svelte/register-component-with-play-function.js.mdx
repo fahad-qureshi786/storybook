@@ -7,38 +7,44 @@ import RegistrationForm from './RegistrationForm.svelte';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/svelte/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/svelte/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'RegistrationForm',
   component: RegistrationForm,
 };
 
-const Template = (args) => ({
-  Component: RegistrationForm,
-  props: args,
-});
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/svelte/api/csf
+ * to learn how to use render functions.
+ */
 
-export const FilledForm = Template.bind({});
-FilledForm.play = async () => {
-  const emailInput = screen.getByLabelText('email', {
-    selector: 'input',
-  });
+export const FilledForm = {
+  render: (args) => ({
+    Component: RegistrationForm,
+    props: args,
+  }),
+  play: async () => {
+    const emailInput = screen.getByLabelText('email', {
+      selector: 'input',
+    });
 
-  await userEvent.type(emailInput, 'example-email@email.com', {
-    delay: 100,
-  });
+    await userEvent.type(emailInput, 'example-email@email.com', {
+      delay: 100,
+    });
 
-  const passwordInput = screen.getByLabelText('password', {
-    selector: 'input',
-  });
+    const passwordInput = screen.getByLabelText('password', {
+      selector: 'input',
+    });
 
-  await userEvent.type(passwordInput, 'ExamplePassword', {
-    delay: 100,
-  });
-  // See https://storybook.js.org/docs/svelte/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
-  const submitButton = screen.getByRole('button');
+    await userEvent.type(passwordInput, 'ExamplePassword', {
+      delay: 100,
+    });
+    // See https://storybook.js.org/docs/7.0/svelte/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+    const submitButton = screen.getByRole('button');
 
-  await userEvent.click(submitButton);
+    await userEvent.click(submitButton);
+  },
 };
 ```

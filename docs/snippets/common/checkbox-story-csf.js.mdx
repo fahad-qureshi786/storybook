@@ -5,20 +5,16 @@ import { Checkbox } from './Checkbox';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Checkbox',
   component: Checkbox,
 };
 
-const Template = (args) => ({
-  //👇 Your template goes here
-});
-
-
-export const Unchecked = Template.bind({});
-Unchecked.args = {
-  label: 'Unchecked',
+export const Unchecked = {
+  args: {
+    label: 'Unchecked',
+  },
 };
 ```

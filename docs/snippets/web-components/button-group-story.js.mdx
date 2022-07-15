@@ -1,26 +1,30 @@
 ```js
 // demo-button-group.stories.js
 
-import { html } from 'lit-html';
-
-import './demo-button-group';
+import { ButtonGroup } from './demo-button-group';
 
 //👇 Imports the Button stories
 import * as ButtonStories from './demo-button.stories';
 
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/7.0/web-components/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'ButtonGroup',
 };
 
-const Template = ({ buttons, orientation }) => {
-  return html`
-    <demo-button-group .buttons=${buttons} .orientation=${orientation}></demo-button-group>
-  `;
-};
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/web-components/api/csf
+ * to learn how to use render functions.
+ */
 
-export const Pair = Template.bind({});
-Pair.args = {
-  buttons: [{ ...ButtonStories.Primary.args }, { ...ButtonStories.Secondary.args }],
-  orientation: 'horizontal',
+export const Pair = {
+  render: (args) => ButtonGroup(args),
+  args: {
+    buttons: [{ ...ButtonStories.Primary.args }, { ...ButtonStories.Secondary.args }],
+    orientation: 'horizontal',
+  },
 };
 ```

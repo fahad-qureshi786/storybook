@@ -15,10 +15,11 @@ export const sleep= (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const Template = (args) => ({
-  components: { MyComponent },
-  template: '<MyComponent />',
-});
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/vue/api/csf
+  to learn how to use render functions.
+-->
 
 <Story 
   name="ExampleChangeEvent"
@@ -33,7 +34,9 @@ export const Template = (args) => ({
 
     await userEvent.selectOptions(select, ['Yet another item']);
 
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={()=>({
+    components: { MyComponent },
+    template: '<MyComponent/>',
+  })} />
 ```

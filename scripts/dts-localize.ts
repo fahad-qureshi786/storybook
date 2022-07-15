@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import path from 'path';
+import path, { dirname, isAbsolute, join, resolve } from 'path';
 import fs from 'fs-extra';
 import { sync } from 'read-pkg-up';
 import slash from 'slash';
@@ -14,8 +14,8 @@ const parseConfigHost = {
 };
 
 function getAbsolutePath(fileName: string, cwd?: string) {
-  if (!path.isAbsolute(fileName)) {
-    fileName = path.join(cwd !== undefined ? cwd : process.cwd(), fileName);
+  if (!isAbsolute(fileName)) {
+    fileName = join(cwd !== undefined ? cwd : process.cwd(), fileName);
   }
 
   return fileName;
@@ -101,17 +101,17 @@ export const run = async (entrySourceFiles: string[], outputPath: string, option
 
     */
 
-    if (relative.includes('node_modules/')) {
-      const [, ...parts] = relative.split('node_modules/');
-      const filename = parts.join('node_modules/').split('/').join('-');
-      newPath = path.join(outputPath, '_modules', filename);
-    } else if (relative.includes('dist/ts-tmp/')) {
-      const [, ...parts] = relative.split('dist/ts-tmp/');
-      const filename = parts.join('').split('/').join('-');
-      newPath = path.join(outputPath, filename);
+    if (relative.includes(`node_modules${path.sep}`)) {
+      const [, ...parts] = relative.split(`node_modules${path.sep}`);
+      const filename = parts.join(`node_modules${path.sep}`).split(path.sep).join('-');
+      newPath = join(outputPath, '_modules', filename);
+    } else if (relative.includes(join('dist', `ts-tmp${path.sep}`))) {
+      const [, ...parts] = relative.split(join('dist', `ts-tmp${path.sep}`));
+      const filename = parts.join('').split(path.sep).join('-');
+      newPath = join(outputPath, filename);
     } else {
-      const filename = relative.split('/').join('-');
-      newPath = path.join(outputPath, filename);
+      const filename = relative.split(path.sep).join('-');
+      newPath = join(outputPath, filename);
     }
     return newPath;
   }

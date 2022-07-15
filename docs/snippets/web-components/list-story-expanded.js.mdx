@@ -7,26 +7,35 @@ import './demo-list';
 import './demo-list-item';
 
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/7.0/web-components/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
 };
 
-export const Empty = (args) => html`<demo-list></demo-list>`;
-
-export const OneItem = (args) => {
-  return html`
-    <demo-list>
-      <demo-list-item></demo-list-item>
-    </demo-list>
-  `;
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/web-components/api/csf
+ * to learn how to use render functions.
+ */
+export const Empty = {
+  render: () => html`<demo-list></demo-list>`,
 };
 
-export const ManyItems = (args) => {
-  return html`
+export const OneItem = {
+  render: () => html`
     <demo-list>
       <demo-list-item></demo-list-item>
-      <demo-list-item></demo-list-item>
-      <demo-list-item></demo-list-item>
     </demo-list>
-  `;
+  `,
+};
+
+export const ManyItems = {
+  render: () => html` <demo-list>
+    <demo-list-item></demo-list-item>
+    <demo-list-item></demo-list-item>
+    <demo-list-item></demo-list-item>
+  </demo-list>`,
 };
 ```

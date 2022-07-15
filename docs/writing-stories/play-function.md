@@ -55,6 +55,12 @@ Storybook's `play` functions are small code snippets that run once the story fin
 
 <!-- prettier-ignore-end -->
 
+<div class="aside">
+
+💡 See the [Interaction testing documentation](../writing-tests/interaction-testing.md#api-for-user-events) for an overview of the available API events.
+
+</div>
+
 When Storybook finishes rendering the story, it executes the steps defined within the `play` function, interacting with the component and filling the form's information. All of this without the need for user intervention. If you check your `Interactions` panel, you'll see the step-by-step flow.
 
 ## Composing stories

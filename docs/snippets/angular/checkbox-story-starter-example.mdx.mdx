@@ -7,18 +7,23 @@ import { Checkbox } from './checkbox.component';
 
 <Meta title="MDX/Checkbox" component={Checkbox} />
 
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
+
 <Canvas>
   <Story 
-    name="all checkboxes">
-    {{
+    name="MyStory"
+    render={() => ({
       template: `
         <form>
-          <Checkbox id="Unchecked" label="Unchecked" />
-          <Checkbox id="Checked" label="Checked" checked />
-          <Checkbox appearance="secondary" id="second" label="Secondary" checked />
-        </form>    
-      `,
-    }}
+          <Checkbox id="Unchecked" label="Unchecked" /> 
+          <Checkbox id="Checked" label="Checked" checked /> 
+          <Checkbox appearance="secondary" id="second" label="Secondary" checked /> 
+        </form>`,
+    })} >
   </Story>
 </Canvas>
 ```

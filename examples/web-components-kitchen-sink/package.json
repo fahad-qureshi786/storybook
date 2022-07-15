@@ -46,7 +46,7 @@
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
     "@storybook/csf-tools": "link:../../lib/csf-tools",
     "@storybook/docs-tools": "link:../../lib/docs-tools",
-    "@storybook/jest": "^0.0.5",
+    "@storybook/jest": "^0.0.10",
     "@storybook/mdx1-csf": "canary",
     "@storybook/node-logger": "link:../../lib/node-logger",
     "@storybook/postinstall": "link:../../lib/postinstall",

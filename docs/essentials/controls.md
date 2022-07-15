@@ -119,7 +119,6 @@ Until now, we only used auto-generated controls based on the component we're wri
     'vue/table-story-fully-customize-controls.mdx-3.mdx.mdx',
     'angular/table-story-fully-customize-controls.ts.mdx',
     'angular/table-story-fully-customize-controls.mdx.mdx',
-    'svelte/table-story-fully-customize-controls.native-format.mdx',
   ]}
 />
 
@@ -151,7 +150,6 @@ One way to deal with this is to use primitive values (e.g., strings) as arg valu
     'angular/component-story-custom-args-complex.ts.mdx',
     'angular/component-story-custom-args-complex.mdx.mdx',
     'svelte/component-story-custom-args-complex.js.mdx',
-    'svelte/component-story-custom-args-complex.native-format.mdx',
   ]}
 />
 

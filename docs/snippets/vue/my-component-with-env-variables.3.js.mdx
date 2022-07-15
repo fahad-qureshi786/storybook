@@ -5,23 +5,28 @@ import MyComponent from './MyComponent.vue';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'MyComponent',
   component: MyComponent,
 };
 
-const Template = (args) => ({
-  components: { MyComponent },
-  setup() {
-    return { args };
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const ExampleStory = {
+  render: (args) => ({
+    components: { MyComponent },
+    setup() {
+      return { args };
+    },
+    template: `<MyComponent v-bind="args"/>`,
+  }),
+  args: {
+    propertyA: process.env.STORYBOOK_DATA_KEY,
   },
-  template: '<MyComponent v-bind="args"/>',
-});
-
-export const ExampleStory = Template.bind({});
-ExampleStory.args = {
-  propertyA: process.env.STORYBOOK_DATA_KEY,
 };
 ```

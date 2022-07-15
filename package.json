@@ -188,7 +188,7 @@
     "@storybook/html": "workspace:*",
     "@storybook/html-webpack5": "workspace:*",
     "@storybook/instrumenter": "workspace:*",
-    "@storybook/jest": "^0.0.5",
+    "@storybook/jest": "^0.0.10",
     "@storybook/linter-config": "^2.5.0",
     "@storybook/node-logger": "workspace:*",
     "@storybook/postinstall": "workspace:*",

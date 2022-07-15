@@ -9,18 +9,22 @@ import { YourComponent } from './YourComponent';
 //👇 This default export determines where your story goes in the story list
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/preact/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/preact/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'YourComponent',
   component: YourComponent,
-}
+};
 
-//👇 We create a “template” of how args map to rendering
-const Template = (args) => <YourComponent {...args} />;
-
-export const FirstStory = Template.bind({});
-FirstStory.args = {
-  //👇 The args you need here will depend on your component
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/preact/api/csf
+ * to learn how to use render functions.
+ */
+export const FirstStory = {
+  render: (args) => <YourComponent {...args} />,
+  args: {
+    //👇 The args you need here will depend on your component
+  },
 };
 ```

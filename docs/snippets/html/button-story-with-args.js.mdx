@@ -9,21 +9,28 @@ export default {
   title: 'Button',
 };
 
-//👇 We create a “template” of how args map to rendering
-const Template = (args) => {
-  const btn = document.createElement('button');
-  btn.innerText = args.label;
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/html/api/csf
+ * to learn how to use render functions.
+ */
+export const Primary = {
+  render: (args) => {
+    const btn = document.createElement("button");
+    btn.innerText = args.label;
 
-  const mode = args.primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-  btn.className = ['storybook-button', 'storybook-button--medium', mode].join(' ');
+    const mode = args.primary
+      ? "storybook-button--primary"
+      : "storybook-button--secondary";
+    btn.className = ["storybook-button", "storybook-button--medium", mode].join(
+      " "
+    );
 
-  return btn;
-};
-
-//👇 Each story then reuses that template
-export const Primary = Template.bind({});
-Primary.args = {
-  primary: true,
-  label: 'Button',
+    return btn;
+  },
+  args: {
+    primary: true,
+    label: 'Button',
+  },
 };
 ```

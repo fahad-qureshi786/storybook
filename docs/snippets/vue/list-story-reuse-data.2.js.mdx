@@ -9,26 +9,32 @@ import { Selected, Unselected } from './ListItem.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
   component: List,
 };
 
-export const ManyItems = (args, { argTypes }) => ({
-  components: { List, ListItem },
-  props: Object.keys(argTypes),
-  template: `
-    <List v-bind="$props">
-      <list-item :isSelected="Selected"/>
-      <list-item :isSelected="Unselected"/>
-      <list-item :isSelected="Unselected"/>
-    </List>`,
-});
-
-ManyItems.args = {
-  Selected: Selected.args.isSelected,
-  Unselected: Unselected.args.isSelected,
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const ManyItems = {
+  render: (args, { argTypes }) => ({
+    components: { List, ListItem },
+    props: Object.keys(argTypes),
+    template: `
+      <List v-bind="$props">
+        <list-item :isSelected="Selected"/>
+        <list-item :isSelected="Unselected"/>
+        <list-item :isSelected="Unselected"/>
+      </List>`,
+  }),
+  args: {
+    Selected: Selected.args.isSelected,
+    Unselected: Unselected.args.isSelected,
+  },
 };
 ```

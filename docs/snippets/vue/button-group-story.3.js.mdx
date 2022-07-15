@@ -8,27 +8,29 @@ import * as ButtonStories from './Button.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'ButtonGroup',
   component: ButtonGroup,
 };
 
-const Template = (args) => ({
-  components: { ButtonGroup },
-  setup() {
-    return { args };
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const Pair = {
+  render: (args) => ({
+    components: { ButtonGroup },
+    setup() {
+      return { args };
+    },
+    template: '<ButtonGroup v-bind="args" />',
+  }),
+  args: {
+    buttons: [{ ...ButtonStories.Primary.args }, { ...ButtonStories.Secondary.args }],
+    orientation: 'horizontal',
   },
-  template: '<ButtonGroup v-bind="args" />',
-});
-
-export const Pair = Template.bind({});
-Pair.args = {
-  buttons: [
-    { ...ButtonStories.Primary.args },
-    { ...ButtonStories.Secondary.args }
-  ],
-  orientation: 'horizontal',
 };
 ```

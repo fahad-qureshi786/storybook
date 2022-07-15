@@ -7,10 +7,6 @@ import { Button } from './Button';
 
 <Meta title="Button" component={Button} />
 
-export const Template = (args) => ({
-   //👇 Your template goes here
-});
-
 
 <Story
   name="Large"
@@ -18,7 +14,6 @@ export const Template = (args) => ({
     backgrounds: {
       disable: true,
     },
-  }}>
-  {Template.bind({})}
-</Story>
+  }} 
+  render={() => ({ // Your implementation here })} />
 ```

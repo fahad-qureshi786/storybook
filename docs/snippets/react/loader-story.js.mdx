@@ -9,17 +9,21 @@ import { TodoItem } from './TodoItem';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
+  * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
   * to learn how to generate automatic titles
   */
   title: 'Examples/Loader'
   component: TodoItem,
+  render: (args, { loaded: { todo } }) => <TodoItem {...args} {...todo} />,
 };
 
-export const Primary = (args, { loaded: { todo } }) => <TodoItem {...args} {...todo} />;
-Primary.loaders = [
+export const Primary = {
+  loaders: [
     async () => ({
-      todo: await (await fetch('https://jsonplaceholder.typicode.com/todos/1')).json(),
+      todo: await (
+        await fetch('https://jsonplaceholder.typicode.com/todos/1')
+      ).json(),
     }),
-];
+  ],
+};
 ```

@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { DocumentScreen } from './YourPage';
 
@@ -13,20 +13,18 @@ import DocumentList from './DocumentList.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
 } as ComponentMeta<typeof DocumentScreen>;
 
-
-const Template: ComponentStoryFn<typeof DocumentScreen> = (args) => <DocumentScreen {...args} />;
-
-export const Simple = Template.bind({});
-Simple.args = {
-  user: PageLayout.Simple.args.user,
-  document: DocumentHeader.Simple.args.document,
-  subdocuments: DocumentList.Simple.args.documents,
+export const Simple: ComponentStoryObj<typeof DocumentScreen> = {
+  args: {
+    user: PageLayout.Simple.args.user,
+    document: DocumentHeader.Simple.args.document,
+    subdocuments: DocumentList.Simple.args.documents,
+  },
 };
 ```

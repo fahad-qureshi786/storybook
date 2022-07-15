@@ -9,11 +9,15 @@ import { MyComponent } from './MyComponent.component';
 
 <Meta title="WithAsync" component={MyComponent} />
 
-export const Template = (args) => ({ props: args });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="ExampleAsyncStory"
-  play={async () => {
+  play={ async () => {
     const Input = screen.getByLabelText('Username', {
       selector: 'input',
     });
@@ -22,15 +26,16 @@ export const Template = (args) => ({ props: args });
       delay: 100,
     });
 
-    // See https://storybook.js.org/docs/angular/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
-    
+    // See https://storybook.js.org/docs/7.0/angular/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+
     const Submit = screen.getByRole('button');
     await userEvent.click(Submit);
 
     await waitFor(async () => {
       await userEvent.hover(screen.getByTestId('error'));
     });
-  }} >
-  {Template.bind({})}
-</Story>
+  }}
+  render={(args) => ({
+    props: args,
+  })} />
 ```

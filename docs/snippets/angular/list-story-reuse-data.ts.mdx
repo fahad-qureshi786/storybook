@@ -13,9 +13,9 @@ import { Selected, Unselected } from './ListItem.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
   component: List,
   decorators: [
@@ -26,19 +26,25 @@ export default {
   ],
 } as Meta;
 
-
-export const ManyItems: Story = (args) => ({
-  props: args,
-  template: `
-    <app-list>
-      <app-listitem [isSelected]="Selected"></app-listitem>
-      <app-listitem [isSelected]="Unselected"></app-listitem>
-      <app-listitem [isSelected]="Unselected"></app-listitem>
-    </app-list>
-  `,
-});
-ManyItems.args= {
-  Selected: Selected.args.isSelected,
-  Unselected: Unselected.args.isSelected,
+ /*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/angular/api/csf
+ * to learn how to use render functions.
+ */
+export const ManyItems: Story = {
+  args: {
+    Selected: Selected.args.isSelected,
+    Unselected: Unselected.args.isSelected,
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <app-list>
+        <app-list-item [isSelected]="Selected"></app-list-item>
+        <app-list-item [isSelected]="Unselected"></app-list-item>
+        <app-list-item [isSelected]="Unselected"></app-list-item>
+      </app-list>
+    `,
+  }),
 };
 ```

@@ -9,10 +9,11 @@ import MyComponent from './MyComponent.vue';
   title="Configure a11y addon" 
   component={MyComponent} />
 
-export const Template = () => ({
-  components: { MyComponent },
-  template: '<MyComponent />',
-});
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/vue/api/csf
+  to learn how to use render functions.
+-->
 
 <Story
   name="ExampleStory"
@@ -36,7 +37,9 @@ export const Template = () => ({
       options: {},
       manual: true,
     },
-  }}>
-  {Template.bind({})}
-</Story>
+  }}
+  render={() => ({
+    components: { MyComponent },
+    template: '<MyComponent />',
+  })} />
 ```

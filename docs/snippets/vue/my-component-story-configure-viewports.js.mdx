@@ -7,9 +7,9 @@ import MyComponent from './MyComponent.vue';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/vue/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/vue/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'MyComponent',
   component: MyComponent,
   parameters: {
@@ -24,13 +24,20 @@ export default {
   },
 };
 
-export const MyStory = () => ({
-  components: { MyComponent },
-  template: '<MyComponent />',
-});
-MyStory.parameters = {
-  viewport: {
-    defaultViewport: 'iphonex'
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/vue/api/csf
+ * to learn how to use render functions.
+ */
+export const MyStory = {
+  render: () => ({
+    components: { MyComponent },
+    template: '<MyComponent />',
+  }),
+  parameters: {
+    viewport: {
+      defaultViewport: 'iphonex',
+    },
   },
 };
 ```

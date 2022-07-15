@@ -6,9 +6,15 @@ import { html } from 'lit-html';
 import './demo-list';
 
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/7.0/web-components/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
 };
 
 // Always an empty list, not super interesting
-const Template = (args) => html`<demo-list></demo-list>`
+export const Empty = {
+  render: () => html`<demo-list></demo-list>`,
+};
 ```

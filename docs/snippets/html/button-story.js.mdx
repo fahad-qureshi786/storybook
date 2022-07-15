@@ -9,16 +9,23 @@ export default {
   title: 'Button',
 };
 
-export const Primary = () => {
-  const btn = document.createElement('button');
-  btn.innerText = 'Button';
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/html/api/csf
+ * to learn how to use render functions.
+ */
+export const Primary = {
+  render: () => {
+    const btn = document.createElement('button');
+    btn.innerText = 'Button';
 
-  btn.className = [
-    'storybook-button',
-    'storybook-button--medium',
-    'storybook-button--primary',
-  ].join(' ');
+    btn.className = [
+      'storybook-button',
+      'storybook-button--medium',
+      'storybook-button--primary',
+    ].join(' ');
 
-  return btn;
+    return btn;
+  },
 };
 ```

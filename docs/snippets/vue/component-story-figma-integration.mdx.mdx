@@ -9,23 +9,24 @@ import MyComponent from './MyComponent.vue';
 
 <Meta title="FigmaExample" component={MyComponent} decorators={[withDesign]} />
 
-export const Template = (args) => ({
-  // Components used in your story `template` are defined in the `components` object
-  components: { MyComponent },
-  template: 'MyComponent />',
-});
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/vue/api/csf
+  to learn how to use render functions.
+-->
 
 <Canvas>
   <Story
     name="Example"
-     parameters={{
+    parameters={{
       design: {
         type: 'figma',
         url: 'https://www.figma.com/file/Sample-File',
       },
     }}
-  >
-  {Template.bind({})}
-  </Story>
+    render={() => ({
+      components: { MyComponent },
+      template: 'MyComponent />',
+    })} />
 </Canvas>
 ```

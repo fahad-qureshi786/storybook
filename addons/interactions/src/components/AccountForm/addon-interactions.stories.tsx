@@ -84,7 +84,7 @@ WaitForElementToBeRemoved.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await waitForElementToBeRemoved(await canvas.findByText('Loading...'), { timeout: 2000 });
   const button = await canvas.findByText('Loaded!');
-  await expect(button).not.toBeNull();
+  await expect(button).toBeInTheDocument();
 };
 
 export const WithLoaders: CSF2Story = (args, { loaded: { todo } }) => {

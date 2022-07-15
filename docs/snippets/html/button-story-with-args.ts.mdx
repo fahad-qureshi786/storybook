@@ -1,12 +1,12 @@
 ```ts
 // Button.stories.ts
 
-import type { Meta, StoryFn } from '@storybook/html';
+import type { Meta, Story } from '@storybook/html';
 
 type ButtonArgs = {
   primary: boolean;
   label: string;
-}
+};
 
 export default {
   /* 👇 The title prop is optional.
@@ -16,21 +16,24 @@ export default {
   title: 'Button',
 } as Meta<ButtonArgs>;
 
-//👇 We create a “template” of how args map to rendering
-const Template: StoryFn<ButtonArgs> = (args): HTMLButtonElement => {
-  const btn = document.createElement('button');
-  btn.innerText = args.label;
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/html/api/csf
+ * to learn how to use render functions.
+ */
+export const Primary: Story = {
+  render: (args) => {
+    const btn = document.createElement('button');
+    btn.innerText = args.label;
 
-  const mode = args.primary ? 'storybook-button--primary' : 'storybook-button--secondary';
-  btn.className = ['storybook-button', 'storybook-button--medium', mode].join(' ');
+    const mode = args.primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+    btn.className = ['storybook-button', 'storybook-button--medium', mode].join(' ');
 
-  return btn;
-};
-
-//👇 Each story then reuses that template
-export const Primary = Template.bind({});
-Primary.args = {
-  primary: true,
-  label: 'Button',
+    return btn;
+  },
+  args: {
+    primary: true,
+    label: 'Button',
+  },
 };
 ```

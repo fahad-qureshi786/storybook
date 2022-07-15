@@ -9,9 +9,9 @@ import { DocumentScreen } from './YourPage';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
 };
@@ -65,23 +65,23 @@ const TestData = {
   ],
 };
 
-const PageTemplate = () => <DocumentScreen />;
-
-export const MockedSuccess = PageTemplate.bind({});
-MockedSuccess.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
-      return res(ctx.json(TestData));
-    }),
-  ],
+export const MockedSuccess = {
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint/', (_req, res, ctx) => {
+        return res(ctx.json(TestData));
+      }),
+    ],
+  },
 };
 
-export const MockedError = PageTemplate.bind({});
-MockedError.parameters = {
-  msw: [
-    rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
-      return res(ctx.delay(800), ctx.status(403));
-    }),
-  ],
+export const MockedError = {
+  parameters: {
+    msw: [
+      rest.get('https://your-restful-endpoint', (_req, res, ctx) => {
+        return res(ctx.delay(800), ctx.status(403));
+      }),
+    ],
+  },
 };
 ```

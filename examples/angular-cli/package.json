@@ -58,7 +58,7 @@
     "@storybook/addons": "7.0.0-alpha.13",
     "@storybook/angular": "7.0.0-alpha.13",
     "@storybook/babel-plugin-require-context-hook": "1.0.1",
-    "@storybook/jest": "^0.0.5",
+    "@storybook/jest": "^0.0.10",
     "@storybook/source-loader": "7.0.0-alpha.13",
     "@storybook/testing-library": "0.0.14-next.0",
     "@types/core-js": "^2.5.4",

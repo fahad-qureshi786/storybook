@@ -7,9 +7,9 @@ import MyComponent from './MyComponent.svelte';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/svelte/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/svelte/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'WithSelectEvent',
   component: MyComponent,
 };
@@ -19,21 +19,26 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const Template = (args) => ({
-  Component: MyComponent,
-  props: args,
-});
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/svelte/api/csf
+ * to learn how to use render functions.
+ */
+export const ExampleChangeEvent = {
+  render: (args) => ({
+    Component: MyComponent,
+    props: args,
+  }),
+  play: async () => {
+    const select = screen.getByRole('listbox');
 
-export const ExampleChangeEvent = Template.bind({});
-ExampleChangeEvent.play = async () => {
-  const select = screen.getByRole('listbox');
+    await userEvent.selectOptions(select, ['One Item']);
+    await sleep(2000);
 
-  await userEvent.selectOptions(select, ['One Item']);
-  await sleep(2000);
+    await userEvent.selectOptions(select, ['Another Item']);
+    await sleep(2000);
 
-  await userEvent.selectOptions(select, ['Another Item']);
-  await sleep(2000);
-
-  await userEvent.selectOptions(select, ['Yet another item']);
+    await userEvent.selectOptions(select, ['Yet another item']);
+  },
 };
 ```

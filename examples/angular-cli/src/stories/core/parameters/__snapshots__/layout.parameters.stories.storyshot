@@ -37,7 +37,7 @@ exports[`Storyshots Core / Parameters / Layout Fullscreen 1`] = `
         Button
       </button>
     </storybook-button-component>
-    
+
   </div>
 </storybook-wrapper>
 `;

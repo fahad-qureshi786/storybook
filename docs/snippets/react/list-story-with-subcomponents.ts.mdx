@@ -3,26 +3,28 @@
 
 import React from 'react';
 
-import type { ComponentStoryFn, ComponentMeta } from '@storybook/react';
+import type { ComponentStoryObj, ComponentMeta } from '@storybook/react';
 
 import { List } from './List';
 import { ListItem } from './ListItem';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/react/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/react/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
   component: List,
   subcomponents: { ListItem }, //👈 Adds the ListItem component as a subcomponent
 } as ComponentMeta<typeof List>;
 
-const Empty: ComponentStoryFn<typeof List> = (args) => <List {...args} />;
+export const Empty: ComponentStoryObj<typeof List> = {};
 
-const OneItem: ComponentStoryFn<typeof List> = (args) =>(
-  <List {...args}>
-    <ListItem />
-  </List>
-);
+export const OneItem: ComponentStoryObj<typeof List> = {
+  render: (args) => (
+    <List {...args}>
+      <ListItem />
+    </List>
+  ),
+};
 ```

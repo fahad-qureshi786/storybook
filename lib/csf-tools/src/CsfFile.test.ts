@@ -407,6 +407,30 @@ describe('CsfFile', () => {
               __id: foo-bar--a
       `);
     });
+
+    it('as default export', () => {
+      expect(
+        parse(
+          dedent`
+          const meta = { title: 'foo/bar' };
+          export const A = () => {};
+          export {
+            meta as default,
+            A
+          };
+        `,
+          true
+        )
+      ).toMatchInlineSnapshot(`
+        meta:
+          title: foo/bar
+        stories:
+          - id: foo-bar--a
+            name: A
+            parameters:
+              __id: foo-bar--a
+      `);
+    });
   });
 
   describe('error handling', () => {

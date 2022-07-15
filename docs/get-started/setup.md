@@ -20,7 +20,6 @@ Pick a simple component from your project, like a Button, and write a `.stories.
     'vue/your-component.3.js.mdx',
     'vue/your-component.mdx-3.mdx.mdx',
     'svelte/your-component.js.mdx',
-    'svelte/your-component.native-format.mdx',
     'svelte/your-component.mdx.mdx',
     'web-components/your-component.js.mdx',
     'html/your-component.js.mdx',

@@ -164,7 +164,7 @@ These tools work by auditing the rendered DOM against heuristics based on [WCAG]
 
 ### Setup
 
-To enable accessibility testing with the test runner, you will need to take additional steps to set it up properly. Detailed below is our recommendation to configure and execute them.
+To enable accessibility testing with the test runner, you will need to take additional steps to set it up properly. We recommend you go through the [test runner documentation](./test-runner.md) before proceeding with the rest of the required configuration.
 
 Run the following command to install the required dependencies.
 

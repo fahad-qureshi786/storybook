@@ -300,8 +300,30 @@ export class CsfFile {
             node.specifiers.forEach((specifier) => {
               if (t.isExportSpecifier(specifier) && t.isIdentifier(specifier.exported)) {
                 const { name: exportName } = specifier.exported;
-                self._storyAnnotations[exportName] = {};
-                self._stories[exportName] = { id: 'FIXME', name: exportName, parameters: {} };
+                if (exportName === 'default') {
+                  let metaNode: t.ObjectExpression;
+                  const decl = t.isProgram(parent)
+                    ? findVarInitialization(specifier.local.name, parent)
+                    : specifier.local;
+
+                  if (t.isObjectExpression(decl)) {
+                    // export default { ... };
+                    metaNode = decl;
+                  } else if (
+                    // export default { ... } as Meta<...>
+                    t.isTSAsExpression(decl) &&
+                    t.isObjectExpression(decl.expression)
+                  ) {
+                    metaNode = decl.expression;
+                  }
+
+                  if (!self._meta && metaNode && t.isProgram(parent)) {
+                    self._parseMeta(metaNode, parent);
+                  }
+                } else {
+                  self._storyAnnotations[exportName] = {};
+                  self._stories[exportName] = { id: 'FIXME', name: exportName, parameters: {} };
+                }
               }
             });
           }

@@ -5,15 +5,18 @@ import { getStoryHref, IconButton, Icons } from '@storybook/components';
 import { Consumer, Combo } from '@storybook/api';
 import { Addon } from '@storybook/addons';
 
-const { PREVIEW_URL } = global;
+const { PREVIEW_URL, document } = global;
 
 const copyMapper = ({ state }: Combo) => {
   const { storyId, refId, refs } = state;
+  const { location } = document;
   const ref = refs[refId];
+  let baseUrl = `${location.origin}${location.pathname}`;
+  if (!baseUrl.endsWith('/')) baseUrl += '/';
 
   return {
     refId,
-    baseUrl: ref ? `${ref.url}/iframe.html` : (PREVIEW_URL as string) || 'iframe.html',
+    baseUrl: ref ? `${ref.url}/iframe.html` : (PREVIEW_URL as string) || `${baseUrl}iframe.html`,
     storyId,
     queryParams: state.customQueryParams,
   };

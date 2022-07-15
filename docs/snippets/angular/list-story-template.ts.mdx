@@ -13,9 +13,9 @@ import { Unchecked } from './ListItem.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'List',
   component: List,
   decorators: [
@@ -26,29 +26,33 @@ export default {
   ],
 } as Meta;
 
-
-const ListTemplate: Story = (args) => ({
-  props: args,
-  template: `
-    <app-list>
-      <div *ngFor="let item of items">
-        <app-list-item [item]="item"></app-list-item>
-      </div>
-    </app-list>
-  `,
-});
-
-export const Empty = ListTemplate.bind({});
-EmptyListTemplate.args = {
-  items: [],
+ /*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/angular/api/csf
+ * to learn how to use render functions.
+ */
+const ListTemplate: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <app-list>
+        <div *ngFor="let item of items">
+          <app-list-item [item]="item"></app-list-item>
+        </div>
+      </app-list>
+    `,
+  }),
 };
 
-export const OneItem = ListTemplate.bind({});
-OneItem.args = {
-  items: [
-    {
-      ...Unchecked.args,
-    },
-  ],
+export const Empty: Story = {
+  ...ListTemplate,
+  args: { items: [] },
+};
+
+export const OneItem: Story = {
+  ...ListTemplate,
+  args: {
+    items: [{ ...Unchecked.args }],
+  },
 };
 ```

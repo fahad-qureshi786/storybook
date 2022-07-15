@@ -14,6 +14,7 @@ import { LoginForm } from './LoginForm';
 <Story 
   name="Example"
   play={async ({ canvasElement }) => {
+    // Starts querying the component from its root element
     const canvas = within(canvasElement);
     
     await userEvent.type(screen.getByTestId('email'), 'emailaddress@provider.com', {

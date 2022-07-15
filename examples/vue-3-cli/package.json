@@ -19,7 +19,7 @@
     "@storybook/addon-interactions": "7.0.0-alpha.13",
     "@storybook/addon-links": "7.0.0-alpha.13",
     "@storybook/addon-storyshots": "7.0.0-alpha.13",
-    "@storybook/jest": "^0.0.5",
+    "@storybook/jest": "^0.0.10",
     "@storybook/testing-library": "0.0.14-next.0",
     "@storybook/vue3": "7.0.0-alpha.13",
     "@storybook/vue3-webpack5": "7.0.0-alpha.13",

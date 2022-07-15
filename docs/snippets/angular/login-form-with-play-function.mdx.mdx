@@ -11,16 +11,21 @@ import { LoginForm } from './LoginForm.component';
 
 <Meta title="Form" component={LoginForm} />
 
-export const Template = (args) => ({ props: args });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 <Canvas>
-  <Story name="Empty Form">
-    {Template.bind({})}
-  </Story>
-
+  <Story 
+    name="Empty Form"
+    render={(args) => ({
+      props: args,
+    })} />
   <Story
     name="Filled Form"
-    play={async ({ canvasElement }) => {
+    play={ async ({ canvasElement }) => {
       // Starts querying the component from its root element
       const canvas = within(canvasElement);
 
@@ -29,7 +34,7 @@ export const Template = (args) => ({ props: args });
 
       await userEvent.type(canvas.getByTestId('password'), 'a-random-password');
 
-      // See https://storybook.js.org/docs/angular/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+      // See https://storybook.js.org/docs/7.0/angular/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
       await userEvent.click(canvas.getByRole('button'));
 
       // 👇 Assert DOM structure
@@ -38,8 +43,9 @@ export const Template = (args) => ({ props: args });
           'Everything is perfect. Your account is ready and we should probably get you started!'
         )
       ).toBeInTheDocument();
-    }}>
-    {Template.bind({})}
-  </Story>
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
 </Canvas>
 ```

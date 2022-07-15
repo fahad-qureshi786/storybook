@@ -16,6 +16,5 @@ const AppDecorator = (storyFn) => {
     <GlobalContainerContext.Provider value={context}>{storyFn()}</GlobalContainerContext.Provider>
   );
 };
-
-addDecorator(AppDecorator);
+export const decorators = [AppDecorator];
 ```

@@ -17,9 +17,9 @@ import * as DocumentListStories from './DocumentList.stories';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/angular/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/angular/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'DocumentScreen',
   component: DocumentScreen,
   decorators: [
@@ -30,15 +30,11 @@ export default {
   ],
 } as Meta;
 
-
-const Template: Story = (args) => ({
-  props: args,
-});
-
-export const Simple = Template.bind({});
-Simple.args = {
-  user: PageLayoutStories.PageLayoutSimple.args.user,
-  document: DocumentHeaderStories.DocumentHeaderSimple.args.document,
-  subdocuments: DocumentListStories.DocumentListSimple.args.documents
+export const ExampleWithRole: Story = {
+  args: {
+    user: PageLayoutStories.PageLayoutSimple.args.user,
+    document: DocumentHeaderStories.DocumentHeaderSimple.args.document,
+    subdocuments: DocumentListStories.DocumentListSimple.args.documents,
+  },
 };
 ```

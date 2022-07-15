@@ -1,7 +1,8 @@
 ```ts
 // YourComponent.stories.ts
 
-import { Meta, StoryFn } from '@storybook/html';
+import type { Meta, Story } from '@storybook/html';
+
 import { createYourComponent } from './YourComponent';
 
 //👇 This default export determines where your story goes in the story list
@@ -12,12 +13,15 @@ export default {
    */
   title: 'YourComponent',
 } as Meta;
-
-//👇 We create a “template” of how args map to rendering
-const Template: StoryFn = (args): HTMLElement => createYourComponent(args);
-
-export const FirstStory = Template.bind({});
-FirstStory.args = {
-  //👇 The args you need here will depend on your component
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/html/api/csf
+ * to learn how to use render functions.
+ */
+export const FirstStory: Story = {
+  render: (args) => createYourComponent(args),
+  args:{
+    // 👇 The args you need here will depend on your component
+  },
 };
 ```

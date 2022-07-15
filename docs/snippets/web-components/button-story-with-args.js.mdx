@@ -1,23 +1,26 @@
 ```js
 // demo-button.stories.js
 
-import { html } from 'lit-html';
-
-import './demo-button';
+import { Button } from './demo-button';
 
 export default {
+  /* 👇 The title prop is optional.
+   * See https://storybook.js.org/docs/7.0/web-components/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'Button',
 };
 
-//👇 We create a “template” of how args map to rendering
-const Template = ({ primary, label }) =>
-  html`<demo-button ?primary=${primary} .label=${label}></demo-button>`;
-
-//👇 Each story then reuses that template
-export const Primary = Template.bind({});
-
-Primary.args = {
-  primary: true,
-  label: 'Button',
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/web-components/api/csf
+ * to learn how to use render functions.
+ */
+export const Primary = {
+  render: (args) => Button(args),
+  args: {
+    primary: true,
+    label: 'Button',
+  },
 };
 ```

@@ -7,9 +7,9 @@ import MyComponent from './MyComponent.svelte';
 
 export default {
   /* 👇 The title prop is optional.
-  * See https://storybook.js.org/docs/svelte/configure/overview#configure-story-loading
-  * to learn how to generate automatic titles
-  */
+   * See https://storybook.js.org/docs/7.0/svelte/configure/overview#configure-story-loading
+   * to learn how to generate automatic titles
+   */
   title: 'MyComponent',
   component: MyComponent,
   parameters: {
@@ -23,12 +23,19 @@ export default {
   },
 };
 
-export const MyStory = () => ({
-  Component: MyComponent,
-});
-MyStory.parameters = {
-  viewport: {
-    defaultViewport: 'iphonex',
+/*
+ *👇 Render functions are a framework specific feature to allow you control on how the component renders.
+ * See https://storybook.js.org/docs/7.0/svelte/api/csf
+ * to learn how to use render functions.
+ */
+export const MyStory = {
+  render: () => ({
+    Component: MyComponent,
+  }),
+  parameters: {
+    viewport: {
+      defaultViewport: 'iphonex',
+    },
   },
 };
 ```

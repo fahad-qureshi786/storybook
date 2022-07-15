@@ -1,7 +1,7 @@
 ```ts
 // Button.stories.ts
 
-import { Meta, StoryFn } from '@storybook/html';
+import type { Meta, Story } from '@storybook/html';
 
 import { createButton, ButtonArgs } from './Button';
 
@@ -19,5 +19,7 @@ export default {
   }],
 } as Meta<ButtonArgs>;
 
-export const Primary: StoryFn<ButtonArgs> = (args) => createButton(args);
+export const Primary: Story = {
+  render: (args) => createButton(args),
+};
 ```

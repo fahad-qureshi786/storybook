@@ -7,5 +7,10 @@
   "include": [
     "../src/**/*",
     "preview.ts"
-  ]
+  ],
+  "compilerOptions": {
+    "types": [
+      "@testing-library/jest-dom"
+    ]
+  }
 }

@@ -7,7 +7,11 @@ import { Badge } from './badge.component';
 
 <Meta title="Badge" component={Badge} />
 
-export const Template = (args) => ({ props: args });
+<!--
+ 👇 Render functions are a framework specific feature to allow you control on how the component renders.
+  See https://storybook.js.org/docs/7.0/angular/api/csf
+  to learn how to use render functions.
+-->
 
 <Canvas>
   <Story 
@@ -15,24 +19,27 @@ export const Template = (args) => ({ props: args });
     args={{ 
       status: 'warning', 
       label: 'Warning',
-    }}>
-    {Template.bind({})}
-  </Story>
+    }} 
+    render={(args) => ({
+      props: args,
+    })} />
   <Story 
     name="neutral"
     args={{ 
       status: 'neutral', 
       label: 'Neutral',
-     }}>
-    {Template.bind({})}
-  </Story>
+     }} 
+    render={(args) => ({
+      props: args,
+    })} />
   <Story 
     name="error"
     args={{ 
       status: 'error', 
       label: 'Error',
-    }}>
-    {Template.bind({})}
-  </Story>
+    }}
+    render={(args) => ({
+      props: args,
+    })} />
 </Canvas>
 ```

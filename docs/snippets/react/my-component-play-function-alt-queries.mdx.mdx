@@ -9,23 +9,21 @@ import { MyComponent } from './MyComponent';
 
 <Meta title="QueryMethods" component={MyComponent} />
 
-export const Template = (args) => <MyComponent {...args} />;
-
 <Story
   name="ExampleWithRole"
-  play={async () => {
-    // See https://storybook.js.org/docs/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+  play={ async () => {
+    // See https://storybook.js.org/docs/7.0/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
     await userEvent.click(screen.getByRole('button', { name: / button label/i }));
   }}>
-  {Template.bind({})}
+  <MyComponent />
 </Story>
 
 <Story
   name="ExampleWithText"
-  play={async () => {
+  play={ async () => {
     // The play function interacts with the component and looks for the text
     await screen.findByText('example string');
   }}>
-  {Template.bind({})}
+  <MyComponent />
 </Story>
 ```

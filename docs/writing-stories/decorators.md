@@ -26,7 +26,6 @@ Some components require a “harness” to render in a useful way. For instance,
     'angular/your-component-with-decorator.ts.mdx',
     'angular/your-component-with-decorator.mdx.mdx',
     'svelte/your-component-with-decorator.js.mdx',
-    'svelte/your-component-with-decorator.native-format.mdx',
     'svelte/your-component-with-decorator.mdx.mdx',
     'web-components/your-component-with-decorator.js.mdx',
   ]}
@@ -121,7 +120,6 @@ To define a decorator for all stories of a component, use the `decorators` key o
     'angular/button-story-component-decorator.ts.mdx',
     'angular/button-story-component-decorator.mdx.mdx',
     'svelte/button-story-component-decorator.js.mdx',
-    'svelte/button-story-component-decorator.native-format.mdx',
     'svelte/button-story-component-decorator.mdx.mdx',
     'web-components/button-story-component-decorator.js.mdx',
   ]}
