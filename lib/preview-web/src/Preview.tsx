@@ -51,7 +51,7 @@ export class Preview<TFramework extends AnyFramework> {
 
   previewEntryError?: Error;
 
-  constructor(private channel: Channel = addons.getChannel()) {
+  constructor(protected channel: Channel = addons.getChannel()) {
     if (global.FEATURES?.storyStoreV7 && addons.hasServerChannel()) {
       this.serverChannel = addons.getServerChannel();
     }

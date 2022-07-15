@@ -87,6 +87,7 @@ interface AnchorMdxProps {
 
 export const AnchorMdx: FC<AnchorMdxProps> = (props) => {
   const { href, target, children, ...rest } = props;
+  const context = useContext(DocsContext);
 
   if (href) {
     // Enable scrolling for in-page anchors.
@@ -103,7 +104,7 @@ export const AnchorMdx: FC<AnchorMdxProps> = (props) => {
             event.preventDefault();
             // use the A element's href, which has been modified for
             // local paths without a `?path=` query param prefix
-            navigate(event.currentTarget.getAttribute('href'));
+            navigate(context, event.currentTarget.getAttribute('href'));
           }}
           target={target}
           {...rest}
@@ -156,6 +157,8 @@ const HeaderWithOcticonAnchor: FC<HeaderWithOcticonAnchorProps> = ({
   children,
   ...rest
 }) => {
+  const context = useContext(DocsContext);
+
   // @ts-ignore
   const OcticonHeader = OcticonHeaders[as];
   const hash = `#${id}`;
@@ -170,7 +173,7 @@ const HeaderWithOcticonAnchor: FC<HeaderWithOcticonAnchorProps> = ({
         onClick={(event: SyntheticEvent) => {
           const element = document.getElementById(id);
           if (element) {
-            navigate(hash);
+            navigate(context, hash);
           }
         }}
       >

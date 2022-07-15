@@ -1,11 +1,5 @@
-import {
-  AnyFramework,
-  ComponentTitle,
-  StoryContextForLoaders,
-  StoryId,
-  StoryName,
-} from '@storybook/csf';
-import { CSFFile, ModuleExport, ModuleExports, Story, StoryStore } from '@storybook/store';
+import type { AnyFramework, StoryContextForLoaders, StoryId, StoryName } from '@storybook/csf';
+import type { CSFFile, ModuleExport, ModuleExports, Story, StoryStore } from '@storybook/store';
 import type { Channel } from '@storybook/channels';
 
 import { DocsContextProps } from './DocsContextProps';
