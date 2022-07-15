@@ -12,6 +12,7 @@ export type GeneratorOptions = {
   language: SupportedLanguage;
   builder: Builder;
   linkable: boolean;
+  commonJs: boolean;
 };
 
 export interface FrameworkOptions {
@@ -67,7 +68,7 @@ const hasInteractiveStories = (framework: SupportedFrameworks) =>
 export async function baseGenerator(
   packageManager: JsPackageManager,
   npmOptions: NpmOptions,
-  { language, builder }: GeneratorOptions,
+  { language, builder, commonJs }: GeneratorOptions,
   framework: SupportedFrameworks,
   options: FrameworkOptions = defaultOptions
 ) {
@@ -150,7 +151,7 @@ export async function baseGenerator(
     framework: frameworkPackage,
     addons: [...addons, ...stripVersions(extraAddons)],
     extensions,
-    commonJs: options.commonJs,
+    commonJs,
     ...mainOptions,
   });
   if (addComponents) {
