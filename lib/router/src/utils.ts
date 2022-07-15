@@ -1,7 +1,7 @@
 import { once } from '@storybook/client-logger';
 import deepEqual from 'fast-deep-equal';
 import isPlainObject from 'lodash/isPlainObject';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import qs, { IStringifyOptions } from 'qs';
 import dedent from 'ts-dedent';
 

@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ReactNode, ComponentProps } from 'react';
 import { styled } from '@storybook/theming';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import { transparentize } from 'polished';
 
 export interface TitleProps {

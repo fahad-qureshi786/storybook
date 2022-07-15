@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 import { styled, Color, lighten, darken } from '@storybook/theming';
 

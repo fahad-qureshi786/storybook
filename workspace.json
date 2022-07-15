@@ -1,6 +1,10 @@
 {
   "version": 2,
   "projects": {
+    "@storybook/thirdparty-memoizerific": {
+      "root": "thirdparty/memoizerific",
+      "type": "library"
+    },
     "@storybook/addon-a11y": {
       "root": "addons/a11y",
       "type": "library"

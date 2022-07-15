@@ -1,4 +1,4 @@
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 import prettierHtml from 'prettier/parser-html';
 import prettier from 'prettier/standalone';

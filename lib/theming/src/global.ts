@@ -1,4 +1,4 @@
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import { Color, Background, Typography } from './types';
 
 type Value = string | number;

@@ -1,6 +1,6 @@
 import store from 'store2';
 import debounce from 'lodash/debounce';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 export { store };
 

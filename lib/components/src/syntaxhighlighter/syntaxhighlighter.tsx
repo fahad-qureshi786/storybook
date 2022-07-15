@@ -2,7 +2,7 @@ import React, { ClipboardEvent, FunctionComponent, MouseEvent, useCallback, useS
 import { logger } from '@storybook/client-logger';
 import { styled } from '@storybook/theming';
 import global from 'global';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 // @ts-ignore
 import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';

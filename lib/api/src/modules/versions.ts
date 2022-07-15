@@ -1,6 +1,6 @@
 import global from 'global';
 import semver from '@storybook/semver';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 import { version as currentVersion } from '../version';
 

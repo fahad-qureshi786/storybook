@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { styled } from '@storybook/theming';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import uniq from 'lodash/uniq';
 import { PropSummaryValue } from './types';
 import { WithTooltipPure } from '../../tooltip/lazy-WithTooltip';

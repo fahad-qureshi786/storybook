@@ -1,5 +1,5 @@
 import React, { FunctionComponent, Fragment, useCallback, useMemo, memo } from 'react';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 import { useParameter, useGlobals } from '@storybook/api';
 import { logger } from '@storybook/client-logger';

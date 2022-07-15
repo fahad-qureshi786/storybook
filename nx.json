@@ -19,6 +19,9 @@
     }
   },
   "projects": {
+    "@storybook/thirdparty-memoizerific": {
+      "implicitDependencies": []
+    },
     "@storybook/addon-a11y": {
       "implicitDependencies": []
     },

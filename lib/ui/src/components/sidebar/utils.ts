@@ -1,4 +1,4 @@
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import global from 'global';
 import { SyntheticEvent } from 'react';
 import type { StoriesHash } from '@storybook/api';

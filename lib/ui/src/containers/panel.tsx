@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import { Consumer, Combo } from '@storybook/api';
 
 import AddonPanel from '../components/panel/panel';

@@ -44,6 +44,7 @@ module.exports = {
     '<rootDir>/lib',
     '<rootDir>/examples/official-storybook',
     '<rootDir>/examples/react-ts',
+    '<rootDir>/thirdparty',
   ],
   transform: {
     '^.+\\.stories\\.[jt]sx?$': '@storybook/addon-storyshots/injectFileName',
@@ -67,6 +68,7 @@ module.exports = {
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'lib/**/*.{js,jsx,ts,tsx}',
+    'thirdparty/**/*.{js,jsx,ts,tsx}',
     'addons/**/*.{js,jsx,ts,tsx}',
   ],
   coveragePathIgnorePatterns: [

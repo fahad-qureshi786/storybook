@@ -1,4 +1,4 @@
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 import React from 'react';
 import deprecate from 'util-deprecate';
 import dedent from 'ts-dedent';

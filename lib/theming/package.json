@@ -41,8 +41,8 @@
   },
   "dependencies": {
     "@storybook/client-logger": "6.5.0-rc.1",
+    "@storybook/thirdparty-memoizerific": "6.5.0-rc.1",
     "core-js": "^3.8.2",
-    "memoizerific": "^1.11.3",
     "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {

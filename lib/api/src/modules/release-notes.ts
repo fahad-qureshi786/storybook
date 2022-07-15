@@ -1,5 +1,5 @@
 import global from 'global';
-import memoize from 'memoizerific';
+import memoize from '@storybook/thirdparty-memoizerific';
 
 import { ModuleFn } from '../index';
 

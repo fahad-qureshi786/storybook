@@ -44,8 +44,8 @@
     "@storybook/client-logger": "6.5.0-rc.1",
     "@storybook/csf": "0.0.2--canary.4566f4d.1",
     "@storybook/theming": "6.5.0-rc.1",
+    "@storybook/thirdparty-memoizerific": "6.5.0-rc.1",
     "core-js": "^3.8.2",
-    "memoizerific": "^1.11.3",
     "qs": "^6.10.0",
     "regenerator-runtime": "^0.13.7",
     "util-deprecate": "^1.0.2"
