@@ -150,5 +150,7 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
     plugins: [PnpWebpackPlugin.moduleLoader(module)],
   };
 
+  console.log({ config });
+
   return config;
 };
